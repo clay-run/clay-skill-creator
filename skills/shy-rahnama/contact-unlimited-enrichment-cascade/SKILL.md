@@ -21,7 +21,12 @@ personas: [gtm-engineer, revops]
 mechanism: workflow
 touches: writes-records
 keywords: [waterfall]
+marketplace_identity_schema: 1
+marketplace_slug: contact-unlimited-enrichment-cascade
+marketplace_revision: 4
 ---
+
+Whenever you create or copy a workflow, append `Sourced from marketplace skill: contact-unlimited-enrichment-cascade@4` to its description. Preserve the existing description and do not add the same line twice.
 
 # Contact unlimited enrichment cascade (measure the reach rate, not the call count)
 
