@@ -806,15 +806,28 @@ def validate(root: str, action_catalog: dict | None = None) -> dict:
             })
 
     # 4 — delegated content checks. Not reimplemented; see the module docstring.
+    #
+    # THIS PROJECTION USED TO DROP `remediation` AND CUT `detail` MID-SENTENCE, and both were found
+    # by a reviewer reading real output rather than by any test. Twenty-seven Finding constructions
+    # in the validator supply a `remediation`; none of it reached anyone, because this dict copied
+    # five keys and that was not one of them. A remediation nobody can read is not a remediation —
+    # it is a comment in a file the audience never opens.
+    #
+    # The truncation was the same class of quiet loss. `marketplace_identity`'s detail is 327
+    # characters, the cap was 300, so the sentence that names the consequence ended "any provenance
+    # marker it writes w". Both fields are authored prose whose length the author already controls,
+    # so they are emitted whole; the caps stay only on `evidence`, which quotes matched source text
+    # and can be arbitrarily long.
     port = P.check_portability(body, files, action_catalog)
     for fnd in port.findings:
         d = fnd if isinstance(fnd, dict) else getattr(fnd, "__dict__", {})
         findings.append({
             "check": "portability/" + str(d.get("resolver", "?")),
             "severity": str(d.get("severity", "report")),
-            "detail": str(d.get("detail", ""))[:300],
+            "detail": str(d.get("detail", "")),
             "evidence": str(d.get("evidence", ""))[:120],
             "line": d.get("line"),
+            "remediation": str(d.get("remediation", "")) or None,
         })
     sysfail = [str(s) for s in (getattr(port, "system_failures", None) or [])]
 

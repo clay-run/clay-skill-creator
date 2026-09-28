@@ -679,6 +679,30 @@ have a failure behind them: a skill that creates several workflows verifies each
 workflow the skill merely reads or modifies **gets no marker** — the skill did not create it, and
 labelling it claims an origin that is not true.
 
+**A COPY COUNTS AS CREATED, and the published instruction has always said so while this rule did
+not.** Every issued package carries *"whenever you create **or copy** a workflow"*, so a run that
+duplicates a workflow has brought a new one into existence and it gets a marker like any other. The
+two rules above still decide the rest: the **source** of the copy gets nothing, because copying it is
+not creating it.
+
+**But a copy arrives carrying the source's description, and that is the case the ordinary rules have
+to settle rather than the create path.** A fresh workflow has a null description and takes the marker
+outright; a copy may already hold one, so:
+
+| What the copy arrived with | What happens |
+|---|---|
+| no description, or empty | write the marker — same as a fresh create |
+| a description, no marker | append on its own line, preserving their bytes |
+| **this** skill's marker at **this** revision | already correct — do nothing, and do not write a second one |
+| any other marker, including this slug at a different revision | **report a conflict and write nothing** |
+
+That last row is the one worth being strict about. A copy of a workflow some other skill built
+inherits that skill's marker, and overwriting it would erase true provenance to assert ours — so the
+conflict rule wins over the create rule whenever they disagree. Our own slug at an older revision
+lands there too: a marker naming `@2` on a copy made by `@4` is evidence about where the graph came
+from, and replacing it silently would destroy the one fact the marker exists to carry. Report it and
+let a person decide.
+
 **Say it and declare it.** Name the marker in the draft's **Writes** axis, and have the build step say
 it out loud in one sentence — *"I'm writing a line into the workflow's description so this can be
 traced back to the listing."* It is a second write into somebody's workspace; an identifier put there

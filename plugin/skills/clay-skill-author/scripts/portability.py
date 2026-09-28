@@ -42,7 +42,13 @@ from typing import Iterable, Sequence
 # which changes derived values on four skills without changing any rule — the implementation half
 # (1.5.0 -> 1.6.0). A caller comparing two results across this boundary needs both numbers to tell
 # which kind of difference they are looking at.
-VERSION = "portability-check/1.7.0"
+# 1.7.1: the marketplace_identity prose only. The seven MI conformance cases assert `resolver`,
+# `severity`, `evidence_contains` and `expect_blocking` — never `detail` or `remediation` — so
+# rewriting those two changes what a reviewer reads and nothing a port is held to. RULESET stays at
+# 1.5 for exactly that reason: the rules did not move, the readable half did. Correcting the
+# `evidence` string, which still reads "draft carries" on a correctly issued package, IS a ruleset
+# change because MI1 and MI2 pin it, and is deliberately not done here.
+VERSION = "portability-check/1.7.1"
 RULESET_VERSION = "portability-ruleset/1.5"  # the RULES: resolvers, severities, dispositions
 
 
@@ -1148,14 +1154,23 @@ def _resolve_marketplace_identity(body: str) -> list[Finding]:
         severity="report",
         evidence=f"draft carries {', '.join(present)}",
         line=line,
-        detail="This package carries Marketplace identity fields. The Marketplace assigns "
-               "`marketplace_slug` and `marketplace_revision` when it prepares a revision for "
-               "review — an unpublished draft has neither, so a draft that carries them is claiming "
-               "an identity nobody issued, and any provenance marker it writes will name the wrong "
-               "listing.",
-        remediation="Delete these fields from the draft. They arrive from publication, not from you. "
-                    "If this package came back from publication and you are editing it, keep the "
-                    "values exactly as they were issued and change nothing about them.",
+        detail="This package carries Marketplace identity fields. They are assigned when the "
+               "Marketplace prepares an immutable revision for review — BEFORE publication, not by "
+               "it — so a package that has been through that step carries them correctly and this "
+               "finding is expected. A package that has NOT is claiming an identity nobody issued, "
+               "and the provenance marker it writes will name the wrong listing. Note the evidence "
+               "line above says `draft carries` in every case: that wording is fixed by this "
+               "ruleset's conformance contract and is not a claim that this package is a draft.",
+        remediation="Decide by provenance, not by this finding, and note that syntactic validity is "
+                    "not proof of issuance — an issued package also matches the authoritative "
+                    "revision record and package hash. Came from an issued package: preserve the "
+                    "values exactly and change nothing. Editing a draft whose base was a verified "
+                    "issued package: preserve them too, because the Marketplace assigns the new "
+                    "revision inside the bytes it reviews, so discarding them is not your step. No "
+                    "issued package behind it: delete them, since nothing assigned them. And absent "
+                    "identity stays a normal state to handle rather than a defect to fix here — not "
+                    "every publication path issues these fields, so a skill that cannot read a "
+                    "usable identity must skip attribution and say so.",
     ))
     if problems:
         out.append(Finding(
