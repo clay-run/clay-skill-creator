@@ -88,10 +88,19 @@ fourth one is the reason this directory exists at all.
 If you want to see how a declared-inputs table is written, or how a skill states what it does *not*
 claim, read these.
 
-**`skills/` is different: it is published skills, and it is not part of this kit.** Every
-directory under it is `skills/<author>/<skill>/`, written by whoever published that skill. Nothing in
+**`skills/` is different: it is other people's skills, and it is not part of this kit.** Every
+directory under it is `skills/<author>/<skill>/`, written by whoever wrote that skill. Nothing in
 this repository's tooling generates or removes anything there — that tree has one writer, and it is not
 the kit. Read those to see the range of what the marketplace holds; read `examples/` to see the format.
+
+**Not all of them are published, so do not read this tree as the marketplace catalogue.** Of 59
+directories, 25 arrived by a publication and match their listing byte for byte; 34 were imported by
+hand, and 30 of those had **no matched active publication** in the audit of 2026-09-25. The 30 under
+`skills/clay/` are library skills, installable from this repository. Whether they were ever submitted
+is not established — an unmatched path is not proof of that, only of what this audit could match — so
+read them as skills you can install from here rather than as listings. This paragraph replaces a
+sentence that called the whole tree "published skills": that was wrong about 34 of 59, and it is where
+the "59 published skills" figure quoted elsewhere came from.
 
 Internal evaluation records (`EVAL.md`) are excluded from everything published here.
 

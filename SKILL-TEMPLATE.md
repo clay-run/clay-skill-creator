@@ -537,3 +537,32 @@ The frame was empty and the renderer had nothing else to show.
 
 **And it is only representative** — not a promise of yield and not a benchmark.
 `## What this skill does not claim` still owes the reader the gaps.
+
+### Five things that separate a good one from a present one
+
+Presence is all a validator can check. The first of these outranks the other four.
+
+1. **Write it for someone who has not read your skill.** This is the one section a *person* reads
+   while deciding, not an agent reads while running — so no term you have not already explained in
+   plain words, and no shorthand from your own head. A cell reading `QUALIFIED_FOR_REVIEW`, a
+   "two-source floor", an "unmatched identity": each sends the reader to a step they never opened.
+   Say what happened in words. *"Rests on one source — take that walkthrough away and she drops to
+   49, under the cut-off"* costs nothing and needs no glossary.
+2. **The verdict enum, stated once — not in every cell.** It has to be identifiable, because
+   installers filter on it: one line beside the table, *"the first table is `QUALIFIED_FOR_REVIEW`,
+   the second `RESEARCH_REQUIRED`, and those are the only two verdicts"*. Lowercase values an
+   installer configured (`mid_market`) read fine in a cell; machine constants do not, and
+   `validate` reports them.
+3. **Show a row that did not succeed, and why in a sentence anybody can read.** Four wins teaches
+   the page that your skill always wins. "Three case studies, none saying who did the work" tells a
+   reader more about your method than any passing row does.
+4. **Give a number its scale and its bar.** `72` is unreadable; `72 / 100, cut-off 55` is a
+   verdict. Claim no precision the method has not got: if the weights are proposed or
+   installer-supplied, `72` is honest and `72.4` asserts calibration you disclaimed elsewhere. And
+   **where a score leans on one source, show it without that source** — a candidate dropping 43 → 26
+   when one citation goes is *why* it reads "research required" instead of merely asserting it.
+5. **One brief, one kind of candidate.** A table mixing a person and an agency is confusing before
+   jargon even arrives. If your skill handles both, show one — or add a column saying which.
+
+
+

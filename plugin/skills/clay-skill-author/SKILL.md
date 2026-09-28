@@ -31,7 +31,7 @@ here?"* — invites a shrug. People correct a draft far better than they answer 
 **First line of output, before anything else:**
 
 ```
-clay-skill-author/2.20.0 · loaded from <absolute path to this SKILL.md>
+clay-skill-author/2.25.0 · loaded from <absolute path to this SKILL.md>
 ```
 
 **AND KEEP THAT ABSOLUTE PATH — every relative path below is relative to it, and reconstructing it
@@ -608,6 +608,139 @@ validator looks for it.** Three labelled lines, all three named even where the a
 Write `Writes: nothing` explicitly when the play only reads; it is the most reassuring line a
 read-only skill has and leaving it implied throws it away. Derive it from the steps you just drafted
 rather than asking the creator: you know what the play reads and writes, because you wrote it.
+
+**A draft that builds a workflow stamps it, so an installed skill can be traced back to its listing.**
+One line, last, on its own line, in the workflow's description:
+
+```
+Sourced from marketplace skill: <slug>
+```
+
+**The identity is supplied, never derived. You do not write these fields and you do not invent them.**
+The Marketplace puts them into the installed `SKILL.md` when it prepares a reviewable revision:
+
+```
+marketplace_identity_schema: 1
+marketplace_slug: <canonical-listing-slug>
+marketplace_revision: <assigned-positive-integer>
+```
+
+**A draft you are writing has none of them, and that is correct** — it has not been published, so it
+has no slug and no revision. Leave them out. A draft that carries them is claiming an identity nobody
+assigned.
+
+**When they are present and valid**, the marker is:
+
+```
+Sourced from marketplace skill: <marketplace_slug>@<marketplace_revision>
+```
+
+**When they are absent, malformed, or the schema is one you do not recognise: skip attribution, say so,
+and carry on with the rest of the work.** Do not substitute the frontmatter `name`, the folder path, or
+a revision fetched from the live listing. Those are three different wrong answers with the same shape:
+
+- **`name` is not the slug.** `source-candidates-2` has `name: source-candidates`, so a `name`
+  fallback writes a marker pointing at a listing that does not exist.
+- **The live listing's latest revision is not this package's revision.** An installed copy is frozen;
+  the listing moves. Reading the current revision labels a workflow with a version of the skill that
+  did not build it.
+- **A placeholder reads as an answer.** `<slug>@<version>` in a real description is worse than no line
+  at all, because a lookup counts it.
+
+Reporting "Marketplace attribution is unavailable for this skill" is a complete, honest outcome. A
+wrong marker is not.
+
+**It is a second call, and that is the part to get right.** `clay workflows create` takes `--name` and
+nothing else — the description is set afterwards by `clay workflows update <id> --description`.
+
+**Read the description before writing it, and branch on five cases.** Skills get re-run, and a rule
+that handles only the happy path produces duplicate markers, silent overwrites, or orphan workflows:
+
+| What `get` returns | Do this |
+|---|---|
+| `null` — a fresh workflow returns `null`, not `""` | write the skill's own description, then a newline, then the marker |
+| a description, no marker | append a newline and the marker. **Keep what is already there** |
+| **this same marker already** | write nothing, and say so. A re-run is not a second stamp |
+| **a different or malformed marker** | **stop and report a conflict.** Do not overwrite it, do not claim attribution — another marker is evidence, not clutter |
+| the `update` call failed | say plainly that **the workflow exists and the provenance line could not be written.** Never report success for a write that did not land |
+
+**On a retry, reuse the workflow id.** The failure that matters is retrying from the top: `create`
+succeeds, `update` fails, the retry creates a *second* workflow, and the first is orphaned and
+unlabelled. Hold the id `create` returned and retry only the `update` against it.
+
+**Read it back after the update and check both halves.** The marker is there, and the description you
+were preserving is still there. An update that lands the marker and drops the creator's own description
+has traded one silent failure for another, and only a readback can tell you. **A readback that does not
+match is a failure to report, not a detail to skip** — say the workflow exists and attribution is
+unconfirmed.
+
+**One marker per workflow this invocation actually created, tracked separately.** Two rules and both
+have a failure behind them: a skill that creates several workflows verifies each one on its own, and a
+workflow the skill merely reads or modifies **gets no marker** — the skill did not create it, and
+labelling it claims an origin that is not true.
+
+**A COPY COUNTS AS CREATED, and the published instruction has always said so while this rule did
+not.** Every issued package carries *"whenever you create **or copy** a workflow"*, so a run that
+duplicates a workflow has brought a new one into existence and it gets a marker like any other. The
+two rules above still decide the rest: the **source** of the copy gets nothing, because copying it is
+not creating it.
+
+**But a copy arrives carrying the source's description, and that is the case the ordinary rules have
+to settle rather than the create path.** A fresh workflow has a null description and takes the marker
+outright; a copy may already hold one, so:
+
+| What the copy arrived with | What happens |
+|---|---|
+| no description, or empty | write the marker — same as a fresh create |
+| a description, no marker | append on its own line, preserving their bytes |
+| **this** skill's marker at **this** revision | already correct — do nothing, and do not write a second one |
+| any other marker, including this slug at a different revision | **report a conflict and write nothing** |
+
+That last row is the one worth being strict about. A copy of a workflow some other skill built
+inherits that skill's marker, and overwriting it would erase true provenance to assert ours — so the
+conflict rule wins over the create rule whenever they disagree. Our own slug at an older revision
+lands there too: a marker naming `@2` on a copy made by `@4` is evidence about where the graph came
+from, and replacing it silently would destroy the one fact the marker exists to carry. Report it and
+let a person decide.
+
+**Say it and declare it.** Name the marker in the draft's **Writes** axis, and have the build step say
+it out loud in one sentence — *"I'm writing a line into the workflow's description so this can be
+traced back to the listing."* It is a second write into somebody's workspace; an identifier put there
+undeclared is exactly what `## What this skill touches` exists to prevent, and writing our own
+unannounced would be a double standard the next reviewer is right to flag.
+
+**The lookup, which is why the format is fixed.** Two things it must do, and the one-liner that skips
+either is wrong rather than shorter: **guard `!= null`**, because `test()` errors on a fresh workflow's
+null description, and **follow the cursor**, because `--limit` caps at 200 and a single page silently
+answers for a whole workspace:
+
+```
+cursor=""
+while :; do
+  page=$(clay workflows list --limit 200 ${cursor:+--cursor "$cursor"})
+  printf '%s' "$page" | jq -r '.data[]
+    | select(.description != null and (.description | test("Sourced from marketplace skill")))
+    | [.id, .name, (.description | gsub("\n"; " / "))] | @tsv'
+  cursor=$(printf '%s' "$page" | jq -r '.cursor // empty')
+  [ -n "$cursor" ] || break
+done
+```
+
+`gsub` on the newline is display only — the stored value keeps its line break, and without it a
+two-line description breaks the TSV row across two lines.
+
+**A draft that builds columns gets no stamp, and this is a deferral rather than an omission.** There is
+no column write surface: `clay tables columns` exposes `list` and `get` only, and
+`clay tables update` toggles query-enablement. Do not ask the installer to paste one in by hand
+either — it would be unverifiable, and a column play adds columns to a table the installer already
+owned, which is not the skill's object to annotate.
+
+**What this is worth, stated honestly, because a creator will ask.** A description is editable and
+clearable by whoever owns the workspace, so this is a **tracing aid whose coverage decays — not
+tamper-proof provenance.** Measured against **Clay CLI v1.4.0**: the write is accepted, a newline
+round-trips, 459 characters were accepted where `--name` caps at 255, the marker survives at the tail,
+and `list` carries the field so a sweep is a few paged calls. Unverified: whether `publish` preserves
+it, and whether editing a workflow in the app clobbers it.
 
 **Decide the shape before the steps, and derive it from the job rather than defaulting to it.** Two
 shapes exist — call the functions, or build a workflow — and `DETERMINISM.md` names two forcing

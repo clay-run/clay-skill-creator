@@ -21,6 +21,10 @@ keyword: route-inbound-demo-requests
 > saying what it does not claim is where that is written down.
 > This example exists to show what that outcome looks like: a complete, usable skill with an honest
 > label, instead of a skill fabricated from column names.
+> It also shows what a good `## Representative output` does. Two of its four rows are *held*, not
+> routed; every row names the rule that fired and the value the decision used; the counts are whole
+> numbers because nothing here measures tenths; and the coverage line says what was skipped and why.
+> A table of four successes teaches the marketplace page that this skill always succeeds.
 
 The insight: **the request that fits no rule is the one worth a human.** Most routing skills force
 every row into a queue, which means the ambiguous ones land wherever the last `else` points.
@@ -56,6 +60,27 @@ Fields: `email`, `company_name` (optional), `job_title` (optional).
 2. `enterprise` — company size **1,000 or more**, or a director-level-and-above title.
 3. `mid_market` — company size **50 or more**.
 4. `self_serve` — everything else.
+
+## Representative output
+
+### Routed request log
+
+214 requests came in. 209 were routed automatically and 5 were held for a person to look at.
+
+| Who asked | Company | Their role | Size we used | Why it went there | Queue |
+|---|---|---|---|---|---|
+| dana@northwind.example | Northwind Logistics | VP Operations | 1,400 people | 1,000 or more, so enterprise. Her title would also have qualified | `enterprise` |
+| sam@contoso.example | Contoso Tooling | Office Manager | 120 people | over 50 but under 1,000, and the title is not senior enough to escalate | `mid_market` |
+| pat@gmail.example | — | — | not supplied | a personal email address with no company name — there is nothing here to route on | `needs_human_review` |
+| lee@fabrikam.example | Fabrikam | Student, MSc Marketing | 900 people | held *before* size was considered, so a student at a 900-person company does not land in mid-market | `needs_human_review` |
+
+The queue names are the installer's own — `enterprise`, `mid_market`, `self_serve` and
+`needs_human_review` are this author's words and get replaced with whatever their queues are called.
+
+### Coverage line
+
+5 requests held: 2 personal email with no company, 3 on the role. The size column was filled in on
+176 of 214 requests; the remaining 38 were routed on job title, or fell through to `self_serve`.
 
 ## What this skill does not claim
 

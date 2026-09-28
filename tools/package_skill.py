@@ -529,6 +529,45 @@ def validate(root: str, action_catalog: dict | None = None) -> dict:
                         "was never described. Fill it in with the literal output, or take the "
                         "heading out", ROOT_FILE)
 
+            # 2d-ii — RAW ENUM TOKENS IN THE TABLE CELLS, which is the one readability defect that
+            # is mechanical rather than a matter of taste.
+            #
+            # This section is the only part of the file read by a person CHOOSING rather than an
+            # agent RUNNING, and it is the part most likely to be written for the author's own
+            # reviewer. A cell reading `QUALIFIED_FOR_REVIEW` is a log line: the reader cannot tell
+            # whether it is good news without going back to a step they have not read.
+            #
+            # Found the way everything here gets found — by writing a bad one. A proposed
+            # improvement to a live submission came back with the verdict enum in every row, a
+            # two-source floor, an unmatched identity and a sentence about uncalibrated
+            # coefficients, and the owner's response was that it was unreadable and inside-baseball.
+            # The enum still belongs in the file; it belongs ONCE, beside the table, not in every
+            # cell of it.
+            #
+            # SCREAMING_SNAKE only, and that narrowness is the point. Lowercase `mid_market` is a
+            # literal output value an installer configured and reads fine; `RESEARCH_REQUIRED` is a
+            # constant addressed to a machine. Four characters minimum so `CRM`, `ICP`, `TAM`, `API`
+            # and `URL` do not trip it, and a lone all-caps word is not a token either.
+            enum_cells = set()
+            for line in sect.splitlines():
+                if not line.lstrip().startswith("|"):
+                    continue
+                for cell in line.split("|"):
+                    for tok in re.findall(r"\b[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+\b", cell):
+                        if len(tok) >= 5:
+                            enum_cells.add(tok)
+            if enum_cells:
+                shown = ", ".join(sorted(enum_cells)[:3])
+                add("representative_output_raw_enum_in_cells", "report",
+                    f"the table(s) under `## Representative output` put machine constants in the "
+                    f"cells ({shown}). This section is the one part of the file read by a person "
+                    f"deciding rather than an agent running, and a cell reading like a log line "
+                    f"makes them go and find a step they have not read. State the enum ONCE beside "
+                    f"the table — \"the first table is X, the second is Y, and those are the only "
+                    f"two verdicts\" — and let the rows say what happened in words. Lowercase "
+                    f"literal values an installer configured are fine and do not trip this",
+                    ROOT_FILE)
+
         # 2e — the steps that stop must be DECLARED. Reported, never blocking, and only for skills
         # that plainly have a gate to declare.
         #
@@ -767,15 +806,28 @@ def validate(root: str, action_catalog: dict | None = None) -> dict:
             })
 
     # 4 — delegated content checks. Not reimplemented; see the module docstring.
+    #
+    # THIS PROJECTION USED TO DROP `remediation` AND CUT `detail` MID-SENTENCE, and both were found
+    # by a reviewer reading real output rather than by any test. Twenty-seven Finding constructions
+    # in the validator supply a `remediation`; none of it reached anyone, because this dict copied
+    # five keys and that was not one of them. A remediation nobody can read is not a remediation —
+    # it is a comment in a file the audience never opens.
+    #
+    # The truncation was the same class of quiet loss. `marketplace_identity`'s detail is 327
+    # characters, the cap was 300, so the sentence that names the consequence ended "any provenance
+    # marker it writes w". Both fields are authored prose whose length the author already controls,
+    # so they are emitted whole; the caps stay only on `evidence`, which quotes matched source text
+    # and can be arbitrarily long.
     port = P.check_portability(body, files, action_catalog)
     for fnd in port.findings:
         d = fnd if isinstance(fnd, dict) else getattr(fnd, "__dict__", {})
         findings.append({
             "check": "portability/" + str(d.get("resolver", "?")),
             "severity": str(d.get("severity", "report")),
-            "detail": str(d.get("detail", ""))[:300],
+            "detail": str(d.get("detail", "")),
             "evidence": str(d.get("evidence", ""))[:120],
             "line": d.get("line"),
+            "remediation": str(d.get("remediation", "")) or None,
         })
     sysfail = [str(s) for s in (getattr(port, "system_failures", None) or [])]
 

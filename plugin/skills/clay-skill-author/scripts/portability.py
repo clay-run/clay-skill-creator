@@ -36,8 +36,20 @@ from typing import Iterable, Sequence
 # so a port carrying R5 and a port without it would both have reported `1.4.0` / `1.2`, and
 # attribution could not tell them apart. That is the exact question these fields exist to answer,
 # and a handoff asking another caller to port R5 needs a version they can assert they did it at.
-VERSION = "portability-check/1.5.0"
-RULESET_VERSION = "portability-ruleset/1.3"  # the RULES: resolvers, severities, dispositions
+# BOTH BUMPED 2026-09-26, and the split matters for whoever ports this. `touches_consistency` is a
+# NEW RESOLVER, which is a rules change (1.3 -> 1.4): a port that does not implement it is no longer
+# conformant, even though nothing it reports blocks. And `_MECH_FUNCTIONS` gained two Clay surfaces,
+# which changes derived values on four skills without changing any rule — the implementation half
+# (1.5.0 -> 1.6.0). A caller comparing two results across this boundary needs both numbers to tell
+# which kind of difference they are looking at.
+# 1.7.1: the marketplace_identity prose only. The seven MI conformance cases assert `resolver`,
+# `severity`, `evidence_contains` and `expect_blocking` — never `detail` or `remediation` — so
+# rewriting those two changes what a reviewer reads and nothing a port is held to. RULESET stays at
+# 1.5 for exactly that reason: the rules did not move, the readable half did. Correcting the
+# `evidence` string, which still reads "draft carries" on a correctly issued package, IS a ruleset
+# change because MI1 and MI2 pin it, and is deliberately not done here.
+VERSION = "portability-check/1.7.1"
+RULESET_VERSION = "portability-ruleset/1.5"  # the RULES: resolvers, severities, dispositions
 
 
 def attribution() -> dict:
@@ -717,8 +729,22 @@ _MECH_PREFLIGHT = re.compile(r"clay\s+(?:whoami|plugin|tools|is)\b", re.I)
 _MECH_WORKFLOW = re.compile(
     r"clay\s+workflows\s+(?:nodes|create|runs|triggers)\b|\bnodes\s+create\b|\bnode\s+graph\b"
     r"|\bmerge\s+node\b|\bcode\s+node\b|\btool\s+node\b", re.I)
+# `campaigns` and `tables` were MISSING until 2026-09-26, and the miss was silent in the direction
+# that matters. Four skills call Clay through them and nothing else — `clay campaigns analytics`,
+# `clay tables rows list`, `clay tables columns list` — so the derivation returned `logic-only`, the
+# value that means "needs no Clay account at all". Found on `matteo-fois/kill-or-keep`,
+# `matteo-fois/list-clearance`, `matteo-fois/swap-test` and `clay/buyer-classification`, and found
+# only because a provenance gate was about to EXEMPT skills on this value. A wrong `logic-only` reads
+# as a skill that spends nothing and needs nothing, which is the most load-bearing thing this axis
+# says — so an omission here is not a narrower answer, it is the opposite answer.
+#
+# The general lesson, which is why this comment is longer than the fix: the pattern enumerates
+# surfaces, so every surface the CLI grows is a silent false `logic-only` until someone adds it.
+# `platform-surfaces.md` names four surfaces; this pattern must cover all of them plus `campaigns`
+# and `tables`. Check it against that page when the CLI changes, not against this list.
 _MECH_FUNCTIONS = re.compile(
-    r"clay\s+(?:routines|functions|search|workflows\s+actions)\b|\brun_subroutine\w*|\brun_action\b"
+    r"clay\s+(?:routines|functions|search|campaigns|tables|workflows\s+actions)\b"
+    r"|\brun_subroutine\w*|\brun_action\b"
     r"|\broutines?\s+(?:get|list|create|runs)\b|\bmanaged\s+function", re.I)
 # Money the skill says it will spend. THE PROPERTY IS A QUANTITY, not cost vocabulary, and the first
 # version of this got that wrong in a way worth keeping written down. It matched `credit|enrich\w*|
@@ -746,6 +772,41 @@ _MECH_ZERO_COST = re.compile(
 _MECH_COST_CLAIM = re.compile(
     r"(?i)\d[\d,.]*\s*(?:×\s*)?credits?\b|\bcredits?\s*(?:×|/|per\b|spent\b|each\b|consumed\b)"
     r"|\bcreditCost\b|\bpaymentType\b|\bcost\s+per\s+row\b")
+
+
+# DOES THE PACKAGE CREATE A WORKFLOW? The eligibility predicate for the provenance marker, and it is
+# a separate question from `mechanism` — a skill can be `writes-records` and never create a workflow
+# (every column play is), while `_MECH_WORKFLOW` matches `workflows runs`, which RUNS an existing one.
+#
+# THREE FORMS, AND THE SECOND ONE IS WHY THIS IS A FUNCTION RATHER THAN A GREP. A literal search for
+# `clay workflows create` over all 59 packages found 6 and MISSED 3 — `tam-audience-loader`,
+# `contact-unlimited-enrichment-cascade` and `get-top-conference-attendees`, all of which create
+# workflows from a bundled script through an argv list:
+#
+#     wf = clay("workflows", "create", "--name", ...)          # build_loader.py:205
+#
+# The words are never adjacent, so no command-string pattern can see them. Every one of the three
+# misses is in the 6-of-59 packages that ship a `scripts/` directory, which characterises the blind
+# spot exactly: a package with scripts can reach any CLI verb through a list, and a reviewer who greps
+# for commands will under-count creators by 3 of 9. Found because a reviewer refused to accept a grep
+# as proof of scope, not because a test failed.
+_WF_CREATE_FORMS = (
+    ("cli-literal", re.compile(r"clay\s+workflows\s+create\b", re.I)),
+    ("argv-list", re.compile(r"""["']workflows["']\s*,\s*["']create["']""", re.I)),
+    ("http-endpoint", re.compile(
+        r"""(?:POST|requests\.post|curl\s+-X\s*POST)[^\n]{0,120}workflows""", re.I)),
+)
+
+
+def workflow_creation_forms(package_text: str) -> list[str]:
+    """Which creation forms the WHOLE PACKAGE shows — SKILL.md plus every supporting file.
+
+    Pass the concatenated package, not the body: the misses this exists for were all in `scripts/`.
+    Returns [] when none are found, which means "no creation path was detected in these three forms",
+    never "this skill does not create a workflow" — a fourth form would be invisible here too, and the
+    honest reading of an empty list is that it is a shortlist rather than a proof.
+    """
+    return [name for name, rx in _WF_CREATE_FORMS if rx.search(package_text or "")]
 
 
 def _mechanism_from_body(body: str) -> str:
@@ -908,9 +969,15 @@ def _resolve_retired_frontmatter(body: str) -> list[Finding]:
             detail=f"`{key}` in the frontmatter is not read by anything. It was a field once and "
                    f"is not one now, so it has no effect on how the skill is routed, validated or "
                    f"published.",
+            # "and nothing else" was true until the Marketplace identity fields existed. A published
+            # package legitimately carries three more that a creator does not write and must not
+            # delete, so the sentence names what the CREATOR writes rather than everything that can
+            # appear — the distinction the old wording lost.
             remediation=f"Delete `{key}`. If it held what the skill does NOT claim, that belongs in "
-                        f"the body as a section a reader can see — the frontmatter is "
-                        f"{', '.join(LIVE_FRONTMATTER)} and nothing else.",
+                        f"the body as a section a reader can see — the fields you write are "
+                        f"{', '.join(LIVE_FRONTMATTER)}. A published copy also carries "
+                        f"{', '.join(MARKETPLACE_IDENTITY_FIELDS)}, which the Marketplace issues: "
+                        f"leave those exactly as they are.",
         ))
     return out
 
@@ -975,6 +1042,227 @@ def _resolve_what_this_skill_touches(body: str) -> list[Finding]:
                f"checked.",
         remediation="Name all three, even where the answer is one word. `Writes: nothing` and "
                     "`Never: deletes or clears a field` are complete answers.",
+    )]
+
+
+# WHAT THE **WRITES** LINE SAYS, as one of four postures. Four rather than two, because the two
+# uninteresting answers are where a naive version of this does its damage.
+#
+# `local-only` exists because three skills write "three files in your working directory" and nothing
+# else. `touches` is about the installer's CLAY WORKSPACE, so a local file is not a write for this
+# purpose, and a classifier that counted it would call those three skills liars for declaring
+# themselves read-only — which is the correct declaration.
+#
+# `unknown` exists because two skills say "only its own output: the drafts, to wherever you point
+# them". That is honest prose and genuinely undecidable from the sentence. It must produce silence,
+# not a guess: see the resolver below on why.
+_WRITES_NOTHING = re.compile(r"(?i)^\W*(?:nothing|none)\b")
+_WRITES_LOCAL = re.compile(r"(?i)\b(?:files?|report|csv|markdown|\.md|\.csv)\b[^.\n]{0,40}"
+                           r"\b(?:working\s+director|local|on\s+disk|beside\s+this)")
+_WRITES_ARTIFACT = re.compile(
+    r"(?i)\b(?:columns?|fields?|records?|rows?|tables?|audiences?|workflows?|objects?|CRM"
+    r"|sequencer|campaigns?)\b")
+
+
+def _writes_posture(line: str | None) -> str:
+    """One of: absent, nothing, local-only, writes, unknown. Never raises, never guesses."""
+    if not line:
+        return "absent"
+    if _WRITES_NOTHING.match(line):
+        return "nothing"
+    # Order matters: a line naming BOTH a local file and a workspace artifact is a write. Only a line
+    # whose sole write target is local counts as local-only, which is why the artifact test runs on
+    # the line with the local clause removed.
+    if _WRITES_LOCAL.search(line) and not _WRITES_ARTIFACT.search(_WRITES_LOCAL.sub(" ", line)):
+        return "local-only"
+    if _WRITES_ARTIFACT.search(line):
+        return "writes"
+    return "unknown"
+
+
+# MARKETPLACE-SUPPLIED IDENTITY. Three fields the Marketplace writes into a reviewable revision, and
+# which an authoring draft must NOT carry: an unpublished skill has no listing slug and no assigned
+# revision, so a draft holding them is claiming an identity nobody issued. The runtime marker is built
+# from these and from nothing else — not from frontmatter `name` (which `source-candidates-2` already
+# shows can differ from its slug), not from the folder path, and not from the live listing's latest
+# revision, because an installed package is frozen while the listing moves.
+MARKETPLACE_IDENTITY_FIELDS = ("marketplace_identity_schema", "marketplace_slug",
+                               "marketplace_revision")
+IDENTITY_SCHEMA_SUPPORTED = (1,)
+_IDENT_SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+_IDENT_PLACEHOLDER = re.compile(r"[<>]|^\s*$|\b(?:tbd|todo|xxx|placeholder)\b", re.I)
+
+
+def marketplace_identity(body: str) -> tuple[dict, list[str]]:
+    """The identity fields present in the frontmatter, and why any of them is unusable.
+
+    Returns (values, problems). `problems` empty AND all three present means a runtime marker may be
+    written. Anything else means attribution is UNAVAILABLE — which is a complete outcome to report,
+    never a reason to fall back to a derived value.
+    """
+    found = {}
+    blk = _frontmatter_block(body)
+    if blk:
+        for m in _FRONTMATTER_PAIR.finditer(blk[0]):
+            if m.group(1) in MARKETPLACE_IDENTITY_FIELDS:
+                found[m.group(1)] = m.group(2).strip()
+    problems: list[str] = []
+    missing = [f for f in MARKETPLACE_IDENTITY_FIELDS if f not in found]
+    if missing:
+        problems.append("absent: " + ", ".join(missing))
+        return found, problems          # nothing else is worth saying about a partial set
+    schema = found["marketplace_identity_schema"]
+    if not schema.isdigit() or int(schema) not in IDENTITY_SCHEMA_SUPPORTED:
+        problems.append(f"unsupported identity schema {schema!r}")
+    slug = found["marketplace_slug"]
+    if _IDENT_PLACEHOLDER.search(slug) or not _IDENT_SLUG.match(slug):
+        problems.append(f"slug is not a canonical slug: {slug!r}")
+    rev = found["marketplace_revision"]
+    if not (rev.isdigit() and int(rev) >= 1):
+        problems.append(f"revision is not a positive integer: {rev!r}")
+    return found, problems
+
+
+def _resolve_marketplace_identity(body: str) -> list[Finding]:
+    """A DRAFT must not carry Marketplace identity, and a package that carries it must carry it whole.
+
+    Two findings, and the first is the one that matters for authoring. The Marketplace assigns the slug
+    and the revision when it prepares a revision for review; a draft that arrives with them filled in
+    has either copied them from another skill or invented them, and either way the runtime marker it
+    writes will name a listing that does not correspond to it.
+
+    The second covers a package that has been through publication and come back damaged — a partial or
+    malformed identity set. That is reported rather than blocked, because the remedy is on the
+    publication side and a creator holding such a package cannot fix it.
+
+    Reports, never blocks. A skill whose identity is unusable still works; it just cannot attribute,
+    and the flow's instruction for that case is to say so and carry on.
+    """
+    values, problems = marketplace_identity(body)
+    if not values:
+        return []                       # the ordinary case for a draft: none present, nothing to say
+    out: list[Finding] = []
+    present = sorted(values)
+    line = 1
+    blk = _frontmatter_block(body)
+    if blk:
+        m = re.search(r"(?m)^marketplace_\w+:", blk[0])
+        if m:
+            line = body[:blk[1] + m.start()].count("\n") + 1
+    out.append(Finding(
+        resolver="marketplace_identity",
+        severity="report",
+        evidence=f"draft carries {', '.join(present)}",
+        line=line,
+        detail="This package carries Marketplace identity fields. They are assigned when the "
+               "Marketplace prepares an immutable revision for review — BEFORE publication, not by "
+               "it — so a package that has been through that step carries them correctly and this "
+               "finding is expected. A package that has NOT is claiming an identity nobody issued, "
+               "and the provenance marker it writes will name the wrong listing. Note the evidence "
+               "line above says `draft carries` in every case: that wording is fixed by this "
+               "ruleset's conformance contract and is not a claim that this package is a draft.",
+        remediation="Decide by provenance, not by this finding, and note that syntactic validity is "
+                    "not proof of issuance — an issued package also matches the authoritative "
+                    "revision record and package hash. Came from an issued package: preserve the "
+                    "values exactly and change nothing. Editing a draft whose base was a verified "
+                    "issued package: preserve them too, because the Marketplace assigns the new "
+                    "revision inside the bytes it reviews, so discarding them is not your step. No "
+                    "issued package behind it: delete them, since nothing assigned them. And absent "
+                    "identity stays a normal state to handle rather than a defect to fix here — not "
+                    "every publication path issues these fields, so a skill that cannot read a "
+                    "usable identity must skip attribution and say so.",
+    ))
+    if problems:
+        out.append(Finding(
+            resolver="marketplace_identity",
+            severity="report",
+            evidence="; ".join(problems)[:120],
+            line=line,
+            detail=f"The Marketplace identity set is unusable: {'; '.join(problems)}. A skill in this "
+                   f"state must skip attribution and say attribution is unavailable — it must not "
+                   f"fall back to the frontmatter `name`, the folder path, or the live listing's "
+                   f"latest revision.",
+            remediation="This is fixed where the identity is issued, not here. Report it rather than "
+                        "working around it, and do not write a marker from a derived value.",
+        ))
+    return out
+
+
+def _resolve_touches_consistency(body: str) -> list[Finding]:
+    """The frontmatter `touches:` axis and the prose **Writes** line must not contradict each other.
+
+    WHY THIS IS WORTH A RESOLVER WHEN IT FIRES ON NOTHING. Measured across all 59 skills in the
+    library: `touches: read-only` and a **Writes** line reading "nothing" select the IDENTICAL set of
+    31, with no skill disagreeing with itself either way. So this is a guard on an invariant that
+    currently holds, not a finding hunting for a corpus — and that is the strongest form available,
+    because the cost of adding it is zero and the thing it protects is load-bearing.
+
+    WHAT IT PROTECTS. Whether a skill writes anything into the installer's workspace is the question
+    that decides who has to declare provenance, what a browsing installer is promised, and which
+    skills a reviewer reads closely. Two independent fields answer it — one machine-readable, one
+    prose — and NOTHING checked that they agreed. Edit `touches: read-only` onto a skill whose Writes
+    line describes six fields written onto account records and every consumer downstream believes the
+    field, silently, including any gate built on it.
+
+    WHY IT DOES NOT BLOCK, AND WHY THAT IS NOT TIMIDITY. A contradiction proves the two declarations
+    disagree. It does not say WHICH is wrong, and the resolver cannot know — the prose may be stale or
+    the axis may be a typo, and the remediation is different in each case. A finding that cannot name
+    the fix should report it to a person, not reject the submission.
+
+    THE ONLY TWO SHAPES IT CLAIMS, and everything else is deliberately silent:
+
+      read-only + a Writes line naming a workspace artifact ....... contradiction
+      writes-* + a Writes line saying "nothing" ................... contradiction
+
+    Absent axis, absent Writes line, a local-file-only write, and prose too loose to classify all
+    return NOTHING. **Missing is unknown, not failure** — the frontmatter axes are tolerated absent by
+    policy (see `TAXONOMY_BLOCKS`, whose comment records that 30 library skills carry no taxonomy and
+    flipping it would reject the launch cohort), and a consistency check is the wrong place to
+    re-litigate that.
+
+    AND IT PROVES NOTHING ABOUT BEHAVIOUR. Two descriptions agreeing is two descriptions agreeing.
+    This resolver reads a file; it has never seen the skill run, and a skill whose Writes line and
+    `touches` axis are in perfect agreement can still do something else entirely. It reports that the
+    declaration is self-consistent, which is a precondition for trusting it and not evidence for it.
+    """
+    tv = _taxonomy_values(body)
+    declared = tv.get("touches")
+    if not declared:
+        return []
+    values, line_no = declared
+    if len(values) != 1 or values[0] not in TAXONOMY_TOUCHES:
+        return []          # an invalid value is `taxonomy_value`'s finding, not this one's
+    axis = values[0]
+    m = _TOUCHES_WRITES.search(body)
+    posture = _writes_posture(m.group(1).strip() if m else None)
+    quoted = (m.group(1).strip()[:70] if m else "")
+
+    if axis == "read-only" and posture == "writes":
+        detail = (f"The frontmatter declares `touches: read-only`, and the **Writes** line describes "
+                  f"a write into the installer's workspace — “{quoted}”. Whoever filters the "
+                  f"marketplace for read-only skills is trusting the axis; whoever reads the file is "
+                  f"trusting the line. One of them is being misled.")
+        remediation = ("Fix whichever is wrong. If it does write, the axis is `writes-own-output` (its "
+                       "own output columns) or `writes-records` (existing records). If it does not, "
+                       "the **Writes** line should say `nothing` — a local file in the installer's "
+                       "working directory is not a workspace write and does not need the axis changed.")
+    elif axis in ("writes-own-output", "writes-records") and posture == "nothing":
+        detail = (f"The frontmatter declares `touches: {axis}`, and the **Writes** line says nothing "
+                  f"is written — “{quoted}”. A skill that writes nothing is `read-only`, and "
+                  f"that is a stronger claim to make than a write it does not perform.")
+        remediation = ("Fix whichever is wrong. If it writes nothing into the workspace, the axis is "
+                       "`read-only`. If it does write, say what — the object and the fields, so an "
+                       "installer knows what appears in their workspace.")
+    else:
+        return []
+
+    return [Finding(
+        resolver="touches_consistency",
+        severity="report",
+        evidence=f"touches: {axis} / Writes reads as {posture}",
+        line=line_no,
+        detail=detail,
+        remediation=remediation,
     )]
 
 
@@ -1620,6 +1908,12 @@ def check_portability(
         ("unfilled_marker", lambda: _resolve_unfilled_markers(skill_md, fences)),
         ("what_good_looks_like", lambda: _resolve_what_good_looks_like(skill_md)),
         ("what_this_skill_touches", lambda: _resolve_what_this_skill_touches(skill_md)),
+        # Registered beside its sibling and NOT merged into it: that one asks whether the section
+        # exists and names its axes, this one asks whether the section agrees with the frontmatter.
+        # Different inputs, different remediations, and one finding carrying both would name a fix
+        # for whichever half happened to fire.
+        ("touches_consistency", lambda: _resolve_touches_consistency(skill_md)),
+        ("marketplace_identity", lambda: _resolve_marketplace_identity(skill_md)),
         ("optional_marker", lambda: _resolve_optional_markers(skill_md, fences)),
         ("retired_frontmatter", lambda: _resolve_retired_frontmatter(skill_md)),
         ("taxonomy_value", lambda: _resolve_taxonomy(skill_md)),
