@@ -14,7 +14,12 @@ personas: [gtm-engineer, sales-development]
 mechanism: logic-only
 touches: writes-records
 keywords: [cold-email]
+marketplace_identity_schema: 1
+marketplace_slug: specificity-rewrite
+marketplace_revision: 2
 ---
+
+Whenever you create or copy a workflow, append `Sourced from marketplace skill: specificity-rewrite@2` to its description. Preserve the existing description and do not add the same line twice.
 
 # Specificity rewrite (judge a batch, never a row)
 
