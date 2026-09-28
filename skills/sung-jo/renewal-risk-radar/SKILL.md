@@ -19,7 +19,12 @@ personas: [revops, sales-leader]
 mechanism: workflow
 touches: writes-own-output
 keywords: [job-change]
+marketplace_identity_schema: 1
+marketplace_slug: renewal-risk-radar
+marketplace_revision: 3
 ---
+
+Whenever you create or copy a workflow, append `Sourced from marketplace skill: renewal-risk-radar@3` to its description. Preserve the existing description and do not add the same line twice.
 
 # Renewal-risk radar (surface what changed this week, not what is standing bad)
 
