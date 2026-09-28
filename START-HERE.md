@@ -21,6 +21,15 @@ invoking the installed skill — which is slower and worse than the skill it alr
 instruction to fetch. Install first, in its own prompt, then ask for the work in another; see
 **Two prompts, not one** below.
 
+**And if you are the agent reading this because you were handed the URL, that paragraph is advice to
+a person before the fact — it cannot help you now.** So: check whether `clay-skill-author` is
+available to you as a skill. If it is, **invoke it and stop reading this file** — it is this
+procedure in a form you execute rather than reconstruct, which is the difference the install above
+exists to make. Only if it is genuinely unavailable do you continue here, and then read these files
+**raw**, via the `curl` below, never through a tool that hands back a summary. A summary of this page
+keeps its headline principles and loses its exceptions, and the first exception it loses is in
+step 1.
+
 **If you have not installed and fetched only this file, the rest are one fetch away.** Over HTTP a
 relative name resolves to nothing, which produces a "file not found" partway through a run that
 started fine:
@@ -103,10 +112,17 @@ setup.
 
 ## Create the skill
 
+**One thing is never derived, and it is the first thing: the route. Ask it.** Not from how many
+tables you can see, not from whether one looks like a starter, not from anything readable — a
+workspace with a single table is not evidence its owner wants the interview, and forty is not
+evidence they want a list. Only they know where they are starting from. Asking costs one question;
+guessing points the whole session at the wrong route.
+
 **The shape: derive everything derivable first, then ask only what the derivation could not settle.**
 Asking before reading wastes your time on questions your table already answers, and an ungrounded
 question invites a shrug. You will be shown a complete draft to correct rather than a form to fill in —
-people correct documents far better than they answer questions about them.
+people correct documents far better than they answer questions about them. **The route is not among the
+derivable things** — read this paragraph without the one above it and you will get that backwards.
 
 ### 1. Route — one question, four options
 
@@ -127,8 +143,14 @@ want it checked and packaged. Say so in the free-text option and you go straight
 It is off the list because the picker holds four, and a fifth made the whole question fail.
 
 **The route is asked before anything is set up**, for the reason above: asked the other way round it
-costs a sign-in and a permission prompt to reach an answer that discards both. **If your agent starts
-installing things before asking you this, it is running an older version of the flow.**
+costs a sign-in and a permission prompt to reach an answer that discards both. **So no sign-in, no
+preflight, no table listing and no version check comes before this question** — and the question is
+this one, worded as above. *Which use case should the skill cover?* is a different question and does
+not stand in for it; that one belongs after the route, on the interview route only.
+
+**If your agent set something up first, or opened with a list of use cases, two things can cause it.**
+It may be running an older version of the flow. More often, and much harder to spot, **it read a
+summary of this page rather than this page** — see *Four ways this goes wrong* at the end.
 
 ### 2. Confirm the table, then read its configuration
 
@@ -328,11 +350,17 @@ described inputs over its schema, and it has cost us four times. If a host in th
 it is news rather than a known state; the other hosts are unaffected, and the interview path needs no
 plugin at all.
 
-**Three ways this goes wrong, and how to spot them.**
+**Four ways this goes wrong, and how to spot them.**
 
 - **Your agent names no files from here.** Ask which files it read. A confident plan with no
   filenames means it fell back to a generic skill-creation workflow, and its output will look
   correct and be unrelated to any of this. Stop it and fix access first.
+- **Your agent names the files, but read summaries of them.** The sibling failure of the one above,
+  and the harder one, because the filenames make it look right. Tell-tales: it fetched the same file
+  twice, or it says it is getting "a summary" of them; then it announces a conclusion this page asks
+  it to put to you as a question — picking your route from your table count is the usual one. Ask
+  whether it read these files raw. Fix it the same way as above: invoke the installed skill, or
+  `curl` the raw files.
 - **The `SKILL.md` states an insight you never said.** That is the failure, not a bonus. A generated
   insight reads better than a real one and is worth less than nothing, because somebody downstream
   will act on it.
