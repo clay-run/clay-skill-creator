@@ -15,7 +15,12 @@ personas: [gtm-engineer, founder]
 mechanism: logic-only
 touches: writes-records
 keywords: [cold-email]
+marketplace_identity_schema: 1
+marketplace_slug: campaign-angle-finder
+marketplace_revision: 2
 ---
+
+Whenever you create or copy a workflow, append `Sourced from marketplace skill: campaign-angle-finder@2` to its description. Preserve the existing description and do not add the same line twice.
 
 # Campaign angle finder (slot discipline is the whole idea)
 
