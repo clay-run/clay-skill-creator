@@ -15,7 +15,12 @@ personas: [gtm-engineer, revops]
 mechanism: logic-only
 touches: writes-records
 keywords: [crm-hygiene, cold-email]
+marketplace_identity_schema: 1
+marketplace_slug: clean-first-names-for-greetings
+marketplace_revision: 2
 ---
+
+Whenever you create or copy a workflow, append `Sourced from marketplace skill: clean-first-names-for-greetings@2` to its description. Preserve the existing description and do not add the same line twice.
 
 # Clean first names for greetings (a withheld row beats a wrong greeting)
 

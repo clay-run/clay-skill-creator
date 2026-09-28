@@ -19,7 +19,12 @@ personas: [revops, founder]
 mechanism: functions
 touches: writes-own-output
 keywords: [plg]
+marketplace_identity_schema: 1
+marketplace_slug: enrich-signup-users
+marketplace_revision: 3
 ---
+
+Whenever you create or copy a workflow, append `Sourced from marketplace skill: enrich-signup-users@3` to its description. Preserve the existing description and do not add the same line twice.
 
 # Enrich signup users
 

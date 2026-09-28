@@ -14,7 +14,12 @@ personas: [gtm-engineer, sales-development]
 mechanism: logic-only
 touches: writes-records
 keywords: [lead-scoring, cold-email]
+marketplace_identity_schema: 1
+marketplace_slug: pricing-page-signal
+marketplace_revision: 2
 ---
+
+Whenever you create or copy a workflow, append `Sourced from marketplace skill: pricing-page-signal@2` to its description. Preserve the existing description and do not add the same line twice.
 
 # Pricing page signal (bones by default, because a price in a stranger's inbox is a claim)
 

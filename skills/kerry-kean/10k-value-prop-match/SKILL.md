@@ -26,7 +26,12 @@ personas: [revops, sales-leader]
 mechanism: logic-only
 touches: read-only
 keywords: []
+marketplace_identity_schema: 1
+marketplace_slug: 10k-value-prop-match
+marketplace_revision: 2
 ---
+
+Whenever you create or copy a workflow, append `Sourced from marketplace skill: 10k-value-prop-match@2` to its description. Preserve the existing description and do not add the same line twice.
 
 # 10-K value-proposition match (fetch the filing outside Clay; match with judgment, not a Clay column)
 
