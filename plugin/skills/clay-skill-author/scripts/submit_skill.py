@@ -92,7 +92,7 @@ EXIT_OK, EXIT_INTERNAL, EXIT_VALIDATION, EXIT_REJECTED, EXIT_NETWORK = 0, 1, 2, 
 # Sent on every request. See the note at the request construction: the stdlib default is blocked
 # by the WAF, so this is load-bearing rather than cosmetic. Keep it honest and identifiable — it is
 # how the receiving side tells our traffic from a scraper's.
-USER_AGENT = "clay-skill-author/1 (+https://github.com/sungwanjo-clay/clay-skill-creator)"
+USER_AGENT = "clay-skill-author/1 (+https://github.com/clay-run/clay-skill-creator)"
 
 # The server's documented ceilings. Checked HERE, before encoding, for the same reason the
 # credential scan runs before transmission: a 5 MB package becomes a 6.67 MB request body, and

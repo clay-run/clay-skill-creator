@@ -35,7 +35,7 @@ relative name resolves to nothing, which produces a "file not found" partway thr
 started fine:
 
 ```
-curl -fsSL https://raw.githubusercontent.com/sungwanjo-clay/clay-skill-creator/main/<NAME>
+curl -fsSL https://raw.githubusercontent.com/clay-run/clay-skill-creator/main/<NAME>
 ```
 
 Nothing below requires another file. Fetch on demand rather than guessing at content you could not
@@ -306,10 +306,10 @@ yet — if you want something pulled back, ask the person who invited you. `SUBM
 marketplace, so the whole flow installs — no clone, no network at runtime:
 
 ```
-codex plugin marketplace add sungwanjo-clay/clay-skill-creator
+codex plugin marketplace add clay-run/clay-skill-creator
 ```
 
-or `/plugin marketplace add sungwanjo-clay/clay-skill-creator` in Claude Code, then install
+or `/plugin marketplace add clay-run/clay-skill-creator` in Claude Code, then install
 **`clay-skill-author`** — the flow, its validator and the worked examples, at
 [`plugin/skills/clay-skill-author/`](plugin/skills/clay-skill-author/). **A sandbox with no outbound
 access cannot read this page; an installed skill does not have to.**
@@ -330,7 +330,7 @@ do both is what kept failing:
 
 ```
 1.  Set up the Clay skill creator by following the steps in
-    https://github.com/sungwanjo-clay/clay-skill-creator
+    https://github.com/clay-run/clay-skill-creator
 
 2.  Create a Clay GTM skill
 ```

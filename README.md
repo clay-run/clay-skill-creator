@@ -71,7 +71,7 @@ The rest is reference, in the order you will want it:
 **This repo is an installable plugin.** Two commands, and nothing needs to be fetched at runtime:
 
 ```
-codex plugin marketplace add sungwanjo-clay/clay-skill-creator      # or /plugin marketplace add … in Claude Code
+codex plugin marketplace add clay-run/clay-skill-creator      # or /plugin marketplace add … in Claude Code
 ```
 
 then install **`clay-skill-author`**. The skill lives at
@@ -110,7 +110,7 @@ The one-liner in [`START-HERE.md`](START-HERE.md) hands your agent a GitHub link
 network, or a blob page it cannot parse. **Then tell it to fetch the raw file instead:**
 
 ```
-curl -fsSL https://raw.githubusercontent.com/sungwanjo-clay/clay-skill-creator/main/START-HERE.md
+curl -fsSL https://raw.githubusercontent.com/clay-run/clay-skill-creator/main/START-HERE.md
 ```
 
 That is a different mechanism from a `git clone` or a web search, and it is the one that works when

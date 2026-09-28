@@ -31,7 +31,7 @@ here?"* — invites a shrug. People correct a draft far better than they answer 
 **First line of output, before anything else:**
 
 ```
-clay-skill-author/2.25.0 · loaded from <absolute path to this SKILL.md>
+clay-skill-author/2.25.1 · loaded from <absolute path to this SKILL.md>
 ```
 
 **AND KEEP THAT ABSOLUTE PATH — every relative path below is relative to it, and reconstructing it
@@ -57,7 +57,7 @@ marketplaces, and there is no switch on our side to turn it on for you. Two real
 skills built by a version that predated the rules those skills broke. So look, once, cheaply:
 
 ```
-curl -fsS --max-time 5 https://raw.githubusercontent.com/sungwanjo-clay/clay-skill-creator/main/plugin/.claude-plugin/plugin.json
+curl -fsSL --max-time 5 https://raw.githubusercontent.com/clay-run/clay-skill-creator/main/plugin/.claude-plugin/plugin.json
 ```
 
 **154 bytes.** Read `version` out of it, and read your own **off this file on disk** — never off the
@@ -111,7 +111,7 @@ either version alone**, because nothing on screen says which half is which.
 ```
 LIVE_DIR="$(mktemp -d)/clay-skill-author"
 mkdir -p "$LIVE_DIR"
-curl -fsSL --max-time 60 https://codeload.github.com/sungwanjo-clay/clay-skill-creator/tar.gz/main \
+curl -fsSL --max-time 60 https://codeload.github.com/clay-run/clay-skill-creator/tar.gz/main \
   | tar xz -C "$LIVE_DIR" --strip-components=4 'clay-skill-creator-main/plugin/skills/clay-skill-author'
 ```
 
@@ -1421,7 +1421,7 @@ Say the review cost once, plainly, and do not batch beyond what a person will re
 comes back slower than a queue of one, because a person reads every submission.
 
 **If `scripts/package_skill.py` is not beside this file**, this host did not carry the tools.
-Fetch them from <https://github.com/sungwanjo-clay/clay-skill-creator> (`tools/`) and run there, or
+Fetch them from <https://github.com/clay-run/clay-skill-creator> (`tools/`) and run there, or
 hand over the finished `SKILL.md` and say plainly that it was **not machine-checked**. Never skip
 validation silently.
 
