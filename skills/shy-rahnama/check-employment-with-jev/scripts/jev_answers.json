@@ -1,0 +1,459 @@
+{
+ "advisor_after_leaving": {
+  "questions": [
+   "kind_0",
+   "kind_1",
+   "main_0",
+   "other_0"
+  ],
+  "response": {
+   "answers": {
+    "kind_0": {
+     "choice": "advisor_or_board",
+     "confidence": 0.99,
+     "probabilities": {
+      "advisor_or_board": 1.0,
+      "contractor": 0.0,
+      "employee": 0.0,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.0,
+      "not_enough_information": 0.0
+     },
+     "type": "choice"
+    },
+    "kind_1": {
+     "choice": "employee",
+     "confidence": 0.91,
+     "probabilities": {
+      "advisor_or_board": 0.0,
+      "contractor": 0.0,
+      "employee": 0.92,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.0,
+      "not_enough_information": 0.08
+     },
+     "type": "choice"
+    },
+    "main_0": {
+     "noul": 0.11,
+     "type": "noul"
+    },
+    "other_0": {
+     "choice": "employee",
+     "confidence": 1.0,
+     "probabilities": {
+      "advisor_or_board": 0.0,
+      "contractor": 0.0,
+      "employee": 1.0,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.0,
+      "not_enough_information": 0.0
+     },
+     "type": "choice"
+    }
+   },
+   "model": "jev-1.13.0",
+   "usage": {
+    "input_tokens": 1633,
+    "output_tokens": 248
+   }
+  }
+ },
+ "board_seat_only": {
+  "questions": [
+   "kind_0",
+   "main_0",
+   "other_0"
+  ],
+  "response": {
+   "answers": {
+    "kind_0": {
+     "choice": "advisor_or_board",
+     "confidence": 0.99,
+     "probabilities": {
+      "advisor_or_board": 0.99,
+      "contractor": 0.0,
+      "employee": 0.0,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.0,
+      "not_enough_information": 0.01
+     },
+     "type": "choice"
+    },
+    "main_0": {
+     "noul": 0.07,
+     "type": "noul"
+    },
+    "other_0": {
+     "choice": "employee",
+     "confidence": 1.0,
+     "probabilities": {
+      "advisor_or_board": 0.0,
+      "contractor": 0.0,
+      "employee": 1.0,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.0,
+      "not_enough_information": 0.0
+     },
+     "type": "choice"
+    }
+   },
+   "model": "jev-1.13.0",
+   "usage": {
+    "input_tokens": 1262,
+    "output_tokens": 174
+   }
+  }
+ },
+ "fractional_exec": {
+  "questions": [
+   "held_0",
+   "kind_0",
+   "main_0",
+   "other_0",
+   "other_1"
+  ],
+  "response": {
+   "answers": {
+    "held_0": {
+     "noul": 0.79,
+     "type": "noul"
+    },
+    "kind_0": {
+     "choice": "contractor",
+     "confidence": 1.0,
+     "probabilities": {
+      "advisor_or_board": 0.0,
+      "contractor": 1.0,
+      "employee": 0.0,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.0,
+      "not_enough_information": 0.0
+     },
+     "type": "choice"
+    },
+    "main_0": {
+     "noul": 0.24,
+     "type": "noul"
+    },
+    "other_0": {
+     "choice": "employee",
+     "confidence": 0.98,
+     "probabilities": {
+      "advisor_or_board": 0.0,
+      "contractor": 0.02,
+      "employee": 0.98,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.0,
+      "not_enough_information": 0.0
+     },
+     "type": "choice"
+    },
+    "other_1": {
+     "choice": "contractor",
+     "confidence": 0.99,
+     "probabilities": {
+      "advisor_or_board": 0.0,
+      "contractor": 1.0,
+      "employee": 0.0,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.0,
+      "not_enough_information": 0.0
+     },
+     "type": "choice"
+    }
+   },
+   "model": "jev-1.13.0",
+   "usage": {
+    "input_tokens": 2000,
+    "output_tokens": 267
+   }
+  }
+ },
+ "investor_title": {
+  "questions": [
+   "kind_0",
+   "main_0",
+   "other_0"
+  ],
+  "response": {
+   "answers": {
+    "kind_0": {
+     "choice": "investor",
+     "confidence": 0.99,
+     "probabilities": {
+      "advisor_or_board": 0.0,
+      "contractor": 0.0,
+      "employee": 0.0,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.99,
+      "not_enough_information": 0.01
+     },
+     "type": "choice"
+    },
+    "main_0": {
+     "noul": 0.13,
+     "type": "noul"
+    },
+    "other_0": {
+     "choice": "employee",
+     "confidence": 0.97,
+     "probabilities": {
+      "advisor_or_board": 0.0,
+      "contractor": 0.0,
+      "employee": 0.97,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.03,
+      "not_enough_information": 0.0
+     },
+     "type": "choice"
+    }
+   },
+   "model": "jev-1.13.0",
+   "usage": {
+    "input_tokens": 1272,
+    "output_tokens": 174
+   }
+  }
+ },
+ "left_cleanly": {
+  "questions": [
+   "kind_0",
+   "other_0"
+  ],
+  "response": {
+   "answers": {
+    "kind_0": {
+     "choice": "employee",
+     "confidence": 0.79,
+     "probabilities": {
+      "advisor_or_board": 0.0,
+      "contractor": 0.0,
+      "employee": 0.82,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.0,
+      "not_enough_information": 0.18
+     },
+     "type": "choice"
+    },
+    "other_0": {
+     "choice": "employee",
+     "confidence": 1.0,
+     "probabilities": {
+      "advisor_or_board": 0.0,
+      "contractor": 0.0,
+      "employee": 1.0,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.0,
+      "not_enough_information": 0.0
+     },
+     "type": "choice"
+    }
+   },
+   "model": "jev-1.13.0",
+   "usage": {
+    "input_tokens": 1017,
+    "output_tokens": 153
+   }
+  }
+ },
+ "name_collision": {
+  "questions": [
+   "kind_0",
+   "same_0"
+  ],
+  "response": {
+   "answers": {
+    "kind_0": {
+     "choice": "employee",
+     "confidence": 0.96,
+     "probabilities": {
+      "advisor_or_board": 0.0,
+      "contractor": 0.0,
+      "employee": 0.97,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.0,
+      "not_enough_information": 0.03
+     },
+     "type": "choice"
+    },
+    "same_0": {
+     "noul": 0.11,
+     "type": "noul"
+    }
+   },
+   "model": "jev-1.13.0",
+   "usage": {
+    "input_tokens": 825,
+    "output_tokens": 96
+   }
+  }
+ },
+ "primary_with_side_roles": {
+  "questions": [
+   "held_0",
+   "kind_0",
+   "main_0",
+   "other_0",
+   "other_1"
+  ],
+  "response": {
+   "answers": {
+    "held_0": {
+     "noul": 0.81,
+     "type": "noul"
+    },
+    "kind_0": {
+     "choice": "employee",
+     "confidence": 1.0,
+     "probabilities": {
+      "advisor_or_board": 0.0,
+      "contractor": 0.0,
+      "employee": 1.0,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.0,
+      "not_enough_information": 0.0
+     },
+     "type": "choice"
+    },
+    "main_0": {
+     "noul": 0.88,
+     "type": "noul"
+    },
+    "other_0": {
+     "choice": "advisor_or_board",
+     "confidence": 1.0,
+     "probabilities": {
+      "advisor_or_board": 1.0,
+      "contractor": 0.0,
+      "employee": 0.0,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.0,
+      "not_enough_information": 0.0
+     },
+     "type": "choice"
+    },
+    "other_1": {
+     "choice": "investor",
+     "confidence": 1.0,
+     "probabilities": {
+      "advisor_or_board": 0.0,
+      "contractor": 0.0,
+      "employee": 0.0,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 1.0,
+      "not_enough_information": 0.0
+     },
+     "type": "choice"
+    }
+   },
+   "model": "jev-1.13.0",
+   "usage": {
+    "input_tokens": 2044,
+    "output_tokens": 269
+   }
+  }
+ },
+ "profile_as_text_other_shape": {
+  "questions": [
+   "kind_0",
+   "same_0"
+  ],
+  "response": {
+   "answers": {
+    "kind_0": {
+     "choice": "employee",
+     "confidence": 0.98,
+     "probabilities": {
+      "advisor_or_board": 0.0,
+      "contractor": 0.0,
+      "employee": 0.98,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.0,
+      "not_enough_information": 0.02
+     },
+     "type": "choice"
+    },
+    "same_0": {
+     "noul": 0.91,
+     "type": "noul"
+    }
+   },
+   "model": "jev-1.13.0",
+   "usage": {
+    "input_tokens": 812,
+    "output_tokens": 96
+   }
+  }
+ },
+ "stale_current_role": {
+  "questions": [
+   "held_0",
+   "kind_0",
+   "main_0",
+   "other_0"
+  ],
+  "response": {
+   "answers": {
+    "held_0": {
+     "noul": 0.17,
+     "type": "noul"
+    },
+    "kind_0": {
+     "choice": "employee",
+     "confidence": 0.74,
+     "probabilities": {
+      "advisor_or_board": 0.0,
+      "contractor": 0.0,
+      "employee": 0.78,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.0,
+      "not_enough_information": 0.22
+     },
+     "type": "choice"
+    },
+    "main_0": {
+     "noul": 0.31,
+     "type": "noul"
+    },
+    "other_0": {
+     "choice": "employee",
+     "confidence": 1.0,
+     "probabilities": {
+      "advisor_or_board": 0.0,
+      "contractor": 0.0,
+      "employee": 1.0,
+      "honorary": 0.0,
+      "intern": 0.0,
+      "investor": 0.0,
+      "not_enough_information": 0.0
+     },
+     "type": "choice"
+    }
+   },
+   "model": "jev-1.13.0",
+   "usage": {
+    "input_tokens": 1539,
+    "output_tokens": 190
+   }
+  }
+ }
+}
