@@ -28,7 +28,7 @@ argument is visible in `ps` to every other process on the machine. It reads the
 | `GET /me` | bearer | the account, its credit balance, its free allowance |
 | `POST /conferences/lookup` | bearer | resolves a name to one verified edition |
 | `POST /campaigns` | bearer | starts a run; returns immediately |
-| `GET /campaigns/{id}` | bearer | status, counts, share link |
+| `GET /campaigns/{id}` | bearer | status, counts, results link |
 | `GET /campaigns/{id}/contacts` | bearer | the ranked people, paginated |
 | `GET /campaigns` | bearer | every campaign the key can see — how a lost id is recovered |
 | `POST /campaigns/{id}/unlock` | bearer | spends credits to enrich locked contacts |
@@ -59,7 +59,7 @@ Measured against a fresh self-serve account:
 ```
 account: {email, user_id, client, key_label, key_prefix, source}
 credits: 0
-free_dossiers_per_campaign: 5
+free_dossiers_per_campaign: 8
 unlimited: false
 campaigns_url: <the account's campaigns page>
 ```
@@ -70,9 +70,15 @@ with and a short prefix identifying it, which is how you tell two keys apart wit
 either. **Never print the prefix** — it is not the key, but it is key-shaped, and key-shaped
 strings in a package are a rejection.
 
-A brand-new self-serve account has **0 credits and 5 free dossiers per campaign**. That is the
-baseline every first run hits, and it is why the allowance has to be stated before the run
-rather than discovered in the results.
+A brand-new self-serve account has **0 credits and up to 8 free dossiers per campaign** (it was
+5 until late September 2026). That is the baseline every first run hits, and it is why the
+allowance has to be stated before the run rather than discovered in the results.
+
+`/me` lagged that change for a few days — it reported 5 while campaigns were allowed 8 — and
+was fixed 2026-10-01; it now returns 8, read from the same setting the create call enforces.
+`/me` is the only figure there is before a run, and the run's own `enrichment.allowed` settles
+it — the order `free_allowance()` already reads them in. If the two ever disagree again, the
+bug is in `/me`.
 
 ## Creating a campaign
 
@@ -240,14 +246,20 @@ rather than reporting a short count.
 Comped campaigns and the vendor's own keys unlock for free, so a quote of 0 credits is
 possible and is not a bug.
 
-## Three campaign links, and they are not interchangeable
+## Four campaign links, and they are not interchangeable
 
-- **`lanyard.redlinegrowth.com/campaign/<id>`** — the page a signed-in person opens to read
-  their own results, and the only one worth putting in front of them. Not returned by the
-  API; build it from the id.
+- **`results_url`** — a short, stable `/r/<code>` link that opens the campaign's results
+  without signing in. One per campaign: repeat reads return the same link (checked
+  2026-10-01). On `GET /campaigns/{id}`, every `GET /campaigns` row, the create `202` and the
+  callback payload. **This is the one to put in front of a person.** It carries the same
+  access as `share_url`, so it is not something to commit or paste anywhere it outlives the
+  conversation.
+- **`lanyard.redlinegrowth.com/campaign/<id>`** — the signed-in page. Not returned by the API;
+  built from the id. It fails for anyone not already signed in to Lanyard in that browser,
+  which is why it is only the fallback for a response with no `results_url`.
 - **`share_url`** — a `/claim?t=<token>` link. The token IS the access, so anyone holding the
-  link can see the campaign without an account. Useful for handing results to a colleague;
-  wrong as a default, and not worth pasting anywhere it will outlive the conversation.
+  link can see the campaign without an account. Same access as `results_url`, longer, and it
+  exposes the token in plain sight; there is no reason to prefer it.
 - **`dashboard_url`** — an `/admin/<id>` view. Not the customer's page.
 
 `locked.unlock_url` is the claim link again rather than a separate payment page, so do not
@@ -256,8 +268,9 @@ treat it as one; a quote's `payment_url` is the authoritative place to add credi
 ## `GET /campaigns` — the recovery path
 
 Every campaign the key can see, newest first, including ones started in the web app. Carries
-`campaign_id`, `label`, `status`, `created_at`, `client_url`, `conference`, `counts`,
-`poll_url`, `contacts_url`. Pages on `limit` (default 25, max 100) and `offset`.
+`campaign_id`, `label`, `status`, `created_at`, `client_url`, `conference`, `counts`
+(including `locked` and `this_year`), `credits_per_contact`, `unlock_cost_credits`,
+`results_url`, `poll_url`, `contacts_url`. Pages on `limit` (default 25, max 100) and `offset`.
 
 This is what makes the skill recoverable from nothing but the key. The campaign id is the
 whole of its state, and before this existed it lived only in a local file.
@@ -319,7 +332,8 @@ is what grants access to the campaign, so never commit it and never put it in a 
 
 **`enrichment` on the create `202` — confirmed present.** `{requested, allowed,
 free_limit_applied}`. Measured on a fresh self-serve account asking for 25: `requested 25`,
-`allowed 5`, `free_limit_applied true`. This is what makes the free-tier disclosure a stated
+`allowed 5`, `free_limit_applied true` (the free allowance was 5 then; it is up to 8 now).
+This is what makes the free-tier disclosure a stated
 figure rather than a derived one, and it is available **before** the campaign runs, which is
 the only moment the disclosure is worth anything.
 

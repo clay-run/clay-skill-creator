@@ -9,12 +9,7 @@ personas: [account-executive, founder]
 mechanism: workflow
 touches: writes-records
 keywords: [event-follow-up, lead-scoring]
-marketplace_identity_schema: 1
-marketplace_slug: get-top-conference-attendees
-marketplace_revision: 3
 ---
-
-Whenever you create or copy a workflow, append `Sourced from marketplace skill: get-top-conference-attendees@3` to its description. Preserve the existing description and do not add the same line twice.
 
 # Get top conference attendees (re-read the campaign; never remember what changed)
 
@@ -150,7 +145,7 @@ cannot change without a rebuild:**
   audience field list, action catalogue and workflow graph.
 - **Writes** — audience **records**: one person per attendee with a dossier, and one company
   per attendee whose company has a domain, linked. Creates or adopts the columns listed in
-  `references/audience-model.md`. Builds one Clay workflow and its nodessd. Appends a local
+  `references/audience-model.md`. Builds one Clay workflow and its nodes. Appends a local
   ledger file under `~/.clay-conference-writer/`, outside any repository.
 - **Never** — deletes a record, clears a populated field, writes an attendee who has no
   dossier, drafts or sends a message, enrols anyone in a sequence, pushes anything to a CRM,
@@ -162,9 +157,9 @@ cannot change without a rebuild:**
   not run. An account is free to create and a free account gets a limited number of dossiers
   per campaign.
 - **Derived from** — Lanyard's own build brief for this skill, author-confirmed, plus its live
-  API read on 2026-09-16. Three blocks the brief documents are not in the published schema;
-  they are read when present and derived when absent, and the run says which. See
-  `references/attendee-api.md`.
+  API, read on 2026-09-16 and re-checked on 2026-10-01. The published schema now documents
+  every block the client reads; the newer ones are still read when present and derived when
+  absent, and the run says which. See `references/attendee-api.md`.
 
 ## What ships in this package
 
@@ -177,7 +172,7 @@ cannot change without a rebuild:**
 | `scripts/lanyard_lib.py` | The attendee-service client plus every pure reshaping function: dossier states, the flattening, the top-up delta, the unlock suggestion. |
 | `scripts/audience_lib.py` | The field plan, the value validation that keeps invisible writes out, and the routing decision that picks a writer lane. |
 | `scripts/conference_lib.py` | Build helpers: column adoption, node creation, pin wiring and read-back. Handles no credentials of any kind. |
-| `scripts/test_offline.py` | 324 checks over all of the above, with no platform, no network and no credentials. Run it before trusting a change. |
+| `scripts/test_offline.py` | 345 checks over all of the above, with no platform, no network and no credentials. Run it before trusting a change. |
 | `references/attendee-api.md` | The API as measured — shapes, limits, and where the service has moved ahead of its published spec. |
 | `references/audience-model.md` | Every column, its type, and why that type — including the three traps that make a column unqueryable. |
 | `references/graph-shape.md` | The workflow node by node, and which platform constraint forces each one. |
@@ -697,21 +692,25 @@ Then report, in this order:
    match. (When the campaign publishes its own `locked` block that carries tiers too; a
    locally counted fallback cannot, and must never be presented as a tier breakdown.)
 6. **The unlock offer** — see Step 9. This is the question they will have anyway.
-7. **One link, one next step, and an open door.** End with
-   `lanyard.redlinegrowth.com/campaign/<campaign id>` — the signed-in page where the dossiers
-   are — then tell them they can unlock more from there whenever they like, today or in a
-   month, and that coming back and asking is all it takes to get the new ones into their
-   audience. Say plainly that a later session needs nothing from them: not the id, not this
-   conversation, not anything on this machine.
+7. **One link, one next step, and an open door.** End with the campaign's results link — the
+   short `lanyard.redlinegrowth.com/r/<code>` link the loader prints, which opens the dossiers
+   without signing in — then tell them they can unlock more from there whenever they like,
+   today or in a month, and that coming back and asking is all it takes to get the new ones
+   into their audience. Say plainly that a later session needs nothing from them: not the
+   id, not this conversation, not anything on this machine.
 
    **Exactly one link.** An ending that offers a page, a payment link and a command makes
    somebody choose between three things before they have read anything. There is one thing
    worth doing next: open it, read what came back, unlock more if it earns it.
 
-   **And not `share_url`.** It looks like the obvious field and is a different thing: a
-   `/claim?t=<token>` link whose token grants access to whoever holds it. Right for handing
-   results to a colleague with no account; wrong as "your results", because it is both the
-   wrong page and a quiet act of sharing nobody asked for.
+   **Why that link and not the signed-in page.** `lanyard.redlinegrowth.com/campaign/<id>`
+   fails for anyone not already signed in to Lanyard in that browser — and the person who ran
+   this signed in with an emailed code in a terminal, not in their browser. The results link
+   (`results_url` on the campaign) opens without a sign-in. It carries the same access as
+   `share_url`: whoever holds it can see the campaign. So hand it to the person who ran this,
+   and to colleagues they choose, but don't paste it anywhere it outlives the conversation and
+   never commit it. The loader falls back to the signed-in page only for a campaign that
+   carries no `results_url`, and says so.
 
 ## Step 9 — Unlocking more, which normally happens in Lanyard
 
@@ -832,7 +831,9 @@ their audience, and the ids are opaque enough that a wrong guess would not be no
 ### The load report, printed in the session
 
 Real output from a live run against a real conference, on a free account — 144 attendees
-found. The conference and the campaign id are left out; the numbers are as they printed.
+found. The conference and the campaign id are left out; the numbers are as they printed. It was
+captured when the free allowance was 5 dossiers per campaign; it is up to 8 now, so a run today
+writes up to eight.
 
 ```
 reading campaign <campaign id>
@@ -912,38 +913,64 @@ querying people whose company domain matches returns this person and nobody else
 
 ## What this skill does not claim
 
-  - A ranked attendee is a well-evidenced belief, not a confirmed registration**, and this is
-    the single most important thing to read before booking a flight. No attendee product can
-    confirm a registration it cannot see; this one shows its working instead. Every record
-    carries `Attendance year` (a documented enum: `this_year`, `last_year`, `prior`), the
-    confidence, and the evidence sentence behind it, and the campaign reports the split across
-    everything it found — two live campaigns turned up 70 of 144 and 120 of 173 with this-year
-    evidence. So the provenance travels with each record and the filter is safe to write. A
-    `likely` is not a `confirmed`. Apply the filter before treating the list as people who will
-    be in the building.
-  - No attendee list is complete, and this one does not claim to be.** The attendees are the
-    ones Lanyard finds, plus any you supply. A private event app is not read. "144 attendees
-    found" is what was found, not who is going.
-  - No conversion, meeting or reply rate is claimed anywhere**, and no benchmark for one
-    exists in this package.
-  - The scoring rubric is generated per campaign from your own goals**, so two runs with
-    differently worded goals rank the same people differently and a score is not comparable
-    across campaigns. A vague sentence of goals produces a vaguely ranked list: measured, a run
-    asking for "marketing, RevOps and sales leaders" returned two investors in its top five —
-    plausible people to meet at that event, but not the roles that were asked for. Read the top
-    of the list before acting on it, and sharpen the goals if it is not what you meant.
-  - A company link, once written, cannot be moved.** Measured: writing an attendee with a
-    different company ADDS a second association rather than replacing the first, and there is no
-    way to remove one from outside the app. So an attendee whose company was recorded wrongly
-    and then corrected ends up attached to both, and a filter on the wrong company still returns
-    them. The skill warns before a rewrite that would do this; it cannot undo it.
-  - An attendee with no usable email cannot be linked to a company.** Contacts do not carry a
-    company domain, so the domain is derived from the email address. An attendee whose only
-    address is at a mailbox provider is written unlinked by design, and an attendee with no email
-    at all cannot be linked to anything.
-  - The dossier field names are a moving target.** The shape measured here shares exactly one
-    key with the shape the service's own documentation describes, so every read scans both. If
-    the service changes again, columns go blank rather than wrong — but they do go blank.
+- **A ranked attendee is a well-evidenced belief, not a confirmed registration**, and this is
+  the single most important thing to read before booking a flight. No attendee product can
+  confirm a registration it cannot see; this one shows its working instead. Every record
+  carries `Attendance year` (a documented enum: `this_year`, `last_year`, `prior`), the
+  confidence, and the evidence sentence behind it, and the campaign reports the split across
+  everything it found — three live campaigns turned up 70 of 144, 121 of 304 and 126 of 142
+  with this-year evidence. So the provenance travels with each record and the filter is safe
+  to write. A `likely` is not a `confirmed`. Apply the filter before treating the list as
+  people who will be in the building.
+- **No attendee list is complete, and this one does not claim to be.** The attendees are the
+  ones Lanyard finds, plus any you supply. A private event app is not read. "144 attendees
+  found" is what was found, not who is going.
+- **No conversion, meeting or reply rate is claimed anywhere**, and no benchmark for one
+  exists in this package.
+- **The scoring rubric is generated per campaign from your own goals**, so two runs with
+  differently worded goals rank the same people differently and a score is not comparable
+  across campaigns. A vague sentence of goals produces a vaguely ranked list: measured, a run
+  asking for "marketing, RevOps and sales leaders" returned two investors in its top five —
+  plausible people to meet at that event, but not the roles that were asked for. Read the top
+  of the list before acting on it, and sharpen the goals if it is not what you meant.
+- **A company link, once written, cannot be moved.** Measured: writing an attendee with a
+  different company ADDS a second association rather than replacing the first, and there is no
+  way to remove one from outside the app. So an attendee whose company was recorded wrongly
+  and then corrected ends up attached to both, and a filter on the wrong company still returns
+  them. The skill warns before a rewrite that would do this; it cannot undo it.
+- **An attendee with no usable email cannot be linked to a company.** Contacts do not always
+  carry a company domain, so when one is absent the domain is derived from the email address.
+  An attendee whose only address is at a mailbox provider is written unlinked by design, and
+  an attendee with no email at all cannot be linked to anything.
+- **The dossier field names are a moving target.** The shape measured here shares exactly one
+  key with the shape the service's own documentation describes, so every read scans both. If
+  the service changes again, columns go blank rather than wrong — but they do go blank.
+- **Three response blocks arrived in the service before they reached its published schema**
+  — a locked summary, a free-limit block on campaign creation, and a distinct flat row format.
+  All three are documented now. Nothing here depends on them anyway: each is read when present
+  and derived when absent, and the run states which answered. A derived number is labelled as
+  derived.
+- **Which candidates get the free dossiers is the service's call, and it changed recently.**
+  Earlier runs measured here spent them on contacts evidenced from previous editions — two of
+  five in one campaign, none of five in another — and the selection has since been changed to
+  prioritise this-year evidence. Measured on the first campaign run since that change: all
+  eight written dossiers carried this-year evidence, out of a pool of 142 where 126 did. The
+  report shows both the pool and the written split precisely so this stays checkable per
+  campaign rather than taken on trust in either direction.
+- **What has actually been exercised, and how much.** End to end across three campaigns at
+  three conferences between 2026-09-17 and 2026-09-23 — sign-up, the key exchange, the
+  conference lookup, a real campaign, the build into a live workspace, and the load, all
+  through this package's own scripts, with the workflow built once and reused by the runs
+  that followed. Across them, 590 attendees found and 18 dossiers written. On the run measured
+  in detail: 23 columns created, 11 nodes built and wired, 144 attendees found, 5 dossiers
+  written into Audiences with all 12 content columns populated and filterable, 5 company
+  records created, every attendee linked to the right company, and a re-run wrote nothing.
+  **The top-up is proven as a delta but not against a real browser unlock** — the same command
+  correctly re-derived what was outstanding and skipped what was already written, and nobody
+  has yet unlocked a dossier in the browser and watched it appear. Run time is measured only
+  on these runs — about eleven minutes on a mid-sized event, past forty on a large one — and
+  five to twenty minutes is the service's own published figure. Measured runs are evidence
+  about the conferences they ran against, not about every conference.
 
 ## What good looks like
 
@@ -966,7 +993,7 @@ querying people whose company domain matches returns this person and nobody else
 - Signing in is two requests and a code typed into a card. Nobody is sent to a terminal, and
   no sign-in helper is written for them.
 - They are asked whether they already have an attendee list, because they will not offer it.
-- They are told it takes 10 to 15 minutes, and told which columns they are getting, BEFORE
+- They are told it usually takes 10 to 20 minutes, and told which columns they are getting, BEFORE
   agreeing to wait — not after.
 - The closing report says what landed in the audience, not that something was "enriched".
 - The unlock offer arrives with a suggested batch and a price, not as an open question.
@@ -1048,7 +1075,7 @@ results land in your Clay audience."* Then `clay whoami` names the workspace and
 Audiences in <workspace> and builds one workflow. It sends nothing to anyone."*
 
 **Step 1.** There is already an account, and it resolves to `someone@example.com` with 0
-credits and 5 free dossiers per campaign. The card asks one thing — *use
+credits and 8 free dossiers per campaign. The card asks one thing — *use
 `someone@example.com`* / *use a different email* — and they click the first. Not assumed: the
 credits would have come out of that account. Keys are never mentioned; they chose an email.
 
@@ -1076,11 +1103,11 @@ how a list half-fails.
 
 **Step 5.** The dry run counts it first, creating nothing: of the 23 columns in the plan —
 19 on people, 4 on companies — `Conference` already exists and would be adopted, so 22 would
-be created, plus one workflow. Then the plan, including how long and what they get: *"about 10 to 15 minutes, and
+be created, plus one workflow. Then the plan, including how long and what they get: *"usually 10 to 20 minutes, and
 you will end up with ranked attendees in your Clay audience carrying tier, score, attendance
 evidence, a dossier headline and summary, their company summary, buying signals, conversation
 openers and a value prop."* Asking for 25 dossiers; `/me` says the account's free allowance is
-5 per campaign, so five are coming and the rest will be ranked and locked. Writing into
+8 per campaign, so eight are coming and the rest will be ranked and locked. Writing into
 `<workspace>`, creating 22 columns and adopting 1. One person record per attendee with a
 dossier, plus a company record wherever a domain is known. No message is drafted or sent.
 **Halt.** They say go. Nothing exists in their workspace yet.
@@ -1089,14 +1116,14 @@ dossier, plus a company record wherever a domain is known. No message is drafted
 plus the trigger, one routine, published.
 
 **Step 7.** The campaign starts. Stages reported as they change. It completes in about eleven
-minutes: 166 attendees found, 5 enriched, 5 dossiers.
+minutes: 166 attendees found, 8 enriched, 8 dossiers.
 
-**Step 8.** The load writes 4 people and 3 companies. The fifth attendee has neither a
+**Step 8.** The load writes 7 people and 5 companies. The eighth attendee has neither a
 LinkedIn URL nor an email.
 
-**Step 8b.** Verified against the workspace: 4 people carry the campaign id. Reported: the four
-people with their one-line reasons; the fifth named, with *"no LinkedIn URL and no email —
-nothing can match them"*; the share link; and *"161 more are ranked and waiting, 159 of them
+**Step 8b.** Verified against the workspace: 7 people carry the campaign id. Reported: the seven
+people with their one-line reasons; the eighth named, with *"no LinkedIn URL and no email —
+nothing can match them"*; the results link; and *"158 more are ranked and waiting, 156 of them
 simply never enriched — unlocking happens in the browser."* Then the top-up command, spelled out.
 
 Then the offer, straight from the loader: *"12 S-tier attendees are still locked. Unlocking
@@ -1109,8 +1136,8 @@ link, nothing attempted.
 contacts that now carry a dossier and are not in the ledger as written. Twenty-five have a
 usable identifier and are written, along with 11 new company records; the twenty-sixth is the
 attendee from Step 8 who still has neither a LinkedIn URL nor an email, reported again by
-name. The four written on the first run are not in the 26 at all — the ledger already settled
+name. The seven written on the first run are not in the 26 at all — the ledger already settled
 them — so nothing is rewritten and nothing is duplicated. It reports: *"25 written, 0 left
-unsettled, 135 still locked."*
+unsettled, 133 still locked."*
 
 Nobody had to tell it which 26.

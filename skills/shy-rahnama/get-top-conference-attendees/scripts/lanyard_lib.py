@@ -198,16 +198,34 @@ def create_campaign(key, payload):
     return _request("POST", "/campaigns", key, payload)
 
 
-# The page a signed-in person opens to read their own results. Built from the id rather than
-# taken from a response field, because the response's `share_url` is a DIFFERENT thing: it is
-# a `/claim?t=<token>` link, and handing that over as "your results" is both the wrong page
-# and a quiet act of sharing — the token in it grants access to whoever ends up holding it.
+# The page a signed-in person opens to read their own results. Only the FALLBACK now: it
+# fails for anyone not already signed in to Lanyard in that browser, and the person who ran
+# this signed in with an emailed code in a terminal, not in their browser.
 CAMPAIGN_PAGE = "https://lanyard.redlinegrowth.com/campaign/%s"
 
 
 def campaign_url(campaign_id):
     """The logged-in view of a campaign. Only worth offering once it has results."""
     return CAMPAIGN_PAGE % campaign_id
+
+
+def results_link(campaign, campaign_id=None):
+    """The link to hand a person for reading their results, and whether it needs a sign-in.
+
+    Prefers the campaign's `results_url`: a short, stable `/r/<code>` link that opens the
+    results without signing in (added to the API 2026-10-01, on the campaign, on every
+    `GET /campaigns` row, on the create response and on the callback). It carries the same
+    access as `share_url`, so whoever holds it can see the campaign — fine to hand to the
+    person who ran this, not something to paste anywhere it outlives the conversation.
+
+    Falls back to the signed-in campaign page for a response that does not carry one.
+    Returns `(url, opens_without_sign_in)`.
+    """
+    campaign = campaign if isinstance(campaign, dict) else {}
+    url = campaign.get("results_url")
+    if isinstance(url, str) and url.startswith(("https://", "http://")):
+        return url, True
+    return campaign_url(campaign_id or campaign.get("campaign_id") or campaign.get("id") or ""), False
 
 
 def get_campaign(key, campaign_id):

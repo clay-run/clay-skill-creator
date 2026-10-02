@@ -771,6 +771,78 @@ try:
 finally:
     L._request = _real_request
 
+
+# ------------------------- the edition check needs no writer; starting a campaign does
+#
+# SKILL.md Step 3 looks the event up before anything is built, so on a first run in a new
+# workspace there is no build-state at all. That lookup has to work; the campaign must not.
+
+import argparse     # noqa: E402
+import contextlib   # noqa: E402
+import io           # noqa: E402
+
+_calls = []
+
+
+def _fake_lookup(key, name=None, city=None, year=None, url=None):
+    _calls.append("lookup")
+    return {"conference": {"name": "INBOUND 2026", "start_date": "2026-09-01",
+                           "end_date": "2026-09-03", "location": "Boston, MA",
+                           "website": "https://www.inbound.example", "confidence": "high"}}
+
+
+def _fake_create(key, body):
+    _calls.append("create")
+    return {"campaign_id": "c-should-never-exist"}
+
+
+def _do_run(cfg, yes):
+    """do_run against fakes: what it printed, and the message it stopped with."""
+    _calls.clear()
+    out, why = io.StringIO(), None
+    args = argparse.Namespace(conference="INBOUND", city="Boston", year="2026",
+                              conference_url=None, yes=yes)
+    try:
+        with contextlib.redirect_stdout(out):
+            D.do_run(cfg, os.path.join(cfg["writer_dir"], "conference-config.json"), "k", args, {})
+    except SystemExit as e:
+        why = str(e.code)
+    return out.getvalue(), why or ""
+
+
+_real_lanyard = (L.whoami, L.lookup_conference, L.create_campaign)
+L.whoami = lambda key: {"account": {"email": "dana@acme.example"}, "credits": 0,
+                        "free_dossiers_per_campaign": 10}
+L.lookup_conference = _fake_lookup
+L.create_campaign = _fake_create
+try:
+    _fresh = {"writer_dir": tempfile.mkdtemp(), "domain": "acme.example",
+              "goals": "meet revenue leaders"}
+    check("run, no writer: there really is no build-state",
+          os.path.exists(C.writer_state_path(_fresh)), False)
+
+    _printed, _why = _do_run(_fresh, yes=False)
+    check("run, no writer, no --yes: the lookup runs", _calls, ["lookup"])
+    check("run, no writer, no --yes: the match is printed", "INBOUND 2026" in _printed, True)
+    check("run, no writer, no --yes: stops at the edition check, not the writer",
+          "re-run with --yes" in _why, True)
+
+    _printed, _why = _do_run(_fresh, yes=True)
+    check("run, no writer, --yes: refuses before creating the campaign", _calls, ["lookup"])
+    check("run, no writer, --yes: says there is no writer", "No writer built" in _why, True)
+
+    # Built but never published: the state file exists and holds no routine id.
+    _unpublished = dict(_fresh, writer_dir=tempfile.mkdtemp())
+    with open(C.writer_state_path(_unpublished), "w") as fh:
+        json.dump({"meta": {}}, fh)
+    _printed, _why = _do_run(_unpublished, yes=True)
+    check("run, unpublished writer, --yes: refuses before creating the campaign",
+          _calls, ["lookup"])
+    check("run, unpublished writer, --yes: names the missing routine id",
+          "no routine id" in _why, True)
+finally:
+    L.whoami, L.lookup_conference, L.create_campaign = _real_lanyard
+
 _cfg = {"workspace_id": "123456"}
 _run = C.run_dir(_cfg, date="2026-09-23")
 check("run_dir: lands under the writer, keyed by workspace and date",
@@ -837,8 +909,54 @@ check("match: a row with no conference does not crash", L.match_campaigns([{"cam
 
 # --------------------------------------- the link a person opens to read their results
 
-# `share_url` is a /claim?t=<token> link whose token IS the access. Handing it over as "your
-# results" is the wrong page and quietly shares the campaign with whoever ends up holding it.
+# The campaign's `results_url` (/r/<code>) is the link handed over: it opens without signing
+# in, and the signed-in page fails for anyone not already logged in to Lanyard in that browser.
+_R = "https://lanyard.redlinegrowth.com/r/Xk82PqLm"
+check("results link: the campaign's results_url wins",
+      L.results_link({"campaign_id": "abc-123", "results_url": _R}), (_R, True))
+check("results link: an explicit id does not override a results_url",
+      L.results_link({"results_url": _R}, "abc-123"), (_R, True))
+check("results link: without one, the signed-in page — and it says it needs a sign-in",
+      L.results_link({"campaign_id": "abc-123"}),
+      ("https://lanyard.redlinegrowth.com/campaign/abc-123", False))
+check("results link: a blank results_url falls back",
+      L.results_link({"results_url": ""}, "abc-123")[0],
+      "https://lanyard.redlinegrowth.com/campaign/abc-123")
+check("results link: a non-URL results_url falls back",
+      L.results_link({"results_url": {"href": _R}}, "abc-123")[1], False)
+check("results link: no campaign at all still yields the page for the id",
+      L.results_link(None, "abc-123")[0], "https://lanyard.redlinegrowth.com/campaign/abc-123")
+# The close prints exactly that link, and says which kind it is.
+_out = io.StringIO()
+with contextlib.redirect_stdout(_out):
+    D.offer_unlock("k", [], {}, "abc-123", {"campaign_id": "abc-123", "results_url": _R})
+check("close: prints the results link", _R in _out.getvalue(), True)
+check("close: says it opens without signing in", "without signing in" in _out.getvalue(), True)
+check("close: and not the signed-in page", "/campaign/abc-123" in _out.getvalue(), False)
+_out = io.StringIO()
+with contextlib.redirect_stdout(_out):
+    D.offer_unlock("k", [], {}, "abc-123", {"campaign_id": "abc-123"})
+check("close: without a results_url, the signed-in page",
+      "/campaign/abc-123" in _out.getvalue(), True)
+check("close: and it says a sign-in is needed", "Same login" in _out.getvalue(), True)
+# The campaign list shows each campaign's results link, so a lost one is recoverable.
+_real_list = L.list_campaigns
+L.list_campaigns = lambda key: ([{"campaign_id": "c-1", "conference": {"name": "Sculpt"},
+                                  "status": "complete", "counts": {"attendees": 3},
+                                  "results_url": _R},
+                                 {"campaign_id": "c-2", "conference": {"name": "INBOUND"},
+                                  "status": "complete", "counts": {"attendees": 2}}], 2)
+try:
+    _out = io.StringIO()
+    with contextlib.redirect_stdout(_out):
+        D.do_campaigns("k")
+    check("campaigns: lists each results link", _out.getvalue().count("results: " + _R), 1)
+    check("campaigns: a row without one prints no empty link", "results: None" in _out.getvalue(),
+          False)
+finally:
+    L.list_campaigns = _real_list
+
+# The signed-in page is still built from the id, and carries no token.
 check("link: built from the id, not from a response field",
       L.campaign_url("abc-123"), "https://lanyard.redlinegrowth.com/campaign/abc-123")
 check("link: carries no token", "?" in L.campaign_url("abc-123"), False)

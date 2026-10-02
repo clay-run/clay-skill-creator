@@ -401,7 +401,7 @@ def verdict_of(row):
 # --------------------------------------------------------------------- the load
 
 
-def offer_unlock(key, contacts, locked, campaign_id):
+def offer_unlock(key, contacts, locked, campaign_id, campaign=None):
     """Close with ONE link and ONE next step.
 
     The ending used to offer three things at once — a CLI unlock command, a payment link and
@@ -412,9 +412,11 @@ def offer_unlock(key, contacts, locked, campaign_id):
     Shown on EVERY path, including a run that wrote nothing, because that is the path
     somebody checking back is on.
     """
+    url, open_link = L.results_link(campaign, campaign_id)
     print("\n== read them in Lanyard ==")
-    print("  %s" % L.campaign_url(campaign_id))
-    print("  Same login you signed in with.")
+    print("  %s" % url)
+    print("  Opens without signing in — anyone you give this link to can see these results."
+          if open_link else "  Same login you signed in with.")
 
     tiers = L.locked_by_tier(contacts)
     if not tiers:
@@ -495,9 +497,9 @@ def do_load(cfg, config_path, key, campaign_id, env, dry=False, limit=None, rewr
         print("  %d more are ranked and waiting without a dossier%s"
               % (locked["total"],
                  (" — by %s: %s" % (locked["breakdown_by"], bits)) if bits else ""))
-        # No link here. The close gives exactly one, and it is the signed-in campaign page —
-        # the campaign's own `unlock_url` is the /claim?t=<token> link, so printing it here
-        # both duplicated the ending and put an access token in the middle of a plan.
+        # No link here. The close gives exactly one, the campaign's results link — printing
+        # the `unlock_url` (/claim?t=<token>) here as well duplicated the ending and put an
+        # access token in the middle of a plan.
 
     if dry:
         print("\n-- dry run: nothing written.")
@@ -505,7 +507,7 @@ def do_load(cfg, config_path, key, campaign_id, env, dry=False, limit=None, rewr
 
     if not shaped:
         print("\nNothing new to write — everything with a dossier is already in Audiences.")
-        offer_unlock(key, contacts, locked, campaign_id)
+        offer_unlock(key, contacts, locked, campaign_id, campaign)
         return 0
 
     already_unwritable = {r.get("contact_id") for r in ledger.rows()
@@ -602,7 +604,7 @@ def do_load(cfg, config_path, key, campaign_id, env, dry=False, limit=None, rewr
                   "\n  on evidence from a previous one.")
     print("  ledger: %s" % ledger.path)
 
-    offer_unlock(key, contacts, locked, campaign_id)
+    offer_unlock(key, contacts, locked, campaign_id, campaign)
     return 0 if failed == 0 else 1
 
 
@@ -610,17 +612,10 @@ def do_load(cfg, config_path, key, campaign_id, env, dry=False, limit=None, rewr
 
 
 def do_run(cfg, config_path, key, args, env):
-    # Check the things a completed campaign would be USELESS without, BEFORE spending one.
-    # A campaign is the only real cost in this skill, and the load that follows it dies
-    # immediately on a missing build-state — so discovering that afterwards means having paid
-    # for a run that cannot be written anywhere.
-    state = load_state(config_path, cfg)
-    if "routine_id" not in (state.get("meta") or {}):
-        raise SystemExit(
-            "build-state.json has no routine id, so nothing could be written even if the "
-            "campaign succeeded.\nRe-run build_conference_writer.py --publish first. "
-            "Refusing to start a campaign that has nowhere to land.")
-
+    # No writer is needed to LOOK the event up. Without --yes this is the free, read-only
+    # edition check that SKILL.md Step 3 runs before anything is built — on a first run in a
+    # new workspace the writer does not exist yet, and must not, until the plan is approved.
+    # The writer check sits immediately before the campaign is created instead.
     me = L.whoami(key)
     acct = me.get("account") or {}
     print("signed in as %s · %s credits · %s free dossiers per campaign"
@@ -692,6 +687,18 @@ def do_run(cfg, config_path, key, args, env):
     if cfg.get("enrich_count"):
         body["enrich_count"] = int(cfg["enrich_count"])
 
+    # Check the things a completed campaign would be USELESS without, BEFORE spending one.
+    # A campaign is the only real cost in this skill, and the load that follows it dies
+    # immediately on a missing build-state — so discovering that afterwards means having paid
+    # for a run that cannot be written anywhere. Only --yes reaches here, so the edition check
+    # above stays free of it.
+    state = load_state(config_path, cfg)
+    if "routine_id" not in (state.get("meta") or {}):
+        raise SystemExit(
+            "build-state.json has no routine id, so nothing could be written even if the "
+            "campaign succeeded.\nRe-run build_conference_writer.py --publish first. "
+            "Refusing to start a campaign that has nowhere to land.")
+
     created = L.create_campaign(key, body)
     campaign_id = created.get("campaign_id")
     print("\nstarted campaign %s" % campaign_id)
@@ -742,8 +749,8 @@ def do_run(cfg, config_path, key, args, env):
     counts = campaign.get("counts") or {}
     print("\n  %s attendees found · %s enriched · %s dossiers"
           % (counts.get("attendees"), counts.get("enriched"), counts.get("dossiers")))
-    # The logged-in page, not the `/claim?t=…` share link: same login they signed in with.
-    print("  read them here: %s" % L.campaign_url(campaign_id))
+    # The short results link when the campaign carries one; the signed-in page otherwise.
+    print("  read them here: %s" % L.results_link(campaign, campaign_id)[0])
 
     return do_load(cfg, config_path, key, campaign_id, env, limit=args.limit)
 
@@ -775,6 +782,8 @@ def do_campaigns(key):
             cost = r.get("unlock_cost_credits")
             print("      %s still locked%s" % (locked, " · %s credits to unlock them all" % cost
                                                if cost is not None else ""))
+        if r.get("results_url"):
+            print("      results: %s" % r["results_url"])
     print("\nLoad or top one up with:  load --campaign <id>")
     return 0
 
