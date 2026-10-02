@@ -1,2 +1,2 @@
-# Synthetic package QA marker: baseline-v1.
+# Synthetic package QA marker: replacement-v2.
 # No executable workflow or network calls.

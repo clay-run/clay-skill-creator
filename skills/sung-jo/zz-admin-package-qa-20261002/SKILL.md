@@ -2,11 +2,14 @@
 name: zz-admin-package-qa-20261002
 description: Temporary synthetic package test for Marketplace Admin. Returns a supplied test label without using external systems.
 license: MIT
+marketplace_identity_schema: 1
+marketplace_slug: zz-admin-package-qa-20261002
+marketplace_revision: 2
 ---
 
 # Temporary package QA
 
-This is an owner-authorized test fixture, not a production workflow or customer example. It exists only to check package publication and replacement. Version 1 is the baseline.
+This is an owner-authorized test fixture, not a production workflow or customer example. It exists only to check package publication and replacement. Version 2 is the replacement.
 
 ## Declared inputs
 
@@ -29,7 +32,7 @@ This is an owner-authorized test fixture, not a production workflow or customer 
 ## Outputs
 
 - Test label: the exact label supplied by the user.
-- Package revision: baseline-v1.
+- Package revision: replacement-v2.
 
 ## Example prompt
 
@@ -39,7 +42,7 @@ Run the temporary package QA with the test label Sample A.
 
 | Test label | Package revision |
 | --- | --- |
-| Sample A | baseline-v1 |
+| Sample A | replacement-v2 |
 
 ## Supporting files
 
