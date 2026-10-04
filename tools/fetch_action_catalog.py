@@ -60,10 +60,20 @@ def _run(exe: str, args: list[str], timeout: int = 90) -> dict:
     if any(a in FORBIDDEN for a in args):
         sys.exit(f"refusing to run `clay {' '.join(args)}`: this tool performs reads only.")
     p = subprocess.run([exe, *args], capture_output=True, text=True, timeout=timeout)
-    try:
-        return json.loads(p.stdout)
-    except Exception:
-        return {"error": {"code": "unparseable", "message": (p.stdout + p.stderr)[:200]}}
+    # THE CLI PUTS ERRORS ON STDERR, with a non-zero exit and an EMPTY stdout — measured: a
+    # not_found schema read exits 6 and prints `{"error": {"code": "not_found", ...}}` to stderr.
+    # Parsing stdout alone recorded every retired action as `unparseable`, which collapsed the one
+    # distinction this file exists to keep: a provider that is GONE (actionable — pick another)
+    # versus a read that FAILED (not actionable — say so and do not call it a retirement).
+    for stream in (p.stdout, p.stderr):
+        if not (stream or "").strip():
+            continue
+        try:
+            return json.loads(stream)
+        except Exception:
+            continue
+    return {"error": {"code": "unparseable",
+                      "message": f"exit {p.returncode}: {(p.stdout + p.stderr)[:200]}"}}
 
 
 def pairs_from_text(text: str) -> set[tuple[str, str]]:
