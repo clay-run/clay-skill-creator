@@ -14,6 +14,33 @@ python3 tools/package_skill.py validate build/<slug>
 Exit `0` means the package shape and content checks pass. Non-zero prints every finding with its
 file and line.
 
+## If your skill names a Clay action, fetch the catalogue too
+
+Run these two in order, not just the second:
+
+```
+python3 tools/fetch_action_catalog.py --package build/<slug> -o /tmp/catalog.json
+python3 tools/package_skill.py validate build/<slug> --action-catalog /tmp/catalog.json
+```
+
+**Without the catalogue, nothing checks the actions your skill calls**, and `ok` means only that the
+shape is right. There is no finding to read and no warning that a check was skipped, which is why the
+two commands belong together. With it, two things become blocking:
+
+- **An action that no longer resolves.** Providers get retired. On a real 2024 table, 5 of its 15
+  distinct actions are gone — a step naming one of them cannot run for anybody.
+- **A parameter that action does not accept**, or one whose type contradicts what you feed it. A
+  shipped skill put a personal email in a parameter the schema declares as a LinkedIn URL. It
+  validated clean, and a person found it by running the skill.
+
+`fetch_action_catalog.py` reads only — it asks the catalogue what exists and what each action's
+inputs are, refuses anything that executes, and never spends a credit. `validate` itself never calls
+`clay`: it reads the file the fetcher wrote, so a machine without the CLI gets an honest "unverified"
+rather than a failure.
+
+If you cannot fetch it, say so under `## What this skill does not claim` and name the actions you
+could not check. Unverified and checked-and-clean are different claims.
+
 ## The exit codes tell you whose problem it is
 
 Non-zero is not one thing. The code separates a defect in your package from a broken tool from a

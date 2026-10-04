@@ -270,7 +270,10 @@ python3 tools/package_skill.py validate build/<slug>
 ```
 
 `0` clean · `4` blocking findings in your package · `2` the command was wrong · `1` the tool is broken,
-not your package. Multi-file skills also need `zip` then `verify`, comparing **manifests, not
+not your package. **If your skill calls a Clay action, run `tools/fetch_action_catalog.py` first and
+pass `--action-catalog`** — on its own, `validate` checks the shape and nothing about the actions,
+so a retired provider or a parameter the action does not accept both come back clean. `VALIDATION.md`
+has both commands. Multi-file skills also need `zip` then `verify`, comparing **manifests, not
 archives**. Read the file end to end before uploading — you are the last reviewer. **Blocking findings
 get fixed; heads-ups get mentioned and left to you** — your agent will not rewrite your draft to clear
 one, and an over-long description is fine. **Nothing submits without an explicit yes from you.** You

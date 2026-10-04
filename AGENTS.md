@@ -33,6 +33,12 @@ clothes.
 
     python3 tools/package_skill.py validate <package-dir>
 
+**If the package names a Clay action, fetch the catalogue first or nothing checks the actions it
+calls** — `tools/fetch_action_catalog.py --package <dir> -o /tmp/catalog.json`, then pass
+`--action-catalog /tmp/catalog.json`. Without it, `ok` means the shape is right and says nothing
+about whether the action still exists or accepts the parameters named. `VALIDATION.md` has both
+commands and what the second one blocks on.
+
 `VALIDATION.md` says what each exit code means and which findings block. `DETERMINISM.md` covers
 choosing between Clay functions when more than one would do the job, and
 `references/functions/` carries what each surface actually returned — read its index, then the one
