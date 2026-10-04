@@ -1403,6 +1403,7 @@ _CRED_SHAPES = re.compile(
     r"|github_pat_[A-Za-z0-9_]{20,}"        # fine-grained, underscores are inside the shape
     r"|xox[baprs]-[A-Za-z0-9-]{10,}"
     r"|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{6,}"
+    r"|clay_scoped_[A-Za-z0-9]{20,}"              # Clay's own scoped key — the one shape missing
     r"|AKIA[0-9A-Z]{16}"
     r"|AIza[A-Za-z0-9_-]{35}"                      # Google API key, fixed 39-char total
     r"|-----BEGIN(?:\s[A-Z]+)*\sPRIVATE KEY-----"  # PEM block, any key type
@@ -1421,8 +1422,19 @@ _CRED_SHAPES = re.compile(
 # the disclosure scanner's own credential axis, which has no sentinel list. Two checks, one string,
 # opposite verdicts — and the comment does not need the literal to make its point.
 _CRED_ASSIGNMENT = re.compile(
-    r"(?i)\b(?:api[_-]?key|apikey|secret|token|access[_-]?token|auth[_-]?token|authorization"
-    r"|bearer|password|passwd)"
+    # The left anchor used to be `\b`, and `_` is a word character — so there was no boundary
+    # between `CLAY_` and `API_KEY`, and every realistically-named variable escaped. Measured:
+    # `API_KEY=` caught, `CLAY_API_KEY=` missed; `SECRET=` caught, `AWS_SECRET_ACCESS_KEY=` missed;
+    # `TOKEN=` caught, `MY_TOKEN=` missed. The bare names were the only ones ever checked.
+    # An optional `[A-Za-z0-9_]*` prefix lets the keyword match as the SUFFIX of a longer
+    # identifier. Precision is carried by the 16-character value floor and the sentinel list
+    # below, not by this anchor.
+    # The identifier may continue on BOTH sides of the keyword, which the first attempt at this
+    # missed: `AWS_SECRET_ACCESS_KEY=` matched `SECRET` and then wanted the `=` immediately after
+    # it, so the variable escaped on its own suffix. Prefix and suffix are both optional runs.
+    r"(?i)(?:^|[^A-Za-z0-9_])[A-Za-z0-9_]*?"
+    r"(?:api[_-]?key|apikey|secret|token|access[_-]?token|auth[_-]?token|authorization"
+    r"|bearer|password|passwd)[A-Za-z0-9_]*"
     # An optional scheme word, so `authorization: Bearer <token>` is measured on the TOKEN.
     # Without it the value seen is "Bearer" — six characters, under the floor, silently safe.
     r"\s*[:=]\s*(?:Bearer\s+|Token\s+|Basic\s+)?[\"\']?(?P<v>[A-Za-z0-9_\-]{16,})[\"\']?"

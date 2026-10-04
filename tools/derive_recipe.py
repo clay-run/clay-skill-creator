@@ -655,6 +655,20 @@ def derive(table_id: str, cols: list[dict]) -> dict:
                              k == "collection" or k.startswith("fields|") for k in b)
                          else None)
         actions[c["name"]] = {
+            # The action's IDENTITY, carried through verbatim. The table has it on every action
+            # column; dropping it is what made a wrong input field unverifiable — a parameter name
+            # with no owner cannot be looked up, so `clay workflows actions schema <packageId>
+            # <actionKey>` has no arguments and `cost_basis: needs_catalog_lookup` below asks for a
+            # lookup that has been made impossible. NEVER synthesise a pair: absent means `null`,
+            # and the caller reports it unverified rather than guessing a packageId.
+            "action_key": (c.get("settings") or {}).get("actionKey"),
+            "action_package_id": (c.get("settings") or {}).get("actionPackageId"),
+            "action_version": (c.get("settings") or {}).get("actionVersion"),
+            # The parameter names as the TABLE spells them — one side of the schema comparison.
+            # Clay's UI writes a shotgun of aliases per action (one source column mapped to every
+            # plausible name so whichever the provider reads lands), so this is a candidate set,
+            # never a contract. Only the action's schema says which of them is real.
+            "input_parameter_names": sorted(keys),
             "kind": kind,
             "cost_knobs": knobs,
             # HTTP cost sits with the callee, so it is unavailable — NEVER zero.
@@ -714,6 +728,14 @@ def derive(table_id: str, cols: list[dict]) -> dict:
         # abandoned experiment from an optional input never filled. Played back, never pruned.
         "dead_candidates": sorted(by_id[c]["name"] for c in user_ids
                                   if not refs_out[c] and c not in referenced),
+        # Terminal outputs: reference something, referenced by nothing → what the table PRODUCES.
+        # The two branches above both require `not refs_out[c]`, so terminals fell into neither and
+        # the outputs were never computed at all. Root → terminal is the use case, from config:
+        # on the table this was found against, "Personal Email" in, "Work Email" out.
+        # It also separates a dead-end OUTPUT from an orphan: a column that consumes earlier work
+        # and is consumed by nothing is a second output, which `dead_candidates` cannot express.
+        "terminal_outputs": sorted(by_id[c]["name"] for c in user_ids
+                                   if refs_out[c] and c not in referenced),
         "actions": actions,
         "external_hosts": sorted(hosts),
         "enums": enums,
