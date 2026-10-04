@@ -31,7 +31,7 @@ here?"* — invites a shrug. People correct a draft far better than they answer 
 **First line of output, before anything else:**
 
 ```
-clay-skill-author/2.25.3 · loaded from <absolute path to this SKILL.md>
+clay-skill-author/2.25.4 · loaded from <absolute path to this SKILL.md>
 ```
 
 **AND KEEP THAT ABSOLUTE PATH — every relative path below is relative to it, and reconstructing it
@@ -983,6 +983,25 @@ sizing — AND READ IT BEFORE WRITING THE STEP.** Everything above is about enri
 in, a priced row out. Search is the seam between finding and enriching, and this file deliberately does
 not summarise it: **read the leaf and take the specifics from there rather than from here**, because a
 paraphrase in this file is one more copy to drift.
+
+**AND IF ANY STEP RESOLVES A PERSON, OR FINDS A WORK EMAIL OR A PHONE NUMBER, OPEN
+`references/functions/contacts.md` AND READ IT BEFORE WRITING THAT STEP.** Named by path for the same
+reason as the line above, and because the alternative is measured: **four separate drafts reached this
+part of the step, read the action catalogue, and never opened that leaf** — the fourth then
+re-derived a weaker version of what the file already says from schemas alone.
+
+What is in there and not here: the email arm's **measured** yield (0 of 3 real work emails resolved,
+all `complete` with an empty result in seconds), Enrich Person's real input contract, the asymmetry
+that decides batch design (hits in ~12s, not-founds in ~4.5 minutes, so a batch finishes at the speed
+of its misses), and that the managed work-email function verifies internally without surfacing
+catch-all or risky discrimination.
+
+Two traps it carries that a schema read alone will not give you. A parameter whose name reads like an
+identifier may want a **URL**: the table UI shows *"Professional URL"* while the wire name is
+`person_identifier`, so the label and the parameter are different strings and neither tells you the
+accepted type. And a table's `inputsBinding` writes a **shotgun of ~10 alias names per action** so
+whichever one the provider reads lands — so a name lifted from a table is a candidate, never a
+contract. Confirm every one against the action's own schema.
 
 **One thing from the leaf belongs here, because it changes the cost gate:** the search row is **thinner
 than the set of fields you can filter on**, so anything the skill judges or links to beyond what it

@@ -8,6 +8,7 @@
 | a name or a company → a domain; is this domain alive; normalising anything | [`identity-and-domains.md`](identity-and-domains.md) |
 | firmographics, headcount, revenue, tech stack, traffic, hierarchy | [`company-enrichment.md`](company-enrichment.md) |
 | finding a person, a work email, a phone; resolving someone to a profile | [`contacts.md`](contacts.md) |
+| what an action's input parameter actually accepts — the UI label, the table's binding and the schema are three different answers | [`contacts.md`](contacts.md) |
 | checking an email address you already hold | [`email-validators.md`](email-validators.md) |
 | counting or filtering job postings; hiring as a signal | [`signals-jobs.md`](signals-jobs.md) |
 | funding, executive changes, third-party news about accounts | [`signals-funding-news.md`](signals-funding-news.md) |

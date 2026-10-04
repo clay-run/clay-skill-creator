@@ -1,8 +1,10 @@
 # Contacts: finding people, emails and phones
 
-> **Observed 2026-08-07 – 2026-08-14**, one workspace, one plan, by builds that spent the credits. Every
-> figure was read off a live response. **Report what you read; never quote a figure here as anyone's
-> price.** Structural facts do not rot the way prices do. If the live catalogue disagrees, it wins.
+> **Observed 2026-08-07 – 2026-08-14**, extended **2026-10-04** for the input-contract sections at the
+> end, one workspace, one plan, by builds that spent the credits — except the 2026-10-04 additions,
+> which are schema and catalogue reads and spent nothing. Every figure was read off a live response.
+> **Report what you read; never quote a figure here as anyone's price.** Structural facts do not rot
+> the way prices do. If the live catalogue disagrees, it wins.
 
 | Need | Reach for | Cost as observed | Trap |
 |---|---|---|---|
@@ -103,3 +105,44 @@ are labelled invalid.**
 actually call. And the three-way timing model matters here too — a hit is seconds, a real-person miss is
 minutes, an unresolvable profile URL fast-fails in about 60 s at resolution, *before* the waterfall runs,
 which is a different not-found shape (`complete` at the run level wrapping an item-level `failed`).
+
+## The parameter name tells you nothing about the accepted type
+
+**Read 2026-10-04 from action schemas; no run, no credit.**
+
+Three separate layers name the same input differently, and only one of them is binding:
+
+| Where you read it | What it says | Binding? |
+|---|---|---|
+| the table UI's column label | *"Professional URL"* | no |
+| the action's `inputsBinding` in table config | `person_identifier` | the name only |
+| the action's **schema** | `semanticType: person-linkedin-url` | **yes** |
+
+So a parameter whose name reads like a generic identifier may accept **only a URL**. A shipped skill
+fed that parameter a personal email address and validated clean; the call returns `validation_error`
+per item, and the step looks configured. **Confirm every input against
+`clay workflows actions schema <packageId> <actionKey>` before wiring it** — `semanticType` is a
+structured enum and it is the only one of the three layers that answers the question.
+
+**And a table binds a shotgun, not a contract.** Clay's UI writes the same source column to every
+plausible parameter name so that whichever one the provider reads picks it up — observed on one real
+action column: `email`, `workEmail`, `inputFields|emailAddress`, `data`, `work_email`, `work-email`,
+`search_input`, `personal_email` and more, all fed the same cell. Ten-plus candidates per action, most
+of them wrong for the action they are bound to. A name lifted from a table is a candidate; the schema
+says which one is real.
+
+## A work-email input cannot be the first step of a work-email skill
+
+**Read 2026-10-04 from action schemas; no run, no credit.**
+
+Several managed person-enrichment arms declare their one required input as a **work email**
+(`semanticType: work-email`, `required: true`) rather than any email. That makes them unusable for
+resolving identity in a play whose *output* is the work email — the input is the thing you do not have
+yet. Checked on the arms a personal-email play would naturally reach for: two of three wanted a work
+address, and only one accepted a personal one (its schema says so in prose: *"the work or personal
+email address of the person"*).
+
+This compounds with the low-yield line in the index above. A skill that starts from a personal email
+should establish, from schemas rather than from the arm's name, that **some** available arm accepts a
+personal address at all — and when none does, say so and ask for a name or a profile URL instead of
+shipping a waterfall that cannot run.
