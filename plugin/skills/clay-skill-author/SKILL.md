@@ -31,7 +31,7 @@ here?"* — invites a shrug. People correct a draft far better than they answer 
 **First line of output, before anything else:**
 
 ```
-clay-skill-author/2.25.2 · loaded from <absolute path to this SKILL.md>
+clay-skill-author/2.25.3 · loaded from <absolute path to this SKILL.md>
 ```
 
 **AND KEEP THAT ABSOLUTE PATH — every relative path below is relative to it, and reconstructing it
@@ -418,8 +418,118 @@ their table.
 ## Step 5 — Derive the complete draft, before asking anything
 
 ```
-python3 scripts/derive_recipe.py derive <tableId>
+python3 scripts/derive_recipe.py live <tableId>
 ```
+
+**`live` — not `derive`, which is not a subcommand.** This line read `derive <tableId>` for several
+versions and fails with `invalid choice: 'derive'` at the first command of the step, which is the
+same defect `VALIDATION.md` records about its own opening command. The three modes are `live`
+(reads the table through the CLI), `config` (reads a `tables columns get` dump you already have —
+the fallback when `live` refuses on RULE 0 because the table belongs to someone else), and
+`compare`.
+
+### 5a — The table is evidence, not a score. Read what it PRODUCES, then resolve how to produce it.
+
+**Transcribing the table faithfully is the wrong instinct, and the cost is measured.** On a real
+2024 table, a faithful transcript inherits all three of these:
+
+| What faithfulness carries over | Measured |
+|---|---|
+| Retired providers | **5 of its 15 distinct `(packageId, actionKey)` pairs return `not_found`** |
+| A cost ordering nobody chose | a 4-credit arm placed ahead of a 1-credit one |
+| An unexamined default dressed as a decision | a verifier's catch-all switch left unset, so catch-alls passed as `valid` |
+
+A skill built by transcription from that table is a third broken, mis-ordered, and claims a
+catch-all policy its creator never made. **So read the table for what it was TRYING to do, and
+resolve the mechanism fresh.** Work in this order.
+
+**1. Read the outcome off the graph, then confirm it — do not interview for it cold.** The recipe
+carries `declared_inputs` (columns that feed something and are fed by nothing) and
+`terminal_outputs` (columns that consume something and are consumed by nothing). Root to terminal
+*is* the use case: on the reference table, `Personal Email` in, `Work Email` out. Put that back to
+the creator as a statement to correct, not a question to answer.
+
+This matters most on a table that cannot tell you its own purpose. That one returned
+`intent_prompt_chars: 0` against a threshold of 200 with 25 mechanics columns — it says *how* at
+length and never once says *why*. The graph is the only thing left that speaks to intent, so use it
+rather than inferring purpose from column names, which reads fluent and is unfounded.
+
+A second terminal that nothing reports is a **dead-end output**, not an orphan. Name it as an open
+question; do not quietly promote it to a deliverable or drop it.
+
+**2. Resolve the capability against what every installer actually has.** `clay workflows actions
+list` splits three ways, and only one of them is portable:
+
+| `paymentType` | Count | Priced |
+|---|---|---|
+| **`Clay Credits`** | **467** | **all 467** |
+| `Bring Your Own Account` | 252 | none |
+| unset (no `displayName` — internal) | 1,275 | none |
+
+**Build on `Clay Credits`.** Every entry is priced, and no installer needs a vendor account for it.
+Measured on the reference table: all ten of its surviving actions are `Clay Credits`, none are BYO —
+so the vendor names in a table are usually Clay-managed arms rather than the creator's private
+integrations. **The portability risk is retirement, not entitlement**, which is the opposite of what
+a roster-based skill guards against.
+
+`scripts/fetch_action_catalog.py` writes the file this reads from, carrying `resolves`,
+`payment_type`, `credit_cost`, each parameter's `semanticType`, and the `or_group` sentence.
+
+**3. The inputs are the LAST thing you decide, not the first.** There is a circularity in "pick the
+action, then derive its inputs": which action is right depends on what the installer actually holds.
+So intersect two sides —
+
+- what an installer plausibly has (an email, a name, a domain, a profile URL, a CRM export)
+- what each surviving capability *requires*: `required`, `semanticType`, and the `or_group` sentence
+
+— and present the **entry points** that survive, each with its coverage and its cost. A real draft
+did this unprompted and it is the better shape: it offered three entry points and made *"which of
+these do your rows carry"* a declared input of its own, because that answer picks the opening stage.
+Another draft on the same table worked backwards from one action and asked only for an email. Neither
+is wrong; only one is derived.
+
+**Do not read `required` on its own.** Across 40 sampled enrichment actions, **7 mark nothing
+`required: true`**, and **6 of those 7** state the real contract only in a prose `displayHeader`
+sentence — *"At least one of the following fields is required…"*. A flag-only reader concludes
+nothing is required, which is exactly how an interview ends up asking for neither. Read the
+sentence; never parse it into a flag.
+
+**4. `## Declared inputs` is then a CONSEQUENCE.** It falls out of step 3 — each `semanticType`
+translated into the question to ask — rather than being assembled from the parameter names the table
+happened to bind. A table's `inputsBinding` writes a shotgun of ~10 alias names per action so
+whichever one the provider reads lands, so those names are candidates, not a contract.
+
+### Name the job and the shelf, never the vendor
+
+| Write | Example | Shelf life |
+|---|---|---|
+| ✗ a vendor | "use `nymblr-find-work-email`" | **retired inside two years** |
+| ✓ the job | "find a work email from a name and a domain" | durable |
+| ✓✓ **the job, plus the capability class and its price band** | "~18 managed work-email finders exist at 0.2–8 credits; take the cheapest that resolves and ladder down" | durable **and self-healing** |
+
+The third row is what `DETERMINISM.md`'s "ship no frozen catalogue" rule was reaching for and had no
+mechanism for. A retired vendor no longer breaks a skill written that way — the resolution step picks
+another. Concrete pairs belong in a **dated reference file labelled as a measurement**, with the rule
+that where the file and the live catalogue disagree, the catalogue is right.
+
+### Improve the mechanism; surface the judgment. The line is not negotiable.
+
+Reading the table as evidence licenses you to make the skill better than its source. It does not
+license you to invent what the creator meant.
+
+- **Improve the mechanism, and you must:** order by live cost, drop actions that no longer resolve,
+  turn an unexamined default into a declared input. None of this is optional.
+- **Surface the judgment, never settle it:** what counts as a good lead, what the insight is, whether
+  catch-alls are acceptable. Propose it, **label it as proposed**, and require a yes.
+
+Two independent drafts got this right without being told — both re-ordered by price *and said the
+order was proposed rather than inherited*. That is the standard.
+
+**And when the capability is simply gone, say so.** Run this on the reference table and it fails
+correctly: no surviving managed arm resolves a person from a *personal* email — two are retired and
+two require a `work-email`, which is the output the skill exists to produce. The honest draft says
+*"this cannot be done from a personal email alone; bring a name or a LinkedIn URL."* A confident
+four-arm waterfall there is the failure, not the deliverable.
 
 Write a **complete** `SKILL.md` to `build/<slug>/` — not an outline, not a plan. It must carry a
 **`## Declared inputs` section**: a three-column table of every value the installer supplies — the
