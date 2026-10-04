@@ -1403,6 +1403,7 @@ _CRED_SHAPES = re.compile(
     r"|github_pat_[A-Za-z0-9_]{20,}"        # fine-grained, underscores are inside the shape
     r"|xox[baprs]-[A-Za-z0-9-]{10,}"
     r"|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{6,}"
+    r"|clay_scoped_[A-Za-z0-9]{20,}"              # Clay's own scoped key — the one shape missing
     r"|AKIA[0-9A-Z]{16}"
     r"|AIza[A-Za-z0-9_-]{35}"                      # Google API key, fixed 39-char total
     r"|-----BEGIN(?:\s[A-Z]+)*\sPRIVATE KEY-----"  # PEM block, any key type
@@ -1421,8 +1422,19 @@ _CRED_SHAPES = re.compile(
 # the disclosure scanner's own credential axis, which has no sentinel list. Two checks, one string,
 # opposite verdicts — and the comment does not need the literal to make its point.
 _CRED_ASSIGNMENT = re.compile(
-    r"(?i)\b(?:api[_-]?key|apikey|secret|token|access[_-]?token|auth[_-]?token|authorization"
-    r"|bearer|password|passwd)"
+    # The left anchor used to be `\b`, and `_` is a word character — so there was no boundary
+    # between `CLAY_` and `API_KEY`, and every realistically-named variable escaped. Measured:
+    # `API_KEY=` caught, `CLAY_API_KEY=` missed; `SECRET=` caught, `AWS_SECRET_ACCESS_KEY=` missed;
+    # `TOKEN=` caught, `MY_TOKEN=` missed. The bare names were the only ones ever checked.
+    # An optional `[A-Za-z0-9_]*` prefix lets the keyword match as the SUFFIX of a longer
+    # identifier. Precision is carried by the 16-character value floor and the sentinel list
+    # below, not by this anchor.
+    # The identifier may continue on BOTH sides of the keyword, which the first attempt at this
+    # missed: `AWS_SECRET_ACCESS_KEY=` matched `SECRET` and then wanted the `=` immediately after
+    # it, so the variable escaped on its own suffix. Prefix and suffix are both optional runs.
+    r"(?i)(?:^|[^A-Za-z0-9_])[A-Za-z0-9_]*?"
+    r"(?:api[_-]?key|apikey|secret|token|access[_-]?token|auth[_-]?token|authorization"
+    r"|bearer|password|passwd)[A-Za-z0-9_]*"
     # An optional scheme word, so `authorization: Bearer <token>` is measured on the TOKEN.
     # Without it the value seen is "Bearer" — six characters, under the floor, silently safe.
     r"\s*[:=]\s*(?:Bearer\s+|Token\s+|Basic\s+)?[\"\']?(?P<v>[A-Za-z0-9_\-]{16,})[\"\']?"
@@ -1844,6 +1856,17 @@ def _resolve_stale_actions(body: str, fences, catalog: dict[str, str] | None) ->
     """
     if not catalog:
         return []
+    # TWO ACCEPTED SHAPES, and the legacy one must keep working: R4 has live callers that pass a
+    # flat `{stale: current}` map. The richer catalogue nests its renames under `renames` and its
+    # per-pair schemas under `actions`, so a flat map is read as-is and a nested one is read from
+    # `renames`. A nested catalogue with no `renames` disables R4 and leaves R5 running, which is
+    # correct: no rename knowledge is not the same as no catalogue.
+    renames = catalog.get("renames") if isinstance(catalog.get("renames"), dict) else None
+    if renames is None:
+        renames = {} if ("actions" in catalog or "renames" in catalog) else catalog
+    catalog = {k: v for k, v in renames.items() if isinstance(v, str)}
+    if not catalog:
+        return []
     out: list[Finding] = []
     seen: set[tuple[str, int]] = set()
     for m in _ACTION_KEY.finditer(body):
@@ -1870,6 +1893,156 @@ def _resolve_stale_actions(body: str, fences, catalog: dict[str, str] | None) ->
 
 
 # ─────────────────────────────────────────────────────────────────────────────────────────
+# R5 — the (packageId, actionKey) pair a paid step names: does it resolve, and do its
+#      input parameters exist with types that agree?
+#
+# WHY THIS EXISTS: a skill named a real action and fed `person_identifier` a personal email.
+# That parameter is `semanticType: person-linkedin-url`; an email there returns
+# `validation_error`, so the step was dead on arrival. It validated `ok`, 0 blocking,
+# 0 findings, and a human found it by running the skill.
+#
+# TWO CHECKS, AND THE SECOND ONE IS NOT THE LOUD ONE. Measured on a real 2024 table:
+# 5 of its 15 distinct pairs no longer resolve at all. A retired provider breaks the skill
+# for every installer and is mechanically detectable, where a wrong parameter is rare —
+# 1 of 59 published skills wires one explicitly. Both block; `action_not_found` will fire
+# far more often, and its remediation is different (pick another provider, not rewire a field).
+#
+# KEYED BY THE PAIR, NEVER THE KEY ALONE: 5 of 777 catalogue keys appear under more than one
+# packageId, `enrich-company` among them, so a key-only lookup is a known-ambiguous read.
+#
+# OFFLINE. This never shells out to `clay`. It reads a catalogue the caller supplies, because
+# `validate` exiting 1 means "a check did not run" and a check needing the CLI would make
+# every machine without it an exit-1. `scripts/fetch_action_catalog.py` writes the catalogue.
+# ─────────────────────────────────────────────────────────────────────────────────────────
+
+_UUID = r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+# A pair on one line, in either order, which is the house per-paid-step table format.
+_PAIR_LINE = re.compile(
+    rf"(?P<pid>{_UUID})(?P<between>.{{0,200}}?)`?(?P<key>[a-z][a-z0-9]*(?:-[a-z0-9]+)+)`?"
+    rf"|`?(?P<key2>[a-z][a-z0-9]*(?:-[a-z0-9]+)+)`?(?P<between2>.{{0,200}}?)(?P<pid2>{_UUID})"
+)
+# Parameters named as JSON keys (`{"person_identifier": …}`) or as a backticked identifier
+# followed by an arrow/colon — the two ways the corpus writes an input mapping.
+_PARAM_JSON = re.compile(r'"(?P<n>[a-z][a-z0-9_]{2,40})"\s*:\s*(?P<v>"[^"]{0,120}"|[^,}\|]{0,120})')
+_PARAM_ARROW = re.compile(r"`(?P<n>[a-z][a-z0-9_]{2,40})`\s*(?:←|<-|:=|:)\s*(?P<v>[^|\n]{0,120})")
+
+# A contradiction is only reported when the TYPE is structured and the VALUE prose is
+# unambiguous. The type side is an enum from the schema; the value side is the author's own
+# words, so anything less than an outright contradiction is left alone rather than guessed at.
+_URLISH = ("linkedin-url", "profile-url", "company-url", "website-url", "url", "domain")
+
+
+def _semantic_contradiction(semantic_type: str | None, value_prose: str) -> str | None:
+    """Return a human reason when a structured type and the stated value plainly disagree."""
+    if not semantic_type:
+        return None
+    v = (value_prose or "").lower()
+    st = semantic_type.lower()
+    has_email = "email" in v
+    has_url = any(w in v for w in ("linkedin", "url", "http", "profile"))
+    if any(st.endswith(u) or st == u for u in _URLISH) and has_email and not has_url:
+        return f"`{semantic_type}` expects a URL; the value given is an email"
+    if st == "work-email" and ("personal" in v or "gmail" in v):
+        return f"`{semantic_type}` expects a work address; the value given is a personal one"
+    if st in ("email", "work-email") and has_url and not has_email:
+        return f"`{semantic_type}` expects an email; the value given is a URL"
+    return None
+
+
+def _actions_index(catalog: dict | None) -> dict:
+    """The per-pair half of the catalogue. Absent in the legacy flat rename map → empty."""
+    if not isinstance(catalog, dict):
+        return {}
+    actions = catalog.get("actions")
+    return actions if isinstance(actions, dict) else {}
+
+
+def _resolve_action_pairs(body: str, fences, catalog: dict | None) -> list[Finding]:
+    index = _actions_index(catalog)
+    if not index:
+        # Same contract as R4: no catalogue → no findings. The pairs in this skill are
+        # UNVERIFIED rather than passing, which `validate` says in its summary.
+        return []
+    out: list[Finding] = []
+    seen: set[tuple[str, str, str]] = set()
+    for raw in body.split("\n"):
+        line_no = _line_of(body, body.index(raw)) if raw else 0
+        m = _PAIR_LINE.search(raw)
+        if not m:
+            continue
+        pid = m.group("pid") or m.group("pid2")
+        key = m.group("key") or m.group("key2")
+        if not (pid and key):
+            continue
+        entry = index.get(f"{pid}/{key}")
+        if entry is None:
+            continue  # not a pair the catalogue knows; silence beats a guess
+        if entry.get("resolves") is False:
+            if (pid, key, "nf") not in seen:
+                seen.add((pid, key, "nf"))
+                out.append(
+                    Finding(
+                        resolver="action_pair",
+                        severity="block",
+                        evidence=f"{pid}/{key}",
+                        line=line_no,
+                        detail="This skill names a Clay action that no longer resolves, so the "
+                        "step cannot run for any installer. Measured on a real table of this "
+                        "vintage, a third of its actions had been retired.",
+                        remediation="Re-resolve the capability against the live catalogue and "
+                        "name a provider that still exists, or describe the capability and have "
+                        "the skill pick one at install time.",
+                    )
+                )
+            continue
+        schema = {p.get("name"): p.get("semanticType")
+                  for p in (entry.get("inputs") or []) if isinstance(p, dict)}
+        if not schema:
+            continue
+        for pm in list(_PARAM_JSON.finditer(raw)) + list(_PARAM_ARROW.finditer(raw)):
+            name, value = pm.group("n"), pm.group("v")
+            if name == key or name in ("packageId", "actionKey"):
+                continue
+            if name not in schema:
+                if (pid, key, name) in seen:
+                    continue
+                seen.add((pid, key, name))
+                out.append(
+                    Finding(
+                        resolver="action_pair",
+                        severity="block",
+                        evidence=name,
+                        line=line_no,
+                        detail=f"`{name}` is not an input parameter of `{key}`. The step will "
+                        "reject the call, or silently ignore the value and answer about nobody. "
+                        "A table's input binding carries a shotgun of alias names, most of them "
+                        "wrong for the action it is bound to — only the schema says which is real.",
+                        remediation="Confirm the parameter against "
+                        f"`clay workflows actions schema {pid} {key}` and use the name it gives. "
+                        f"This action accepts: {', '.join(sorted(schema)) or '(none declared)'}.",
+                    )
+                )
+                continue
+            why = _semantic_contradiction(schema.get(name), value)
+            if why and (pid, key, name + "/type") not in seen:
+                seen.add((pid, key, name + "/type"))
+                out.append(
+                    Finding(
+                        resolver="action_pair",
+                        severity="block",
+                        evidence=f"{name}={value.strip()[:60]}",
+                        line=line_no,
+                        detail=f"`{name}` on `{key}`: {why}. The call fails per item, or "
+                        "resolves the wrong person — and the step looks configured either way.",
+                        remediation="Feed this parameter a value of the type the schema declares, "
+                        "or derive that value in an earlier step and reference it here. Confirm "
+                        f"with `clay workflows actions schema {pid} {key}`.",
+                    )
+                )
+    return out
+
+
+# ─────────────────────────────────────────────────────────────────────────────────────────
 # Entry point
 # ─────────────────────────────────────────────────────────────────────────────────────────
 
@@ -1885,7 +2058,13 @@ def check_portability(
         skill_md: the submitted body, decoded, exactly as stored.
         package_files: paths present in the package. A single-file submission passes
             ("SKILL.md",) — which is precisely why the canary must block.
-        action_catalog: stale-key → current-key map. None disables R4.
+        action_catalog: either the legacy flat `{stale-key: current-key}` rename map, or the
+            richer shape `{"renames": {...}, "actions": {"<packageId>/<actionKey>":
+            {"resolves": bool, "inputs": [{"name", "semanticType", "required"}],
+             "or_group": str|None, "credit_cost": float|None, "payment_type": str|None}}}`.
+            Keyed by the PAIR because 5 of 777 catalogue keys are shared across packages.
+            None disables R4 and R5 both: the pairs are then UNVERIFIED, not passing.
+            Written by `scripts/fetch_action_catalog.py`. Never fetched from here.
 
     Never performs network I/O. Never raises on malformed input: an exception here would
     fail OPEN, which is how the one real escape got accepted with `intake_findings: []`.
@@ -1934,6 +2113,10 @@ def check_portability(
         # answer — and would fire the report branch on any reference page that quotes an API host.
         ("third_party_dependency", lambda: _resolve_third_party_dependency(skill_md, fences)),
         ("stale_action", lambda: _resolve_stale_actions(skill_md, fences, action_catalog)),
+        # Registered AFTER stale_action deliberately: a key the catalogue knows has merely moved
+        # is R4's remap, not R5's block. R5 only speaks about pairs the catalogue carries a
+        # schema for, so a renamed key reaches it under its current name or not at all.
+        ("action_pair", lambda: _resolve_action_pairs(skill_md, fences, action_catalog)),
     )
     system: list[SystemFailure] = []
     if attribution()["fixture_suite_hash"].endswith("UNAVAILABLE"):

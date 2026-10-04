@@ -31,7 +31,7 @@ here?"* — invites a shrug. People correct a draft far better than they answer 
 **First line of output, before anything else:**
 
 ```
-clay-skill-author/2.25.1 · loaded from <absolute path to this SKILL.md>
+clay-skill-author/2.25.2 · loaded from <absolute path to this SKILL.md>
 ```
 
 **AND KEEP THAT ABSOLUTE PATH — every relative path below is relative to it, and reconstructing it
@@ -1348,6 +1348,41 @@ resolves on your disk and nowhere else. One sentence, at the moment they ask.
 ```
 python3 scripts/package_skill.py validate build/<slug>
 ```
+
+### Fetch the action catalogue first, or the paid steps go out unverified
+
+**If the draft names any `(packageId, actionKey)` pair, run these two in order — not just the second:**
+
+```
+python3 scripts/fetch_action_catalog.py --package build/<slug> -o /tmp/catalog.json
+python3 scripts/package_skill.py validate build/<slug> --action-catalog /tmp/catalog.json
+```
+
+On the table route you can take the pairs from the recipe instead of re-scanning the body:
+`--recipe <the derive_recipe config output>`.
+
+**Without the catalogue, `validate` says nothing about any action the skill calls, and `ok` means
+only that the SHAPE is right.** There is no finding to read and no warning that a check was skipped —
+it is the quietest kind of gap, so the two commands belong together or neither is worth running.
+What the second one then enforces:
+
+- **A pair that no longer resolves blocks.** Measured on a real 2024 table: **5 of its 15 distinct
+  pairs are retired.** A provider that is gone breaks the step for every installer, and this is the
+  branch that will fire most often — the remediation is to re-resolve the capability, not to rewire
+  a field.
+- **A parameter the action does not accept blocks**, and so does one whose declared `semanticType`
+  contradicts the value the draft feeds it. This is the defect that shipped: a skill fed
+  `person_identifier` a personal email, where the schema declares `person-linkedin-url`. It validated
+  `ok` with zero findings and a person found it by running the skill.
+
+**`fetch_action_catalog.py` performs reads only** — `workflows actions list` and
+`workflows actions schema`, and it refuses anything under `test` or `runs`. It never spends. The
+validator itself never calls `clay` at all, which is why the catalogue is a file: a check that needed
+the CLI would turn every machine without it into a failed run rather than an honest one.
+
+**If the catalogue cannot be fetched, say so in `## What this skill does not claim` and name the
+pairs you could not verify.** Unverified is a different thing from checked-and-clean, and only one of
+them is true in that case.
 
 ### A skill that arrived already written gets rewrapped first, and only its formatting
 

@@ -130,7 +130,12 @@ PORTABLE_DIRS = ("references", "scripts")
 # `unfilled_marker` and `optional_marker` are deliberately NOT here. They report a draft awaiting
 # its author, which is a different claim, and a build-notes file legitimately carries `{{handles}}`
 # by the page's own design — including them would flag correct work on every workflow-route package.
-CONTENT_RESOLVERS = ("workspace_handle", "endpoint")
+# `action_pair` is here because the defect that motivated it lived in a REFERENCE file, not in
+# `SKILL.md`: the house format puts the per-paid-step table with its (packageId, actionKey) pairs
+# on a supporting page, and the real shipped skill that fed `person_identifier` a personal email
+# did exactly that. Registered only in the body pass, the check read a file that never names a
+# pair and reported nothing — verified against that skill, recovered from git history.
+CONTENT_RESOLVERS = ("workspace_handle", "endpoint", "action_pair")
 
 # The ZIP epoch. Fixed so entry metadata carries no build clock — a timestamp is the usual reason
 # two byte-identical trees produce different archives.
@@ -792,7 +797,10 @@ def validate(root: str, action_catalog: dict | None = None) -> dict:
             # A file we could not open is not a file we checked. Same rule as 4a: silence beats a
             # pass we did not earn, and `portable_path`/`unreferenced_file` already speak to shape.
             continue
-        for fnd in P.check_portability(ref_body, [rel], None).findings:
+        # The catalogue IS passed here, unlike the `None` this used to carry: the pairs it checks
+        # live on supporting pages by convention, so withholding it here is withholding it from
+        # the only file that names them.
+        for fnd in P.check_portability(ref_body, [rel], action_catalog).findings:
             d = fnd if isinstance(fnd, dict) else getattr(fnd, "__dict__", {})
             if str(d.get("resolver")) not in CONTENT_RESOLVERS:
                 continue
@@ -800,6 +808,11 @@ def validate(root: str, action_catalog: dict | None = None) -> dict:
                 "check": "portability/" + str(d.get("resolver", "?")),
                 "severity": str(d.get("severity", "report")),
                 "detail": str(d.get("detail", ""))[:300],
+                # Carried because a BLOCKING finding without a fix is a dead end: the creator is
+                # told to stop and not told what to do. The body pass has always carried it; this
+                # pass dropped it silently, which only became visible once a blocking resolver
+                # was registered here.
+                "remediation": str(d.get("remediation", ""))[:300],
                 "evidence": str(d.get("evidence", ""))[:120],
                 "line": d.get("line"),
                 "path": rel,
