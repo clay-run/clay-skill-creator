@@ -143,13 +143,65 @@ build it as a Clay table/workflow instead and say so.
 - NEVER guess a verdict for an unverifiable row; NEVER silently correct a malformed
   address; NEVER report catch-all, role, or disposable rows as plain valid.
 
-## Output
+## Representative output
 
-1. **Audit CSV** — every input row: `email · normalized · segment · reason · evidence ·
-   duplicate_of · provider`.
-2. **keep.csv** — the sendable list (original strings, original columns intact).
-3. **Summary**: rows in → unique → per-segment counts + % → credits actually spent
-   (from usage metadata) → one-line recommendation for the stated purpose.
+Three artifacts come back. The rows below are the shape of a real cold-send clean, at the
+scale this skill was validated on — an 11-row list. **Every address and domain is
+invented** (`.example` reserved TLD, RFC-2606 names); `freemail.example` stands in for a
+consumer mail provider. The only four segments are **keep / risky / remove /
+could-not-verify**, and every input row lands in exactly one.
+
+### Audit CSV — every input row
+
+| email | normalized | segment | reason | evidence | duplicate_of | provider |
+|---|---|---|---|---|---|---|
+| dana.whitfield@example.com | dana.whitfield@example.com | keep | mailbox valid | `status: valid` + `sub_status: ""` (empty string) | — | validator |
+| r.calloway@example.net | r.calloway@example.net | risky | catch-all domain accepts anything | `status: valid` + `sub_status: catch_all` | — | validator |
+| j.okafor@freemail.example | j.okafor@freemail.example | risky | personal mailbox, risky under a cold-send policy | classifier `isLikelyPersonalEmail: true`; validator `status: valid` + `sub_status: alternate`, `free_email: true` | — | classifier + validator |
+| Dana.Whitfield@Example.com | dana.whitfield@example.com | remove | duplicate, case variant | identical to row 1 after lowercasing | row 1 | free pass |
+| dana.whitfield@example.com | dana.whitfield@example.com | remove | duplicate, exact | second occurrence of row 1 | row 1 | free pass |
+| t.ibrahim@@example.org | — | remove | syntax-invalid | two `@` in `t.ibrahim@@example.org`; string kept exactly as supplied, not corrected | — | free pass |
+| s.novak@nowhere.example | s.novak@nowhere.example | remove | dead domain | DNS answer: NXDOMAIN | — | free pass (DNS) |
+| m.haruki@nullmx.example | m.haruki@nullmx.example | remove | dead domain | single MX record `0 .` — the domain declares it takes no mail (RFC 7505) | — | free pass (DNS) |
+| burner@disposable.example | burner@disposable.example | remove | disposable provider | domain on blocklist; agreement probe returned `status: do_not_mail` + `sub_status: global_suppression` | — | free pass + validator |
+| info@example.com | info@example.com | remove | role mailbox, removed under a cold-send policy | local part `info` on the blocklist — no paid call spent on this row | — | free pass |
+| p.lindgren@slowmail.example | p.lindgren@slowmail.example | could-not-verify | validator could not reach the mailbox | `status: unknown` + `sub_status: mail_server_temporary_error` — retryable later | — | validator |
+
+Note the two rows a single-field read would get wrong: the catch-all is sitting under
+`status: valid`, and the freemail address is genuinely deliverable (`valid`) while still
+being risky for a cold send. The mailbox verdict never overrides the policy segment.
+
+### keep.csv — the sendable list
+
+Original strings, original columns untouched.
+
+| email | first_name | last_name | company | source_row |
+|---|---|---|---|---|
+| dana.whitfield@example.com | Dana | Whitfield | Northwind Systems | 1 |
+
+### Summary
+
+```
+Rows in: 11 → unique addresses: 9 (2 duplicates removed)
+
+  keep               1   9.1%
+  risky              2  18.2%   (1 catch-all, 1 personal/freemail)
+  remove             7  63.6%   (2 duplicate, 1 syntax, 2 dead domain,
+                                 1 disposable, 1 role)
+  could-not-verify   1   9.1%
+                    --  -----
+                    11  100.0%     11 in = 1 + 2 + 7 + 1  ✓
+
+Spend, read from run usage metadata: 0 credits + 5 action executions.
+  4 classifier calls on the free passes' survivors — 0 credits, 0 executions
+  5 tier-2 validator calls — 0 credits, 1 action execution each
+Free passes removed 5 of 11 rows before the first paid call.
+
+Recommendation for a cold send: send to keep.csv. The catch-all is worth one
+escalation probe if the list matters; the personal address needs a human call on
+whether consumer mailboxes belong in this campaign. Retry the could-not-verify row
+later — a temporary mail-server error is not a verdict.
+```
 
 ## Worked example
 
