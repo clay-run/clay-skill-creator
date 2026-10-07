@@ -151,6 +151,70 @@ somewhere — silent drops are the cardinal sin.
 - Depth beyond firmographics (tech stack, signals, scoring) → hand off to the named
   sibling skill.
 
+## Representative output
+
+Two artifacts. **Every company and domain below is invented** (`.example` reserved TLD).
+The five statuses are **enriched / not_enriched / dead-domain / ambiguous / acquired**, and
+every unique company lands in exactly one before being joined back to its input rows.
+
+### One row per unique company
+
+| input identity | resolved domain | status | industry | headcount band (ordinal) | revenue | HQ | founded | identity mismatch |
+|---|---|---|---|---|---|---|---|---|
+| Northwind Systems | northwind.example | enriched | B2B software | 201-500 (4) | $50M–$100M | US | 2014 | — |
+| Kirivale Ltd | kirivale.co.uk | enriched | logistics | 1,001-5,000 (6) | unknown | GB | 2003 | — |
+| Fabrikam Cloud | fabrikam.example | enriched | B2B software | unknown | unknown | US | unknown | **flagged** — the payload's `website` reads `fabrikam-group.example`, not the domain supplied. Possibly a different entity, so the row ships visibly doubted rather than quietly wrong |
+| Halloway Industrial | halloway-industrial.example | dead-domain | — | — | — | — | — | — |
+| Summit | — | ambiguous | — | — | — | — | — | — |
+| Brandex | brandex.example | acquired | — | — | — | — | — | — |
+| Quartzlane Systems | quartzlane.example | not_enriched | — | — | — | — | — | — |
+
+Three things in that table are load-bearing:
+
+- **The mismatch check reads `website`, never `domain`.** On a real payload the `domain`
+  field carried a link-shortener echo and would have raised a false mismatch on a perfectly
+  correct row. The wrong-entity failure is otherwise completely silent, which is the only
+  reason this column exists.
+- **The band ships as a string *and* an ordinal.** `"1,001-5,000"` coerced to a number
+  yields **1**. The ordinal column exists so downstream scoring never touches the string.
+- **`not_enriched` is a completed run.** The provider returns a run that completes while
+  the item inside it fails with `result: null`. A completed run is not a found company, and
+  gating on run status would record a fabrication here.
+
+### Summary
+
+```
+250 input rows → 212 unique companies
+
+  enriched       168    79%
+  dead-domain     22
+  ambiguous        8
+  acquired         3
+  not_enriched    11
+                 ---
+                 212 of 212 — every input row joined back to its account,
+                               nothing silently dropped
+
+Unknowns among the enriched rows: revenue 41, founded 29, headcount 12.
+A 100% fill rate on a real CRM list would mean something invented values —
+the unknown column having content is the honest residue, not a shortfall.
+Identity mismatches flagged: 6.
+
+Spend: 168 credits — one enrichment per UNIQUE DOMAIN, never per row. The same
+list priced per row costs 250. The 22 dead domains are the sharper saving: they
+enrich perfectly well on last-known data, so without the identity gate they
+would have returned confident, plausible, stale firmographics for 22 companies
+that no longer trade.
+
+Batching: the bulk endpoint caps at 100 items per run, so 212 companies execute
+as three chunked runs (100 + 100 + 12). A mechanical limit rather than a choice —
+plan a large list around it.
+```
+
+A note on what the coverage figure means: this skill's liveness screen deliberately refuses
+rows that a bare enrichment call would happily fill. Coverage below 100% is the price of
+that refusal, paid on purpose.
+
 ## Worked example
 
 Ask: "Enrich our 120-row account export — industry, size, revenue."

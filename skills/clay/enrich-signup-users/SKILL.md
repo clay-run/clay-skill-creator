@@ -193,15 +193,63 @@ compared. Route by the Step 1 policy — on **what resolved**, not just the pers
 - NEVER write to a CRM, enroll in sequences, or send anything — this play ends at the
   digest; acting on it is the enrich-and-route-leads play.
 
-## Output
+## Representative output
 
-Per signup:
-`email · type (the Step-2 enum value, + validity if checked) · identity (name, title,
-LinkedIn) · identity source (reverse-lookup / search-recovery / could-not-identify) ·
-company (name, domain) · ICP verdict (fit / no-fit / unresolved) · route (sales /
-sales-review / self-serve / disqualify) · evidence`
-plus a summary: signups in, identified %, fits, route counts, unique domains enriched
-vs rows, multi-signup accounts flagged, credits spent (actual).
+Two artifacts. **Every address, name and domain below is invented** (`.example` reserved
+TLD; `freemail.example` stands in for a consumer mail provider). The four routes are
+**sales / sales-review / self-serve / disqualify**, and every signup gets exactly one.
+
+### Per-signup routing
+
+| email | type | identity | identity source | company | ICP | route | evidence |
+|---|---|---|---|---|---|---|---|
+| maya.torres@brightloop.example | work | M. Torres, Head of Growth | search recovery | Brightloop, brightloop.example | fit | sales | reverse lookup came back empty; a name-plus-domain search returned exactly one match. **Top of the queue — four people from this domain signed up** |
+| d.okonkwo@brightloop.example | work | D. Okonkwo, VP Engineering | reverse lookup | Brightloop, brightloop.example | fit | sales | same account, and no second company enrichment was bought — the domain was already paid for |
+| r.calloway@meridianops.example | work | R. Calloway, Operations Manager | reverse lookup | Meridian Ops, meridianops.example | no-fit | self-serve | 12 employees, below the declared 50–5,000 band |
+| j.lindgren@ashgrove-polytechnic.example | education | J. Lindgren, Founder | search recovery via education history | Quartzlane Systems, quartzlane.example | no-fit | self-serve | identity recovered through the school in this person's *education history* — never through employment at the school's domain. Their actual employer is a 40-person startup, below band |
+| info@halloway-industrial.example | generic | — | — | — | unresolved | disqualify | generic mailbox, matched on the free pass before any spend |
+| kc.builds.zq77x2@freemail.example | personal | — | could-not-identify | — | unresolved | disqualify | reverse lookup empty and no anchor to search from. Recorded as "no person resolved from a personal address" — a signup you cannot identify is not a signup you may guess at |
+| test@gmai1.example | junk | — | — | — | unresolved | disqualify | typosquat of a consumer provider, caught by the freemail-typo screen before spend |
+
+The first two rows are the point of the whole skill. **Four signups from one domain is one
+account, not four leads** — and the account is more interesting than any of them
+individually, which is why it is flagged rather than just deduplicated.
+
+### Summary
+
+```
+40 signups in
+
+  by type — the free pass, before any spend
+    work         23
+    personal     12
+    education     1
+    generic       1
+    junk          3
+                 --
+                 40
+
+  routes
+    sales                10
+    sales-review          4
+    self-serve           14
+    disqualify           12    4 settled free at the triage step,
+                              8 unresolved after lookup
+                        ---
+                         40 of 40 accounted for
+
+  identified: 19 of the 33 attempted
+
+Company spend: the 23 work rows share 17 UNIQUE DOMAINS, so 17 company
+enrichments were bought rather than 23. One domain carried 4 signups.
+
+Spend: read the actual charge from run usage metadata. The free triage pass
+disqualified 4 of 40 rows before a single credit was spent, and domain dedupe
+took a further 6 enrichments off the bill.
+```
+
+**The route is the deliverable.** Nothing here is written to a CRM and no sequence is
+triggered — acting on these routes is a separate, deliberate step that you take.
 
 ## Worked example
 
