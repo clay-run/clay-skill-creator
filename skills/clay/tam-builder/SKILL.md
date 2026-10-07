@@ -282,6 +282,92 @@ enumerates; it does not enrich, score or contact.
 - NEVER use count-mode or `limit` clauses in a query — the grammar forbids both.
 - MUST stop on `quota_exceeded` and report progress; NEVER retry it.
 
+## Representative output
+
+Four artifacts, and the first line is the whole point. **Every company and domain below is
+invented** (`.example` reserved TLD). Slice verdicts are **exhausted / truncated /
+incomplete**, and only an `exhausted` slice contributes an exact number.
+
+### The figure
+
+```
+TAM: 1,847 companies — LOWER BOUND, not exact.
+
+Three of four slices enumerated to exhaustion. One hit a platform cap and was
+subdivided once, and its sub-slices capped again, so the true figure for that
+slice is above what is reported here. A single number without this line is
+unusable: "1,847" and "at least 1,847" support different decisions.
+```
+
+### Coverage receipt — one row per slice
+
+| slice | criteria | rows returned | verdict | note |
+|---|---|---|---|---|
+| A | B2B software · 50–200 band · US | 412 | exhausted | exact. Enumeration ended with the dataset reporting no further results |
+| B | B2B software · 201–500 band · US | 388 | exhausted | exact |
+| C | B2B software · 501–1,000 band · US | 196 | exhausted | exact |
+| D | B2B software · 50–1,000 band · EU | 851 | **truncated** | the enumeration was capped before the records ran out. Subdivided by country into five sub-slices; three of those capped again. Reported as a lower bound rather than subdivided a third time |
+
+The oracle here is the dataset's own exhaustion reason, and it has a trap in it: a cap
+reported under a name that reads like *your* limit is in fact **the platform's** limit,
+because a user-supplied limit clause is not permitted in this query mode at all. So a
+"limit" exhaustion never means you asked for too few.
+
+**Counting is not available.** There is no count query — the only way to know the size of a
+slice is to enumerate it to the end, which is why the receipt above exists instead of five
+numbers from five cheap calls.
+
+### The list, with identity collisions held out
+
+| company | domain | size band | country | identity |
+|---|---|---|---|---|
+| Northwind Systems | northwind.example | 201-500 | US | resolved |
+| Kirivale Ltd | kirivale.co.uk | 501-1,000 | GB | resolved |
+| Fabrikam Cloud | fabrikam.example | 50-200 | US | resolved |
+| Harrow Analytics | paymentslink.example | 50-200 | US | **identity_unresolved** |
+| Alder Systems | paymentslink.example | 501-1,000 | IE | **identity_unresolved** |
+
+```
+Held out for identity collisions: 61 records across 9 shared domains.
+Counted in the headline: 1,847.  Listed but excluded: 61.
+```
+
+**Never dedupe a TAM on domain, and never treat one domain as one company.** One real
+domain in this dataset is shared by **33 records carrying 28 distinct company ids** — the
+signature of a pasted link rather than a corporate family, and the more popular the platform
+whose URL got pasted, the worse the collapse. Deduping on domain would destroy 32 real
+companies; deduping on id would keep all the junk. So collisions are flagged and held out,
+and the tell is cheap: one domain against many records whose names, countries and size bands
+are unrelated.
+
+Note also that **the size figures are bands, not headcounts.** There is no exact employee
+count in this dataset, so `201-500` is the finest grain available and no arithmetic should
+pretend otherwise.
+
+### Both spends
+
+```
+Search rows consumed:   1,908 against the period allowance
+                        (metering is exactly per row returned — verified: the
+                        counter moved 5 and then 28 for pages of 5 and 28 rows)
+Allowance remaining:    printed on every page of every response
+Credits consumed:       0 — enumeration spends the search allowance, not credits
+
+Excluded, and why:
+  61 records   identity collisions on 9 shared domains
+  slice D      declared a lower bound after two rounds of subdivision
+  1 field      a low-coverage attribute needed a null-tolerant fallback in the
+               same block; without it, matching records are silently dropped
+               from the result rather than reported as unknown
+
+Two mechanical limits worth planning around: the per-request and per-period caps
+are plan-dependent, so the same partition is enumerable on one plan and not on
+another. And the iterator is forward-only with no cursor — an abandoned run
+cannot be resumed, only restarted, and restarting spends the rows again.
+```
+
+This play sizes and enumerates. It does not enrich, score or contact anyone.
+
 ## Worked example
 
 ICP: software companies, 50–2,000 headcount band, HQ in US / CA / UK. The workspace is on a

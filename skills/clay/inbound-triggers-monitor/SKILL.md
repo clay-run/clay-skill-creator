@@ -304,6 +304,79 @@ and ranks; it does not score against an ICP, write outreach, or push to a CRM.
 - NEVER claim a complete engager list, and NEVER infer that someone did not engage from
   their absence in a capped sample.
 
+## Representative output
+
+Three artifacts. **Every person, account and post title below is invented.** Intensity sums
+distinct (post, interaction) pairs at comment 3 · share 2 · reaction 1; tiers are
+**hot ≥5 / warm 3–4 / watch 1–2**, and every surviving row lands in exactly one.
+
+### Per person
+
+| person | profile | title · account | intensity | tier | distinct interactions | their words |
+|---|---|---|---|---|---|---|
+| M. Torres | /in/m-torres | Head of Growth · Brightloop | 8 | hot | commented on "Why pipeline reviews fail" (09-29) · reacted on three posts (09-22, 09-25, 10-01) · shared "Our Q3 benchmark report" (09-30) | "We ran exactly this and the hand-off step is where it broke for us." |
+| D. Okonkwo | /in/d-okonkwo | VP Engineering · Brightloop | 3 | warm | commented on "Why pipeline reviews fail" (09-28) | "Curious how this handles multi-region." |
+| R. Calloway | /in/r-calloway | unresolved | 2 | watch | shared "Our Q3 benchmark report" (09-30) | — |
+| J. Lindgren | /in/j-lindgren | Operations Manager · Meridian Ops | 1 | watch | reacted on "Why pipeline reviews fail" (09-27) | — |
+
+### Per account
+
+| account | summed intensity | people | tier mix |
+|---|---|---|---|
+| Brightloop | 11 | 2 | 1 hot, 1 warm |
+| unresolved | 2 | 1 | 1 watch |
+| Meridian Ops | 1 | 1 | 1 watch |
+
+### Coverage and suppression — the part that makes it honest
+
+```
+Posts enumerated: 11, window 2026-09-15 → 2026-10-01
+Types pulled: reactions, comments, shares
+
+COVERAGE. Four of 11 posts returned the maximum 50 reactions, so the engager
+list for those four is INCOMPLETE:
+
+    "Why pipeline reviews fail"      requested 50, returned 50   at cap
+    "Our Q3 benchmark report"        requested 50, returned 50   at cap
+    "Three things we got wrong"      requested 50, returned 50   at cap
+    "Hiring for ambiguity"           requested 50, returned 50   at cap
+    "A note on forecasting"          requested 50, returned 48
+
+The 48 is not reassurance. The provider returns what it can reach rather than
+what exists, so a short return is UNEXPLAINED, not complete. Requested and
+returned are both printed so the gap is visible instead of being asserted away.
+
+SUPPRESSION, by rule, all of it before any paid enrichment:
+    own employees and company pages      31 rows
+    existing customers and open opps      6 rows   (ran WITH a roster)
+    competitors                           2 rows
+                                         --
+                                         39 rows dropped, at zero cost
+
+Spend: 3 profiles + 11 posts × 3 types = (0.5 × 3) + (0.5 × 33) = 18 credits.
+Every interaction limit was passed explicitly at its cap. Left unset it
+defaults to 10 of a possible 50 — a 5× recall loss that looks exactly like a
+quiet post in the output.
+```
+
+Two fields that invite fabrication, and how these rows handle them:
+
+- **A reaction's preview text is not content.** It is a synthesized label of the form
+  *"<Reaction> by <name>"* — it restates two fields already in the row and adds nothing.
+  Only a comment's preview text is the person's own words, so the quotes shown above come
+  from comments and from nothing else. Quoting a reaction's preview text as something a
+  person said is fabrication wearing a real field name.
+- **The headline field is a bonus, not a contract.** It is present in the live payload and
+  absent from the action's declared outputs, so it may vanish without notice. `R. Calloway`
+  shows `unresolved` rather than an inferred title.
+
+A quiet window is reported quiet: no posts, or no surviving candidates, is zero with the
+reason. The window is never widened to fill a digest without saying so, and last week's
+people are never re-reported as this week's triggers.
+
+**This play detects and ranks.** It does not score against an ICP, write outreach, or push
+anything to a CRM — the surviving rows are handed to a scoring skill for that.
+
 ## Worked example
 
 Three monitored profiles: a founder and two AEs. The window is 14 days;
