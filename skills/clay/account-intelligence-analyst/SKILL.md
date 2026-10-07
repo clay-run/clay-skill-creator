@@ -125,7 +125,7 @@ Question: "Which of these accounts are building an AI team?"
 
   proxy                              arm                          cost   weight  observable?
   1. open AI/ML job postings         cpj-find-lists-of-jobs        1 cr      3    yes
-  2. eng headcount growth            cpj-get-company-employee-growth 1 cr    2    yes
+  2. eng headcount growth            cpj-get-company-employee-growth-v2 0.5cr 2   yes
   3. AI/ML named in own site copy    site fetch (free)             0 cr      1    yes
   4. named AI leader hired           news arm, date-windowed       1 cr      2    yes
   5. internal roadmap approval       —                             —         2    NO — declared unobservable

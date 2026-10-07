@@ -38,7 +38,7 @@ choice when the proxy only needs a number.
 | Observable | Cheapest arm | Cost | Expensive arm | Cost | Spread |
 |---|---|---|---|---|---|
 | Open job postings | `cpj-find-lists-of-jobs` | 1 | `pdl-enrich-company-job-post-insights` | 10 | **10×** |
-| Employee growth | `cpj-get-company-employee-growth` | 1 | `pdl-enrich-company-detailed-employee-trends` | 10 | **10×** |
+| Employee growth | `cpj-get-company-employee-growth-v2` | **0.5** | `pdl-enrich-company-detailed-employee-trends` | 10 | **20×** |
 | Hiring by department | `lusha-enrich-company-jobs-growth-by-department-signal` | 8 | — | — | — |
 | News / press | `find-google-news-results` | 1 | `lusha-enrich-company-news-signal` | 8 | **8×** |
 | Tech stack | `buyercaddy-enrich-company-tech-stack` | 4 | `cb-insights-company-technology-classification` | 8 | 2× |
@@ -144,7 +144,7 @@ Payload note: full job descriptions ship by default — ~6–9 KB each, 72 KB fo
 AI-column build that is a context cost as well as a credit cost, and `identifiers_only` avoids
 it.
 
-### `cpj-get-company-employee-growth` — 1 cr flat.
+### `cpj-get-company-employee-growth-v2` — 0.5 cr flat (re-verified 2026-10-07; key versioned to `-v2` and cost halved from 1).
 
 The `website` (domain) path works, and **echoes back the resolved LinkedIn company URL** — free
 corroboration that the arm resolved the same entity your anchor did. Use it as an anchor

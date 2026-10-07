@@ -42,7 +42,7 @@ the output.
 
 | Input | What the installer supplies | If it is missing |
 |---|---|---|
-| **An identifier per company** | a company profile URL for the high-accuracy route, or a domain for the documented lower-accuracy one | route each row by what it has; the two run as separate calls and mixing them hard-fails. Name-only rows resolve the domain first, and if the resolution returns a profile URL, harvest it — that row then rides the accurate route for free |
+| **An identifier per company** | a domain, a company profile URL, or a Clay company id — whichever the list already carries | one field takes all three, and the type is inferred from the value unless you name it. Set it explicitly when the column is mixed. Name-only rows resolve to a domain first, because a wrong domain measures the wrong company silently |
 | **Which windows** | near-term momentum, sustained trend, or both | **3 and 12 months read together is defensible** and must be stated: one window alone is a number, not a trajectory |
 | **Cost ceiling** | credits, knowing that misses bill too | dedupe companies first, state list × cost, and say that obscure and very small companies miss more — a low-coverage list burns credits on empty results |
 
@@ -72,13 +72,15 @@ keys drift (`references/growth-mechanics.md`) — and read its declared cost.
 
 ## Step 1 — Scope (identifiers, windows, cost)
 
-1. **Identifier per company** — LinkedIn company URL is the high-accuracy
-   arm; domain is the documented lower-accuracy arm (route each row by what it
-   has — the arms run as separate calls; a domain in the URL arm hard-fails).
-   Name-only rows: resolve the domain FIRST (resolve-company-domain — a wrong
-   domain here silently measures the wrong company), and if the resolution's
-   corroboration payload carries the company's LinkedIn URL, HARVEST it — the
-   resolved row rides the high-accuracy arm for free.
+1. **Identifier per company** — **one field takes all three forms.** Pass the
+   value in `company_identifier`; the type is inferred when you leave
+   `company_identifier_type` empty (a profile URL reads as a social URL, a whole
+   number as a Clay company id, anything else as a domain). Set the type
+   explicitly when the column is mixed, from `company_domain`,
+   `company_linkedin_url` or `clay_company_id`. There is no longer a separate
+   arm per identifier and no hard-fail for putting a domain in the wrong field.
+   Name-only rows still resolve the domain FIRST (resolve-company-domain — a
+   wrong domain here silently measures the wrong company).
 2. **Windows that matter** — near-term momentum (3/6-month) vs. sustained
    trend (12/24-month); default to reading 3 + 12 together (the reversal
    check). One window alone is a number, not a trajectory.
@@ -89,28 +91,34 @@ keys drift (`references/growth-mechanics.md`) — and read its declared cost.
 
 ## Step 2 — Run the action (surface by list size)
 
-Per unique company, run **Find Company Headcount Growth** — one arm per row:
-`url` = LinkedIn company URL, or `website` = domain (never a domain in `url`;
-it hard-fails). Small lists (≤20): ad-hoc action execution — it has a
-25-runs/day workspace quota, and if today's quota is already spent the refusal
-is explicit and free — switch surfaces, don't wait. Larger lists or spent
-quota: the two single-arm workflows in `references/growth-mechanics.md`
-(workflow runs bypass the ad-hoc quota). Never loop past the quota into
-errors.
+Per unique company, run **Find company headcount growth** with the single
+`company_identifier` input from Step 1. Small lists (≤20): ad-hoc action
+execution — it has a 25-runs/day workspace quota, and if today's quota is
+already spent the refusal is explicit and free, so switch surfaces rather than
+waiting. Larger lists or spent quota: **one** workflow, per
+`references/growth-mechanics.md` (workflow runs bypass the ad-hoc quota). Never
+loop past the quota into errors.
 
-## Step 3 — Read the payload honestly (three shapes)
+## Step 3 — Read the payload honestly (four shapes)
 
 - **Hit**: numeric `employee_count` + per-window backdated counts and
-  percentages. FIRST check the entity echo: the result's `name`/`url` name the
-  company the action actually matched — if they don't match the company you
-  asked about, the row is a wrong-entity hit; flag it, don't report its
-  numbers.
+  percentages, plus `clay_company_id`. FIRST check the entity echo: the
+  result's `name`/`url` name the company the action actually matched — if they
+  don't match the company you asked about, the row is a wrong-entity hit; flag
+  it, don't report its numbers.
 - **Per-window nulls inside a hit are normal** (short-window and old-window
   data are often missing even for major companies) — a null window is "no
   snapshot", never zero growth.
-- **Miss**: run completes, `success: true`, `result` EMPTY (the only signal is
-  a "Company Not Found" preview). Verdict `unverifiable` — never "flat", never
-  0%. The credit was still spent; count it.
+- **Not found**: the step **completes**, `success: true`, `result` EMPTY, and
+  the only signal is a `❌ Company Not Found` preview string. Verdict
+  `unverifiable` — never "flat", never 0%. **This one bills.** Count it.
+- **Invalid identifier**: the step **fails** with
+  `ERROR_INVALID_INPUT — Invalid company identifier`, an `errors` array, and
+  empty outputs. **This one is free.** It means the value was not a usable
+  identifier at all, not that the company is unknown — so it is a data-quality
+  finding about your list, not a verdict about the account, and it is cheap to
+  discover. Note that a failing step fails the run, so screen obviously
+  malformed identifiers before a batch rather than during it.
 
 ## Step 4 — Interpret (denominator, bucket, trajectory)
 
@@ -155,8 +163,9 @@ in, measured, unverifiable, wrong-entity, credits measured vs declared
 
 ## Rules
 
-- MUST resolve name-only rows to a domain before measuring; MUST pass the
-  LinkedIn URL when available (domain is the documented lower-accuracy arm).
+- MUST resolve name-only rows to a domain before measuring; MUST set
+  `company_identifier_type` explicitly when the identifier column is mixed,
+  rather than relying on inference row by row.
 - MUST check the entity echo (`name`/`url`) on every hit; a mismatched echo is
   a wrong-entity flag, never a reportable number.
 - MUST treat empty-result success as `unverifiable` (billed, counted) — never

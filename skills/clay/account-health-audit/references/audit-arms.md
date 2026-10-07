@@ -20,12 +20,29 @@ price and in vendor:
 For a read-only audit the cost ambiguity is the issue. For the write-shaped keys it is a
 correctness issue, and worth knowing even though this skill never writes.
 
+**Re-verified 2026-10-07: still exactly 5, and still these 5.** The catalogue carries 776
+distinct action keys and 782 action rows — the 6-row gap is these collisions. Resolve a
+collision by pinning the `(packageId, actionKey)` pair, and read the ids off a fresh
+`clay workflows actions list` rather than from here, because a package id is the one thing
+in this file that cannot be checked by eye:
+
+```
+enrich-company           2 packages
+update-lead              3 packages   ← the widest, and the one that writes
+create-contact           2 packages
+pull-data                2 packages
+lookup-lead-in-campaign  2 packages
+```
+
+`update-lead` resolving to the wrong package writes real data to the wrong CRM, which is why
+this is a correctness note and not a pricing note.
+
 ## Cheap company-enrichment arms
 
 | Arm | Cost | Required input | Notes |
 |---|---|---|---|
 | `icypeas-enrich-company` | 0.5 | **`linkedin_url`** | cheapest by price, but unreachable from a domain without a prior resolution call |
-| `cpj-enrich-company` | 1 | `company_identifier` | accepts a bare domain; richest payload probed |
+| `cpj-enrich-company-v2` | **0.5** | `company_identifier` (+ optional `company_identifier_type`) | accepts a bare domain; richest payload probed. Re-verified 2026-10-07: key versioned to `-v2`, cost halved from 1, and 27 fields returned including `website`, `resolved_domain`, `last_refresh`, `structured_locations_count` and `clay_company_id` |
 | `leadmagic-enrich-company` | 1 | none required (`domain` / `company_name` / `company_linkedin_url`) | accepts a bare domain |
 | `datagma-enrich-company` | 2 | — | not probed |
 | `enrich-company` (Clearbit) | 8 | `domain` | see the collision table |
@@ -44,7 +61,7 @@ subset.
 
 Probed on the same domain, same day. Field names verbatim.
 
-| | `cpj-enrich-company` | `leadmagic-enrich-company` |
+| | `cpj-enrich-company-v2` | `leadmagic-enrich-company` |
 |---|---|---|
 | Exact headcount | `employee_count` | `employeeCount` |
 | Headcount band | `size` | `employee_range` **and** `employeeCountRange {start,end}` |
@@ -61,12 +78,12 @@ Probed on the same domain, same day. Field names verbatim.
 
 Two things worth using:
 
-- **`cpj-enrich-company.last_refresh`** is a provider-side freshness timestamp. Where an arm
+- **`cpj-enrich-company-v2.last_refresh`** is a provider-side freshness timestamp. Where an arm
   offers one, it beats any staleness you could infer, and it is free with the call.
 - **`leadmagic.credits_consumed`** duplicates Clay's cost metadata inside the payload. They agreed
   in the probe (1 = 1). A disagreement between them would itself be a finding.
 
-Also: `cpj-enrich-company` returned **12 structured locations for 1 credit**, where
+Also: `cpj-enrich-company-v2` returned **12 structured locations for what is now 0.5 credits**, where
 `enigma-get-operating-location-addresses` bills **0.8 per location** — 9.6 credits for the same
 count. A richer flat-priced enrichment arm can dominate a specialised per-unit arm outright.
 
@@ -98,7 +115,7 @@ Neither arm flagged uncertainty. Both returned `success: true`.
 - Arm B: `founded_year: "2010"` (string) and `foundedOn.year: 2010` (int). Same value, two types,
   one record.
 
-**Corroboration on the headcount:** a third arm, `cpj-get-company-employee-growth` (1 cr, a
+**Corroboration on the headcount:** a third arm, `cpj-get-company-employee-growth-v2` (0.5 cr, a
 different action in the same package as arm A), independently returned **17,112** — matching arm A
 exactly. So arm B's 11,303 is the outlier of the three readings, and arm A's own *band* is the
 outlier within arm A. Neither of those conclusions is available from one call.

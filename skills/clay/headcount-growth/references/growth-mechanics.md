@@ -1,17 +1,23 @@
 # Growth mechanics — action contract, payload shapes, surfaces, interpretation
 
-Live-verified mechanics 2026-08-12 (isolated eval workspace); re-verify per
-workspace — costs, action keys, and payload shapes drift on this platform.
+Re-verified live **2026-10-07**; re-verify per workspace — costs, action keys and
+payload shapes drift on this platform. **The action was versioned to `-v2` between
+2026-08 and 2026-10, and its input contract changed with it**, which is what this
+table is for.
 
 ## The action contract (live)
 
-| Fact | Value (live-verified) |
+| Fact | Value (live-verified 2026-10-07) |
 |---|---|
-| Display name | **Find Company Headcount Growth** (package "Companies, People, Jobs") |
-| Action key | `cpj-get-company-employee-growth` — DRIFTED from the older `get-company-employee-growth-with-mixrank`; find it by display name in the catalog dump, then use the key + packageId the dump gives you |
-| Inputs (all optional, ≥1 required) | `url` (Company LinkedIn URL — "Highest Accuracy") · `org_id` (LinkedIn company ID / Sales Nav URL) · `website` (domain — "Lower Accuracy"; used only when the URL arm is absent/fails) |
-| Cost | 1 credit per run — **misses bill the same 1 credit as hits** |
-| Outputs | `name`, `url`, `domain`, `employee_count`, and per-window pairs: `employee_count_{N}_month(s)_ago` + `percent_employee_growth_over_last_{N}_month(s)` for N ∈ 1, 3, 6, 9, 12, 24, 36, 48, 60 |
+| Display name | **Find company headcount growth** (package "Companies, People, Jobs") |
+| Action key | `cpj-get-company-employee-growth-v2`, package `e251a70e-46d7-4f3a-b3ef-a211ad3d8bd2`. It has drifted twice now — from `get-company-employee-growth-with-mixrank`, then to this `-v2`. Resolve it by display name from the catalogue dump and take the key **and** packageId from there rather than trusting this cell |
+| Inputs | **one identifier field, not three.** `company_identifier` (**required**) and `company_identifier_type` (optional, one of `clay_company_id` / `company_linkedin_url` / `company_domain`). **Left empty, the type is inferred from the value:** a profile URL reads as a social URL, a whole number as a Clay company id, anything else as a domain |
+| Cost | **0.5 credits per run** — halved from the 1 credit measured in 2026-08. A not-found still bills; an invalid identifier does not |
+| Outputs | `name`, `url`, `domain`, `employee_count`, **`clay_company_id`**, and per-window pairs: `employee_count_{N}_month(s)_ago` + `percent_employee_growth_over_last_{N}_month(s)` for N ∈ 1, 3, 6, 9, 12, 24, 36, 48, 60 |
+
+**Measured on shopify.com, 2026-10-07:** `employee_count` 30,135; the 1-month
+window came back `null` while 3/6/9/12/24/36/48/60 all carried values — so a null
+window is an absent snapshot and not a zero, even on a company this well covered.
 
 Catalog lookup: `clay workflows actions list` (dump, grep by display name) →
 `clay workflows actions schema <packageId> <actionKey>` for the input schema.
@@ -71,38 +77,41 @@ it. There is no error channel for "found a different company".
 | Ad-hoc action execution (`execute_clay_action` MCP tool) | small lists (≤20 companies) | 25 test-runs/day per WORKSPACE quota, shared with everything else ad-hoc that day; hitting it blocks for ~a day |
 | Workflow surface | batches, or when the ad-hoc quota is spent | free of the ad-hoc quota; one-time build below |
 
-**One-time workflow build — TWO single-arm workflows** (CLI + the plugin's
-workflow tools). Build one URL-arm workflow and one domain-arm workflow; route
-each row to the arm matching the identifier it has:
+**One-time workflow build — ONE workflow** (the growth action now takes a single
+identifier, so the two single-arm workflows the 2026-08 build needed are obsolete;
+delete them rather than maintaining them).
 
-1. `clay workflows create --name "<yours>"` — created workflows are
-   trigger-less.
-2. Add a manual trigger via the plugin's trigger-edit tool (`triggerType:
-   manual`, inputSchema with ONE required field: `{url}` for the URL-arm
-   workflow, `{website}` for the domain-arm) — this is the only call that
-   creates a runnable trigger node.
-3. Read the workflow back (the plugin's workflow-read tool, summary mode) to
-   get the trigger's `wfn_…` node id — the trigger-create response returns
-   only a UUID resourceId, not the node id you wire edges from.
-4. Add a tool node wired from that trigger node id: tool = the growth action;
-   map the one arm as a reference (`{{url}}` or `{{website}}`) and map the
-   OTHER arm as `skip` — never leave it referencing a variable the trigger
-   doesn't carry.
-5. Run per company: `echo '{"url":"..."}' |
-   clay workflows runs test <wf> --inputs -` → poll
-   `clay workflows runs get <wf> <runId> --wait 60 --verbose` → the tool
-   node's `outputs.result` is the payload; run-level `dataCreditsUsed` is the
+1. `clay workflows create --name "<yours>"` — created workflows are trigger-less.
+   A workspace with no budgets can still create and run drafts.
+2. `clay workflows triggers create <wf> --input '{"triggerType":"manual",
+   "inputSchema":{"type":"object","properties":{"company_identifier":{"type":"string"}}}}'`
+   — `inputSchema` needs `type` AND `properties` or it is rejected. The response
+   carries `workflowNodeId` (`wfn_…`), which is the id you wire edges from; the
+   `resourceId` UUID is not.
+3. Add the tool node wired from that trigger node:
+   `clay workflows nodes insert <wf> --input '{"target":{"type":"after-node",
+   "nodeId":"<trigger wfn_…>"},"step":{"kind":"action","actionPackageId":
+   "e251a70e-46d7-4f3a-b3ef-a211ad3d8bd2","actionKey":
+   "cpj-get-company-employee-growth-v2","name":"growth"}}'`.
+   A tool node's `inputSchema` is **not writable** — it takes its inputs from
+   upstream fields matching by NAME, so a code node feeding it must emit
+   `company_identifier` (and `company_identifier_type` if you are setting it).
+4. Run per company: `clay workflows runs test <wf> --inputs
+   '{"company_identifier":"acme.com"}'`. **Every run returns
+   `approval_required` with an `aar_…` id and spends nothing until
+   `clay approvals approve <aar_…>` is called** — so a batch driver has to
+   handle that, and an unattended schedule needs that question answered first.
+   Then `clay workflows runs steps <wf> <runId>` → the tool step's
+   `stepOutputs.result` is the payload; run-level `dataCreditsUsed` is the
    measured cost.
 
-**Why single-arm (live-verified the hard way)**: the action VALIDATES its
-`url` input and HARD-FAILS on a non-LinkedIn value (`ERROR_INVALID_INPUT —
-Input URL is not a LinkedIn company page`) — despite the schema's own prose
-claiming it "only uses the company domain if we need it". There is no
-domain-in-`url` fallback; a both-fields workflow fed a domain in `url` fails
-the run (billed 0, but wasted). Schema descriptions are marketing; runtime
-validation is the contract. Pinned-input discipline still applies: every
-mapped reference must be present and non-empty in every run's inputs
-(undefined AND `""` both fail the run).
+**What changed, and why the old rationale is gone**: the 2026-08 action validated a
+separate `url` field and hard-failed on a non-profile value, which is why two
+single-arm workflows existed. The v2 action has one `company_identifier` and infers
+the type, so there is no wrong field to put a domain in. The empty-pin rule is also
+retired — an empty pin now arrives as `""` and a missing path as `None`, and neither
+fails the run. What still holds: a **required** input that is absent fails the step
+outright, and a failed step fails the run.
 
 ## Interpretation rules (deterministic — code, not judgment)
 
