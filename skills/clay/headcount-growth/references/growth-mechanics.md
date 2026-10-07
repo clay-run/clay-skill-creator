@@ -1,7 +1,7 @@
 # Growth mechanics — action contract, payload shapes, surfaces, interpretation
 
 Live-verified mechanics 2026-08-12 (isolated eval workspace); re-verify per
-workspace — costs, action keys, and payload shapes drift on an alpha platform.
+workspace — costs, action keys, and payload shapes drift on this platform.
 
 ## The action contract (live)
 

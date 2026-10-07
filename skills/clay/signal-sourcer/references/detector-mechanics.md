@@ -1,7 +1,7 @@
 # Detector mechanics — the net-new arm, noise profiles, harvest rules, surfaces
 
 Live-verified 2026-08-12 (isolated eval workspace); re-verify per workspace —
-catalogs, costs, and payload shapes drift on an alpha platform.
+catalogs, costs, and payload shapes drift on this platform.
 
 ## What this surface has (and doesn't)
 

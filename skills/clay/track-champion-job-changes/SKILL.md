@@ -29,8 +29,8 @@ becomes a relationship risk (BACKFILL). Most teams run neither because nobody is
 This skill builds the watcher: a scheduled Clay **workflow** that checks each champion's
 current employer, flags real moves, and produces a play-ready digest.
 
-Clay workflows are an **Alpha** product — say so to the user before building, so they can
-calibrate expectations.
+A scheduled workflow is something the installer then owns and maintains, so say what it will
+cost per run and how often it fires before you build it, not after.
 
 ## Declared inputs
 
@@ -132,7 +132,12 @@ user the graph. Where more than one Clay action can do a step (several person-en
 people-finding functions usually exist), list the options by human-readable name with costs
 and let the user choose.
 
-Build gotchas verified against the live Alpha (2026-08):
+Build gotchas, each one measured live — **but measured 2026-08, before workflows went GA.**
+Treat them as the known traps rather than as current facts: a workaround below may be for a
+bug that has since been fixed, and a rule below may have changed. Confirm each against the
+installed version as you wire it (`clay workflows nodes --help`, then a draft run) rather
+than assuming either way. The balanced-diamond rule is the one to check first, because its
+failure mode is silent.
 - Code nodes are `def handler(context):` returning a dict; read inputs with
   `context.get_input("name")`. Top-level `return` is a syntax error.
 - Pin inputs via the flat `inputSchema` shorthand (`{"x": {"type":"string","sourceNodeId":
@@ -270,8 +275,9 @@ is why the test run exists.
 the follow note is a draft, the backfill is a recommendation, and the seat-vacated flag is a
 line in a report. Acting on any of it is a separate decision that you make.
 
-One dependency worth stating plainly: this is built as a scheduled Clay workflow, and Clay
-workflows are an **Alpha** product.
+One dependency worth stating plainly: this is a scheduled Clay workflow, so once it is built
+it is yours — it fires on its cadence whether or not anyone reads the digest, and the spend
+recurs with it.
 
 ## Worked example
 

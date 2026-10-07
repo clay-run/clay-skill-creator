@@ -2,7 +2,7 @@
 
 Mechanics below marked "live-verified" were pinned in the isolated eval workspace
 (2026-08-12, sibling-skill research on the same actions); re-verify per workspace —
-catalogs, costs, and payload shapes drift on an alpha platform.
+catalogs, costs, and payload shapes drift on this platform.
 
 ## The news arm (backbone — live-verified mechanics)
 
