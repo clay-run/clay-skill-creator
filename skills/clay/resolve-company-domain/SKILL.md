@@ -163,6 +163,61 @@ counts, credits measured).
   "is this domain alive".
 - Batch: dedupe names first, state cost, cap the run; per-row provenance ships.
 
+## Representative output
+
+Two artifacts. **Every company name and domain below is invented** (`.example` reserved
+TLD). The five verdicts are **resolved / acquired / ambiguous / not_found / mismatch**, and
+there is no sixth — in particular there is no "probably".
+
+### Per-row verdicts
+
+| input | verdict | canonical domain | operating entity | confidence | provenance |
+|---|---|---|---|---|---|
+| Northwind Systems (US) | resolved | northwind.example | Northwind Systems Inc. | validated | lookup produced the candidate; the free status probe returned a live page whose title reads *"Northwind Systems — Inventory Software"*. The title **is** the semantic evidence |
+| Kirivale (UK) | resolved | kirivale.co.uk | Kirivale Ltd | corroborated | the claimed domain validated. Normalization kept the `co.uk` family intact — a naive registrable-label split takes `co.uk` itself and kills every international row |
+| Brandex | acquired | — | absorbed into Acme Corp | — | news screen confirms the acquisition. The stale `brandex.example` is **never** the answer; `acme-corp.example` ships as the actionable candidate, and resolving to the acquirer is your call because the entity changed |
+| Summit (US) | ambiguous | — | three live candidates | — | a common-word name pinning three real companies: Summit Logistics, Summit Dental Group, Summit Capital Partners — one line each, you pick. This is the refusal working, not the skill failing |
+| Halloway Industrial | not_found | — | — | — | no living candidate. The two name variants tried are listed, so you can see what was searched rather than trusting that something was |
+| Fabrikam Cloud, claiming `fabrikam-cloud.example` | mismatch | — | — | — | the claimed domain serves a parked-registrar page. A better candidate did emerge — `fabrikam.example`, serving a live branded product page — and it is offered, never substituted in silently |
+
+A resolved row is meant to be load-bearing: downstream enrichment can key off it without
+re-checking. That is the entire purpose of making the other four verdicts available.
+
+### Summary
+
+```
+6 rows in
+
+  resolved     2
+  acquired     1
+  ambiguous    1
+  not_found    1
+  mismatch     1
+              --
+               6 of 6
+
+Spend: 1 credit measured. The paid candidate lookup runs only on name-only rows;
+four of these six were settled by free gates — normalization, the status probe,
+the news screen — before any credit was spent.
+
+A 100% resolution rate on a list of common-word names would mean the skill
+guessed. The ambiguous bucket having content is the quality signal.
+```
+
+### What these gates cannot see
+
+Measured against a 250-account labelled panel, and worth knowing before you trust a
+`resolved` row absolutely: **a company can be dead or quietly acquired and still serve a
+live, branded, content-rich site today.** On such a row the status probe passes, the news
+screen is silent, and from a name and a region the row is indistinguishable from a healthy
+company. Two rows in that panel behaved exactly this way and no amount of free gating
+reached them.
+
+So `resolved` means *this domain is the live operating site for this name, on the evidence
+available* — not *this company is trading*. If a stale-account consequence is expensive for
+you, that needs a registry or news deep-check priced per row, which this skill does not
+spend on by default.
+
 ## Worked example
 
 Ask: "Clean these 5 company names into real domains: Brightloop, Meridian, Subway,
