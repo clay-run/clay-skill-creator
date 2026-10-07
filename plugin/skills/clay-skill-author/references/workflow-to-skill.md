@@ -316,9 +316,10 @@ passes:
 3. **Name the nodes in dependency order** with type, what feeds each one, and the edges — or point at
    a `references/` file carrying the graph, which is what the passing skill does.
 4. **Carry the node traps**, because they are what makes a build fail halfway and leave a broken
-   workflow. Measured ones: an asymmetric merge node stays pending forever; a tool node does not echo
-   its own inputs, so trigger fields cannot ride through it; a pin two hops back resolves to null;
-   tool-node pins need `$.result` where code-node pins need `$`.
+   workflow. Re-measured on GA 2026-10-07: a tool node does not echo its own inputs, so trigger fields
+   cannot ride through it, and `graph validate` checks neither merge shape nor pin paths. Retired by GA:
+   asymmetric merges complete, deep pins resolve, empty pins no longer fail a run, and a tool pin of
+   `"$"` returns the envelope rather than erroring.
 5. **A `MUST` on where judgment lives** — a code node, never an LLM node. The LLM node is for prose,
    never for comparison or routing.
 6. **State the topology, read off the EDGES.** See the three rules below — this is where a build
@@ -340,9 +341,9 @@ opposite, from the list rather than the edges, and was wrong.
 **2. REPRODUCE THE SOURCE'S SHAPE. DEVIATE ONLY WHEN YOU CAN NAME WHAT THE DEVIATION NEEDS — AND
 WRITE THE DEVIATION INTO THE SKILL.** Four independent enrichments *could* run in parallel: same
 credits, lower latency. But parallel means four branches converge before the next node, a
-convergence needs a **merge node the serial shape never needed**, and this page's own trap list says
-an asymmetric merge stays pending forever. So a "simplification" that adds a component with its own
-failure mode is not one.
+convergence needs a **merge node the serial shape never needed**. That merge no longer hangs on GA, but
+it is still a component the serial shape did not have, with its own config to get wrong. So a
+"simplification" that adds one needs to buy something real.
 
 Two tests before changing a shape:
 

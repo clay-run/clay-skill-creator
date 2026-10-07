@@ -132,30 +132,47 @@ user the graph. Where more than one Clay action can do a step (several person-en
 people-finding functions usually exist), list the options by human-readable name with costs
 and let the user choose.
 
-Build gotchas, each one measured live (2026-08):
+Build gotchas, re-measured live on GA (2026-10-07) against a throwaway five-node graph:
 - Code nodes are `def handler(context):` returning a dict; read inputs with
-  `context.get_input("name")`. Top-level `return` is a syntax error.
+  `context.get_input("name")`. Top-level `return` is still a syntax error —
+  `'return' outside function`. The runtime adds `executedAt` and `capturedStdout` to
+  whatever you return.
 - Pin inputs via the flat `inputSchema` shorthand (`{"x": {"type":"string","sourceNodeId":
-  "wfn_...","sourcePath":"$.field"}}`). Pins that resolve to undefined OR empty string fail
-  the whole run — emit non-empty sentinels ("none") for possibly-empty fields.
-- **Tool-node OUTPUT pins:** read a tool node's result with `sourcePath: "$.result"`
-  (the validator flags `"$"` with `inputref_tool_node_path_missing_result_prefix`); bind
-  it to a named input and dig in code. Deep paths from a CODE node resolve fine.
-- **BALANCE EVERY DIAMOND (load-bearing).** A merge/join node whose two incoming edges
-  reach it via paths of DIFFERENT length from a common ancestor DEADLOCKS — it sits at
-  `pending` forever and a downstream leaf runs on its empty output (silent blank results).
-  The verdict node merges `resolve` (prep→resolve→verdict, len 2) and the champion context
-  (prep→verdict, len 1) — that asymmetry hangs the run. FIX: put a passthrough "balancer"
-  code node on the short edge so both paths are equal length: `prep→resolve→verdict` AND
-  `prep→balancer→verdict`, balancer echoing champion_name + recorded_account_domain.
-  Verified: with the balancer, 3/3 ground-truth cases pass (current/moved/unverified),
-  1 credit/hit; without it, the verdict node never fires.
-- The data plane is LOCAL: a pin reliably resolves only from a DIRECT predecessor; 2-hop
-  pins to the trigger return null even with the old double-wire. Fan the trigger's fields
-  out through a code "prep" node (the trigger allows one out-edge), then feed every
-  downstream node from its direct parents.
+  "wfn_...","sourcePath":"$.field"}}`). **Empty and missing pins no longer fail the run:**
+  an empty string arrives as `""` and an unresolvable path as `None`. Sentinel values are no
+  longer needed, but a node still fails outright when a `required` input is absent.
+- **`inputSchema` updates MERGE, they do not replace.** Sending a schema without a key does
+  not remove it, and `required` survives — the call still reports `success: true`. There is
+  no way to un-require an input through an update; recreate the node. This cost a debug cycle.
+- **A tool node's `inputSchema` is not writable at all.** `nodes update` returns an empty
+  `appliedUpdates` with no error. A tool node takes its inputs from upstream fields matching
+  by NAME, so emit `url`, `method` and the rest from the code node feeding it.
+- **Tool-node OUTPUT pins:** `"$"` now resolves — to the whole envelope,
+  `{result, success, textPreview}` — and the validator no longer flags it. Use
+  `"$.result"` when you want to skip the wrapper. A tool node still does **not** echo its
+  own inputs, so nothing rides through it; carry fields around it, not through it.
+- **Asymmetric merges no longer deadlock.** A node merging `prep→resolve→verdict` (len 2)
+  with `prep→verdict` (len 1) completes and receives both branches — verified on four
+  consecutive runs. The old passthrough "balancer" workaround is obsolete; delete it rather
+  than carrying it. A merge node also receives **`_branchOutputs`**, a per-branch map keyed
+  by source node id, alongside the flattened fields.
+- **Pins reach back more than one hop now:** a pin from the trigger node to a node two hops
+  downstream resolved correctly. But *automatic* flow is still one hop — a node receives its
+  direct parent's output, and run-level inputs reach the first node only. So pin explicitly
+  for anything further back rather than expecting it to arrive.
+- **Edges are writable, and the field name differs between read and write:** set them with
+  `nodes update` and `incomingEdges: [{"sourceNode": "wfn_..."}]`. `graph get` reports the
+  same edges as `sourceNodeId`/`targetNodeId`. Sending `sourceNodeId` to the writer is a
+  validation error.
+- **`graph validate` is weaker than it looks.** It catches a missing trigger and a node with
+  no incoming edges. It does not comment on merge shape or on tool-pin paths, so a graph that
+  validates clean can still be wrong — the only real check is a draft run.
+- **Every run needs an approval.** `workflows runs test` returns `approval_required` with an
+  `aar_...` id and spends nothing until `clay approvals approve` is called. Budget-less
+  workspaces can still create and run drafts.
 - Prompt `{{vars}}` on agent nodes fill reliably from flat string/object pins; a raw array
   pin can leave the model claiming it got nothing. Flatten arrays in a code node first.
+  (Carried from 2026-08; not re-tested on GA.)
 - Keep agents on a cheap model while wiring, then graduate only the nodes that write prose;
   comparisons and routing stay in code — an LLM asked to compare domains may wander off to
   the web instead.

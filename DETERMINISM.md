@@ -24,9 +24,13 @@ run when no agent is present, or the volume and cadence exceed what one conversa
 is real, and it is below. **Confirm how nodes get built on the installed
 version — `clay workflows nodes --help` — and do not write "there is no CLI for this" into a skill.**
 As of 0.8.1 `nodes create/update/test` exist; a skill that routes only to plugin tools is a dead end on
-a machine with no plugin. An asymmetric merge node stays pending forever. A tool node does not echo its own
-inputs, so trigger fields cannot ride through it. A pin two hops back resolves to null. Tool-node pins
-need `$.result` where code-node pins need `$`.
+a machine with no plugin. **Re-measured on GA 2026-10-07:** an asymmetric merge node completes and
+receives both branches (the old "balancer" workaround is obsolete), a pin two hops back resolves, and an
+empty or unresolvable pin no longer fails the run. A tool node still does not echo its own inputs, so
+trigger fields cannot ride through it — carry them around it. A tool pin of `"$"` resolves to the whole
+envelope `{result, success, textPreview}`; `"$.result"` skips the wrapper, and the validator no longer
+flags either. `graph validate` does not check merge shape or pin paths, so a draft run is the only real
+check.
 
 **Tables are not a third option.** No table-creation command appears anywhere on the surface this kit
 touches, and that surface is four commands: `clay whoami`, `tables list`, `columns list`, `columns get`,

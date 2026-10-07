@@ -895,9 +895,10 @@ that line instantly if it is wrong, which is the whole reason it is a statement 
 than a question. **It is not one of Step 6's three.**
 
 **A workflow is the right shape and the rougher road, so choose it with your eyes open.** The node
-defects in `DETERMINISM.md` are measured, not cautionary: an asymmetric merge node stays pending
-forever, a tool node does not echo its own inputs, a pin two hops back resolves to null. Where the
-cadence forces a workflow, write it and route around them. Where it does not, functions are not a
+defects in `DETERMINISM.md` are measured, not cautionary — and they were re-measured on GA, which
+retired three of them: asymmetric merges now complete, deep pins now resolve, and empty pins no longer
+fail a run. What survived is that a tool node does not echo its own inputs. Where the cadence forces a
+workflow, write it and route around what is left. Where it does not, functions are not a
 consolation prize — they are the shape that runs on the most machines.
 
 ### When the work is all judgment, the Clay belongs in the INPUT, not in the wrapper

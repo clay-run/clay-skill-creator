@@ -46,9 +46,11 @@ dates arrive as RELATIVE strings ("2 days ago") — parse to absolute at sweep t
 trigger — an empty workflow has none, and `edit_node` cannot add one) → tool node with
 static inputs, `incomingEdges` from the returned trigger node id → `runs test` → read
 per-step `creditUsageMetadata`. Downstream pins from a tool node use
-`sourcePath: "$.result"` bound to a named input. Any merge node needs BOTH incoming
-paths the same length from their common ancestor — an asymmetric join deadlocks
-(stays pending forever); balance with a passthrough code node on the short edge.
+`sourcePath: "$.result"` bound to a named input, which skips the `{result, success,
+textPreview}` envelope that a bare `"$"` returns. **Merge paths no longer have to be
+balanced** — re-measured on GA 2026-10-07, a merge node whose incoming paths differ in
+length from their common ancestor completes and receives both branches, so the
+passthrough balancer node the Alpha needed is obsolete.
 
 **Window state**: the sweep's only state is the last sweep date. Store it in the
 digest (and/or the table row); next window = [last sweep → today]. First sweep uses
