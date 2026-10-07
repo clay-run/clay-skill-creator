@@ -256,6 +256,77 @@ want to know how big the resulting market is, that is `tam-builder`.
 - NEVER pass an empty array to narrow a dimension — per the platform's guidance it restricts
   nothing; omit the field instead, and record the dimension as unapplied.
 
+## Representative output
+
+Four artifacts, and the last two are what make it honest. The ICP below is invented; the
+vocabulary facts are measured against live field metadata.
+
+### The filter set — ready to execute
+
+**Account axis**
+
+| field | exact allowed values |
+|---|---|
+| `industries` | `Biotechnology`, `Pharmaceutical Manufacturing`, `Medical Equipment Manufacturing` |
+| size band | `51-200`, `201-500`, `501-1000` |
+| country | `United States`, `Canada` |
+
+**Persona axis** — stated separately because each axis speaks its own dialect, even where
+the underlying vocabulary is shared.
+
+| field | exact allowed values |
+|---|---|
+| `company_industries_include` | the same three values — the industry taxonomy is shared across both axes |
+| `job_title_keywords` | `VP Clinical Operations`, `Head of Clinical`, `Director of Clinical Operations` |
+| seniority | `vp`, `director` |
+
+### The verify set — what costs money per row
+
+| dimension | arm | cost per row | required or scored |
+|---|---|---|---|
+| runs trials in-house rather than outsourcing | page fetch and read | ~1 credit | scored |
+| uses a named lab information system | technology detection | 2 credits | scored — and that surface sees website-visible technology only, so absence proves nothing |
+| headcount growth over 12 months | growth arm | 1 credit | scored |
+
+### The unobservable list — declared, so nobody assumes it was applied
+
+| what was asked for, in the asker's words | why it is not in the matrix |
+|---|---|
+| "companies with a culture of fast decision-making" | no field, no arm, and no proxy that should be accepted as one |
+| "pre-IPO but post-Series C" | funding arrives as a band in this dataset, and neither stage is a value in it |
+| "teams where the VP owns the budget" | budget ownership is not observable from any available source |
+
+This list exists because the failure it prevents is silent: a dimension that was asked for,
+could not be applied, and is never mentioned again becomes a criterion everyone downstream
+believes was enforced.
+
+### The translation log
+
+| the asker's words | outcome | what actually happened |
+|---|---|---|
+| "biotech" | approximated | `Biotech` is not a value. `Biotechnology` is. Picked from a candidate list; nothing lost |
+| "healthcare" | **untranslatable** | the concept has no representation in the taxonomy at all — not as a value, not even as a substring of one. Substituted by the three values above, which is **narrower than what was asked for**, and that narrowing is recorded here rather than absorbed |
+| "AI-focused" | dropped | substring-matching `AI` returns 53 values, among them airlines, aviation and waste-programme management. None was correct, so the dimension was dropped rather than approximated badly |
+| "50 to 1,000 employees" | translated, rounding declared | bands are floors, so the executable range is `51-200` + `201-500` + `501-1000` — i.e. **51–1,000**. The 50 became 51, and that is stated rather than rounded quietly |
+| "US and Canada" | translated | exact values existed |
+
+```
+5 dimensions asked for → 2 translated · 2 approximated · 1 dropped
+                          3 further dimensions declared unobservable
+
+Spend: 0 credits, 0 search rows. Every fact above came from free field
+metadata, which is the whole argument for building the matrix before running
+the search: the vocabulary is readable before anything is bought.
+
+Measured against the live taxonomy: 6 of 25 common go-to-market industry terms
+exist as values — a 24% hit rate — and only 52 of 457 values are a single word.
+The taxonomy is compound-phrase shaped while the vocabulary people actually use
+is single-word shaped. Reconciling those two is the work.
+```
+
+Weights and tiers on top of this are a different skill's job, and this matrix is its input:
+the filter set becomes the gate, the verify set becomes the scored dimensions.
+
 ## Worked example
 
 Stated ICP, verbatim: *"mid-market B2B SaaS in the US and UK, 50–2,000 people, $10M+ ARR, uses

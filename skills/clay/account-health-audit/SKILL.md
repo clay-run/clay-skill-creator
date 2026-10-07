@@ -316,6 +316,74 @@ separate approval.
   becomes a number.
 - NEVER write back to the CRM or the source list. The delta is the deliverable.
 
+## Representative output
+
+Three artifacts. **Every account and domain below is invented** (`.example` reserved TLD).
+There is deliberately **no "correct" column** — the reader seeing the disagreement is the
+product.
+
+### The delta, per account per field
+
+| account | field | stored | arm A | arm B | verdict | the test, and what happened |
+|---|---|---|---|---|---|---|
+| Northwind Systems | headcount | 14,000 | 17,112 | 11,303 | disputed | counts agree within 10%. These are 34% apart, so there is no majority and therefore **no verdict about the record** — whatever the record says |
+| Northwind Systems | locations | 12 | 12 | 1 | disputed | same test, failed harder. One arm counts offices and the other counts something else |
+| Northwind Systems | hq country | United States | United States | United States | confirmed | same city and country |
+| Northwind Systems | revenue band | $50M to <$100M | `revenue: 999999999` beside its own band of `$100M to <$1B` | $100M to <$1B | unverified | arm A contradicts **itself** on this field, so its vote here is withheld — leaving one usable value, which is not enough to say anything about the record. Its votes on other fields still stand |
+| Quartzlane Systems | headcount | 40 | 412 | 398 | contradicted | the arms agree with each other (3.4% apart) and both differ from the stored 40 |
+| Fabrikam Cloud | hq country | Ireland | *arm excluded* | Ireland | arm_entity_mismatch | arm A's returned name and founding year describe a **different company**, so every field it returned is excluded for this record. This is its own outcome and never collapses into `disputed`: telling someone their data is contested, when one source was describing a different company, is a false accusation rather than a shrug |
+| Meridian Ops | domain | meridianops.example | meridianops.example | meridianops.example | confirmed | identical after normalizing scheme, `www.`, trailing slash and case |
+| Halloway Industrial | — | — | — | — | **anchor failed** | the free pre-gate found the domain dead. A dead domain outranks every field-level finding on that record, so nothing was audited and nothing was spent |
+
+### Roll-up by verdict
+
+```
+26 records × 5 fields = 130 field verdicts
+
+  confirmed      5
+  contradicted   5
+  disputed       8
+  unverified   112
+              ----
+               130
+
+  plus 3 records that failed the free anchor gate before any field was read
+```
+
+### Roll-up by field — the cut that actually tells you what to do
+
+| field | confirmed | contradicted | disputed | unverified |
+|---|---|---|---|---|
+| hq country | 4 | 1 | 0 | 21 |
+| domain | 1 | 0 | 0 | 25 |
+| headcount | 0 | 3 | 6 | 17 |
+| locations | 0 | 1 | 2 | 23 |
+| revenue band | 0 | 0 | 0 | 26 |
+
+**Revenue band is unverified on 26 of 26 records.** That is a provider problem, not an
+account problem, and the fix is to choose a different arm — not to go and correct 26 rows.
+The pattern is almost always per-field rather than per-account, which is why this roll-up
+exists alongside the first one.
+
+```
+Spend: 26 records × 2 arms × 1 credit = 52 credits against a quoted 60.
+The free anchor gate removed 3 records before enrichment — 6 credits saved,
+and more usefully, three dead companies not audited as though they were live.
+
+Both arms are pinned as a (package, action) pair, and that is a requirement
+rather than pedantry: five action keys in the catalogue collide across
+packages. One key resolves to either of two different vendors, at 10 and 8
+credits, with different data behind each. Another spans three different CRMs.
+A key on its own does not name an arm.
+
+Worth knowing about every field name above: no declared output contract exists
+for this family of arms at all, so each field is named here because an arm was
+executed and returned it — never because a schema promised it.
+```
+
+**The delta stops here.** It goes to a person. Repairing a record is a separate decision
+with its own approval, and nothing above has been written anywhere.
+
 ## Worked example
 
 Four fields audited on 400 accounts: headcount, industry, HQ city, domain. Two 1-credit arms
