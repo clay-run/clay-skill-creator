@@ -141,6 +141,67 @@ empty with a note — never inferred from the model's own knowledge of the site.
 - Recurring or hundreds-of-pages jobs → recommend the table/workflow shape, don't
   grind ad-hoc calls.
 
+## Representative output
+
+Two artifacts. **Every URL and value below is invented** (`.example` reserved TLD). The
+ask was a product listing from a public catalogue, three named fields.
+
+### Rows
+
+Every row carries the URL it came from, so any value can be traced back to a payload
+rather than taken on trust.
+
+| name | price | sku | source URL |
+|---|---|---|---|
+| Alder Field Jacket | $248.00 | NW-4417 | northwind.example/api/catalogue?page=1 |
+| Kestrel Rain Shell | $192.00 | NW-4418 | northwind.example/api/catalogue?page=1 |
+| Harrow Wool Overshirt | — | NW-4419 | northwind.example/api/catalogue?page=1 |
+
+`Harrow Wool Overshirt` has no price **because the payload has no price for it** — the
+field is empty with a note. The model knows roughly what a wool overshirt costs and that
+is exactly why it must not fill the cell; a plausible invented price is indistinguishable
+from a real one to the person reading the spreadsheet.
+
+### Run summary
+
+```
+Rung used: 1 — hidden JSON API, found behind the catalogue's front end
+
+  pages fetched      1 of a stated cap of 3
+  rows extracted     3   (exactly the 3 requested)
+  pages failed       1   — see below
+  spend              0 credits + 1 action execution
+
+Why this rung: the target turned out to be a JSON API behind a front end, so no
+scraper was needed. A scraper would have cost 1 credit per page and returned HTML
+to parse with selectors that rot. Checking the ladder out loud took two minutes.
+
+Failures, reported rather than smoothed over:
+  northwind.example/catalogue/archive   404
+      The scraper rung returned SUCCESS and a full page body for this URL.
+      It genuinely 404s. The vendor exposes no HTTP status anywhere in the
+      response, so the only thing that caught it was a free status probe on
+      the same URL, which errored honestly with the 404.
+      THIS IS WHY SUCCESS IS NOT THE GATE — served content is.
+
+  One earlier attempt on the API rung returned 403 for a missing request
+  header. An honest, diagnosable failure: fixed by sending the header, not by
+  escalating to a heavier rung.
+```
+
+### What was not attempted
+
+**The anti-bot rung was never exercised live.** Its configuration is documented from the
+catalogue, and that is a different thing from having run it — treat its mechanics as
+unverified until someone does. Two things are known about it regardless: it returns
+column-major parallel arrays that need recolumnizing into rows before delivery, and any
+selector set delivered from it is maintenance debt with a shelf life of about a quarter.
+
+One live trap worth carrying into any run on the static rung: a plausible-looking output
+field value that is not in the real enum **silently returns nothing while still billing
+you**. Two calls established that. Read the enum from the live schema rather than from
+what the parameter name suggests.
+
 ## Worked example
 
 Ask: "Scrape the speaker list off this conference site into name / title / company."

@@ -175,6 +175,74 @@ reports it, declared estimate where it doesn't).
 - NEVER stand up a re-scraping loop for a permanent watch — graduate to the native
   subscription (Step 2) instead.
 
+## Representative output
+
+Three artifacts. **Every account, headline and URL below is invented** (`.example`
+reserved TLD). The three routes are **act-now / watch / quiet**, and every account swept
+appears in exactly one.
+
+### Digest
+
+| domain | route | signal type | evidence | source | event date | window |
+|---|---|---|---|---|---|---|
+| northwind.example | act-now | funding | "Northwind Systems raises $42M Series B" — opener angle: congrats-on-round | northwind-press.example/series-b | 2026-09-29 | past 30 days |
+| meridianops.example | act-now | exec hire | "Meridian Ops names a Chief Revenue Officer" — opener angle: new-leader | tradepress.example/meridian-cro | 2026-10-01 | past 30 days |
+| fabrikam.example | watch | expansion | "Fabrikam Cloud opens a Dublin office" — real event, weak hook | fabrikam.example/press/dublin | 2026-09-18 | past 30 days |
+| kirivale.co.uk | quiet | — | — | — | — | past 30 days |
+| halloway-industrial.example | quiet | — | — | — | — | past 30 days |
+
+Every fired signal carries a source link and a date inside the window. A signal missing
+either is **dropped with a note**, never shipped — which is what the next table is for.
+
+### The tail — what was returned and is not a signal
+
+This table is the honest half of the deliverable. A radar that shows only its hits cannot
+be audited.
+
+| event | why it is not a signal |
+|---|---|
+| "Former Northwind exec launches a new venture" | the account appears as a **modifier**. This is a person's story, not the account's. It matches funding vocabulary perfectly and is still not a Northwind event |
+| "Supplier to Northwind Systems wins a contract" | the account is named inside somebody else's news. Entity discipline matches on **domain**, never on a name string |
+| "Quartzlane Systems announces a partnership" | **no date anywhere in the payload.** An event that cannot be dated cannot be placed in a window, so it is dropped rather than assumed recent — on one real premium-arm call, 36 of 100 events arrived undated |
+| "Northwind Systems updates its careers page" | matched no menu entry, so it is `other` — surfaced here, never promoted to a signal |
+
+### Summary
+
+```
+5 accounts swept · window: past 30 days
+
+  act-now      2    1 funding, 1 exec hire
+  watch        1    1 expansion
+  quiet        2
+              --
+               5 of 5 — quiet is a RESULT. A silently dropped row is the
+                        cardinal failure of a radar, because it reads
+                        identically to "nothing happened".
+
+  events returned      14
+  signals fired         3
+  dropped to the tail  11    4 entity-discipline, 3 undated, 4 off-menu
+
+Spend: 5 credits, 1 per account, measured. The two quiet accounts billed
+exactly like the three with events — a quiet sweep is not a free sweep, and a
+cost model that assumes otherwise understates a book of dormant accounts.
+
+Three live traps this run had to work around:
+  - On the cheap arm, event dates arrive as RELATIVE STRINGS ("3 weeks ago")
+    rather than timestamps, and are resolved against the sweep date before any
+    window comparison.
+  - The quiet shape is the result FIELD BEING ABSENT, not an empty list. Code
+    expecting an empty array reads a quiet account as a malfunction.
+  - The premium arm ignores its own result-cap input: asked for 5 events, it
+    returns 100. Budget for 100 and post-filter, or the arithmetic is wrong
+    before the first call.
+```
+
+**Nothing above is outreach-ready, including the act-now rows.** An event proves a state
+change, not deal fit. Before anyone contacts the funding row, confirm the account is still
+in ICP, the new leader is still in seat, and the company in the story is yours — matched
+on domain, not on a name that reads the same.
+
 ## Worked example
 
 Ask: "Watch my 40 target accounts for funding, M&A, and exec hires — weekly."
