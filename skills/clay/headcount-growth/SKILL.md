@@ -166,6 +166,64 @@ in, measured, unverifiable, wrong-entity, credits measured vs declared
   workflow surface; NEVER present profile-count growth as payroll truth.
 - Batch: dedupe companies first, state cost (misses bill), get approval.
 
+## Representative output
+
+Two artifacts. **Every company below is invented.** Buckets are **shrinking / flat /
+growing / high-growth / hyper-growth**; the verdict is **measured** or **unverifiable**;
+and a percentage never appears without the counts underneath it.
+
+### Per-company
+
+| asked → matched echo | employees | 3-month | 12-month | bucket | trajectory | flags | verdict |
+|---|---|---|---|---|---|---|---|
+| Northwind Systems → *Northwind Systems* | 412 | 398 → 412, +3.5% | 330 → 412, +24.8% | growing | **accelerating** — the quarter is running ahead of the year's own pace, and the backdated counts show a dip and rebound that the window percentages smooth over | — | measured |
+| Kirivale Ltd → *Kirivale Ltd* | 1,180 | 1,240 → 1,180, −4.8% | 1,020 → 1,180, +15.7% | growing | **reversing** — a growing year with a shrinking last quarter. Reported on the 12-month read alone this is a healthy account | — | measured |
+| Meridian Ops → *Meridian Ops* | 12 | no snapshot | 3 → 12 | not headlined | — | micro-base · window-gaps | measured |
+| Fabrikam Cloud → *Fabrikam Group Holdings* | — | — | — | — | — | **wrong-entity** | unverifiable |
+| Halloway Industrial → *no match* | — | — | — | — | — | — | **unverifiable** |
+
+Four of those rows exist to show a specific way this data misleads:
+
+- **Meridian Ops grew 3 → 12 people.** That is `+300%`, and shipping it as hyper-growth
+  would put a nine-person company at the top of a ranked list. Below roughly 50 employees
+  the counts ship and the percentage does not.
+- **Kirivale's year looks good and its quarter does not.** One window is a snapshot; two
+  windows are a shape. The verdict names which windows produced it.
+- **Fabrikam's row was caught only by the echo.** The action returned a confident, complete,
+  numerically plausible growth record — for a different company. A wrong-entity hit is
+  shaped exactly like a correct one, so comparing the result's own returned name against
+  the company you asked about is the only thing that detects it. Its numbers are withheld
+  rather than reported with a caveat.
+- **Halloway's run succeeded.** The call completed, reported success, and returned an empty
+  result — the only signal was a "Company Not Found" preview. That is `unverifiable`, never
+  `flat` and never `0%`. **And the credit was still spent.**
+
+A null inside an otherwise good row means *no snapshot taken*, never *no growth* — short
+and old windows are often missing even for large companies.
+
+### Roll-up
+
+```
+5 companies in
+
+  measured        3
+  wrong-entity    1
+  unverifiable    1
+                 --
+                  5 of 5 — every input company lands somewhere
+
+Spend: 7 credits measured against a 10-credit cap, and that figure includes
+the miss. A not-found company bills exactly like a hit, so a list with dead
+rows costs full price. Counting misses in the spend is the difference between
+a cost estimate and a wrong one.
+
+Shipped with every run, not as a footnote: these are professional-profile
+counts, not payroll. Hourly, offshore and contractor-heavy workforces
+undercount badly. And a perfectly flat line on a company whose liveness is in
+doubt is a dead-company artifact rather than stability — this kind of data
+persists for companies that have stopped trading.
+```
+
 ## Worked example
 
 Ask: "Which of these 30 accounts are actually growing? CSV has name, domain,

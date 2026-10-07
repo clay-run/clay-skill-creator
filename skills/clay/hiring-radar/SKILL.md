@@ -296,6 +296,77 @@ overstates what a book with dead rows actually cost.
 - NEVER report a percentage change on a current-window count below 10.
 - NEVER rank, threshold or trend on a `lower_bound_only` count.
 
+## Representative output
+
+Two artifacts. **Every company and domain below is invented** (`.example` reserved TLD).
+Measurement status is one of **arm_mismatch / unmeasured / lower_bound_only / measured**,
+and a read is emitted only where the status is `measured`.
+
+### Per-account
+
+| account | count | object counted | window | dimension · arm | measurement | read | baseline | evidence |
+|---|---|---|---|---|---|---|---|---|
+| Northwind Systems | 332 | posting events the arm tracked | last 30 days | all roles · arm A | measured | flat | 919 over 90 days → trailing 306.3 per 30 days; recent 332 is +8.4%, inside the ±25% band | "Senior Platform Engineer" 2026-09-14 · "Staff SRE" 2026-09-22 |
+| Meridian Ops | 180 | new postings in that department | 4 weeks ending `signalDate` 2026-09-11 | Engineering dept · growth-signal arm | measured | accelerating | the arm's own `historicalAvg` 108 → +67% | "Engineering Manager" 2026-09-02 |
+| Kirivale Ltd | 7 | currently-tracked requisitions | last 30 days | Director+ · arm B | measured | level_only | none obtained, and none attempted — below 10 in the window a percentage swing is smaller than one posting | "Director of Operations" 2026-09-19 |
+| Halloway Industrial | 0 | currently-tracked requisitions | last 30 days | all roles · arm B | measured | no_open_roles | n/a | — |
+| Fabrikam Cloud | ≥ 45 | postings on a capped page, post-filtered | last 30 days | Engineering · arm A | lower_bound_only | — | not computed | "Backend Engineer" 2026-09-28 |
+| Quartzlane Systems | — | — | last 30 days | Finance · arm B | unmeasured | — | the arm returned no coverage for this account, and the dimension was not filterable on it | — |
+| Brandex | — | — | last 30 days | all roles · arm A | arm_mismatch | — | the response's own returned domain reads `acme-corp.example` against an anchor of `brandex.example` — caught before the count was consumed, and free | — |
+
+**Why every row drags its object and window along.** The same company, on the same day,
+returned **8,945**, **737** and **384** from three different arms — a 23× spread — and all
+three label that field as a count of jobs. They are answering different questions: posting
+events ever observed, currently-tracked requisitions, and network postings of unbounded
+age. None of them declares its window. So a bare count cannot be compared between two
+accounts, ranked, or trended, and `"47"` is unusable by the next person who reads it.
+
+That same payload also disproved its own headline for free: the unwindowed 8,945 arrived
+alongside a `num_jobs_last_30_days` of 332, and the windowed call returned exactly 332 —
+the 30-day figure corroborated twice in one response while the big number was shown not to
+be current.
+
+`lower_bound_only` rows are reported as `≥ N` and are **excluded from every ranking,
+threshold and trend**. A lower bound that enters a sort silently becomes a rank.
+
+### Cohort summary
+
+```
+7 accounts
+
+  measured            4
+  lower_bound_only    1
+  unmeasured          1
+  arm_mismatch        1
+                     --
+                      7 of 7
+
+  of the 4 measured:  accelerating 1 · flat 1 · level_only 1 · no_open_roles 1
+
+Spend, taken from each response's own reported cost rather than a balance delta
+(a concurrent session in the same workspace makes a balance delta unattributable):
+
+  arm A calls          0.2 each
+  arm B calls          1 each
+  growth-signal arm    8 PER DEPARTMENT FOUND — not 8 per call
+  total                ~13 credits, refunded empty results netted out
+
+Two cost traps, both of which bite silently:
+  - The catalogue reports a flat cost of 8 for the growth arms. Three of the four
+    bill per result found, and the only place that is stated is a parameter
+    description. The default is 3 departments (24 credits); the maximum is 100
+    (800 credits for ONE company). Pass that parameter explicitly, every time.
+  - An arm that finds nothing returns a refunded no-data result and costs
+    nothing, so summing upfront costs overstates what a book full of dead rows
+    actually cost.
+
+One freshness trap, visible in the Meridian row: that arm's four-week window ends
+at its own signalDate, which was 18 days before the call. The date is carried into
+the output because otherwise the evidence is misdated by two and a half weeks —
+and a radar that diffs runs must diff on signalDate, not on the day it ran, or
+consecutive weekly runs report the same signal as new.
+```
+
 ## Worked example
 
 Asked: *"which of these 200 accounts are staffing up their sales org, and who's accelerating?"*
