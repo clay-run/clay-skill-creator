@@ -240,17 +240,81 @@ score descending with a stable tiebreak (email asc) so ranks don't shuffle.
 - NEVER route, write to a CRM, enroll in sequences, or send anything — deliverable is
   the scored table; acting on it is the enrich-and-route-leads play.
 
-## Output
+## Representative output
 
-Per lead: `email · tier (A/B/C/D/DQ/RE-VERIFY/UNSCORED) · score (0–100) ·
-per-component breakdown (points/weight + quoted evidence) · unknowns · validity
-(valid/invalid/unverified + the quoted verdict) · flags (identity: unresolved,
-validity: unverified, tier-capped) · DQ reason / re-verify reason (+
-refresh_priority)`. Plus a summary: config used + score shape, tier distribution,
-UNKNOWN rates per component, validity coverage, determinism check result. At
-recurring volume, graduate the approved config to Clay table formula columns —
-weights in named weight columns so the user can tune them (Clay's free "Score Row in
-Clay" action, outputting `score` + `scoreReasons`, is the same spirit).
+Three artifacts. **Every address and company below is invented** (`.example` reserved TLD;
+`freemail.example` stands in for a consumer mail provider). The seven destinations are
+**A / B / C / D / DQ / RE-VERIFY / UNSCORED**, and every lead lands in exactly one.
+
+### Per-lead results
+
+| email | tier | score | validity | flags | reason |
+|---|---|---|---|---|---|
+| vp.growth@brightloop.example | A | 85 | valid | — | — |
+| ops@meridiansoft.example | B | 64 | unverified | identity unresolved · tier-capped | two components unobserved, so the score is renormalized over what was seen |
+| cto@meridianops.example | RE-VERIFY | — | invalid | — | email undeliverable, verdict quoted. Fit would have been 90. `refresh_priority` 50 from internal account fit, so re-sourcing works best-accounts-first |
+| vp.eng@stellarbase.example | RE-VERIFY | — | valid | — | employment fields show this person left in March. A perfect-fit score on a departed contact looks hottest exactly when it is most wrong |
+| founder.zx4q19@freemail.example | UNSCORED | — | unverified | identity unresolved | only 25 of 100 weight was observed — too little was seen to put a number on it |
+| cmo@competitor-corp.example | DQ | — | invalid | — | competitor domain. Definitive, and it beats the re-verify lane even though this email is also dead |
+
+The remaining six leads tier B, C and D on ordinary complete rows. **Neither RE-VERIFY nor
+UNSCORED carries a score**, and that is deliberate: a tier is a claim about fit, and these
+rows have not earned one. D is a real tier for a real bad fit — it is not where
+uncertainty goes.
+
+### One lead's score, decomposed
+
+`vp.growth@brightloop.example` — every component quotes the field that earned it.
+
+| component | weight | points | evidence |
+|---|---|---|---|
+| industry | 20 | 20 | `industry: "B2B software"` — inside the declared ICP |
+| headcount band | 20 | 20 | `headcount: "201-500 employees"` — overlaps the declared 50–5,000 |
+| geography | 10 | 10 | `country: "US"` — inside NA/EU |
+| persona | 25 | 25 | `title: "VP Growth Marketing"` — VP+ marketing |
+| email type | 10 | 10 | work address at the company's own domain |
+| intent signal | 15 | 0 | no signal present on this row |
+| **total** | **100** | **85** | → **A** |
+
+One trap worth seeing, because it fails silently in the direction of losing your best
+accounts: a band like `"1,000-5,000 employees"` coerced to a number yields **1**, which
+demotes an enterprise account to the smallest band and hands it a low score that looks
+perfectly reasonable. Bands are matched as ranges and never parsed as integers.
+
+### Summary
+
+```
+12 leads in
+
+  A            2
+  B            3
+  C            2
+  D            1
+  DQ           1
+  RE-VERIFY    2
+  UNSCORED     1
+              --
+              12 of 12 accounted for — no silent drops
+
+Config used: default weights, unobserved components treated as neutral and
+renormalized, flat score shape (no account score exists in this table).
+Validity coverage: 10 of 12 rows carried validity evidence. The 2 without it
+were scored normally and flagged — gating on absent evidence would conflate
+"unknown" with "bad".
+Unobserved components: identity unresolved on 2 rows, headcount missing on 1.
+Determinism: two full passes, byte-identical output, stable sort.
+
+Spend: 0 credits, 0 action executions, 0 search results. Scoring is computation
+over data you already hold.
+
+Policy note, because it changes answers: this run treated unobserved components
+as neutral. The same row under the opt-in penalty policy scores 65 and tiers B
+rather than 81.25 and A. Neither is wrong — the choice is yours, and it is
+recorded in the config above so the number is reproducible.
+```
+
+At recurring volume, graduate the approved config to Clay table formula columns — weights
+in named weight columns so you can tune them without re-running an interview.
 
 ## Worked example
 

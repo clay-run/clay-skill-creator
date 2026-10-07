@@ -153,6 +153,84 @@ not buyers — the user decides whether they get outreach.
 - NEVER spend credits in this skill (enrichment belongs to siblings); NEVER
   reorder or re-tier by anything other than the stated rules.
 
+## Representative output
+
+Three artifacts. The titles below are generic job titles rather than anyone's record, and
+the headcounts are invented. The product being sold is spend-management software — the
+verdicts are only meaningful relative to that, which is why the definition ships with the
+table.
+
+### The classified table
+
+Every row decided by `judgment` rather than a gate is marked, and those rows **are** the
+review sample — they are the ones to spot-check.
+
+| title | headcount | verdict | reason | decided by |
+|---|---|---|---|---|
+| CFO | 1,200 | buyer | finance function and decision authority both hold | gate |
+| Interim CFO | 400 | buyer | authority is intact; flagged **interim**, since the tenure may be short | gate |
+| VP Finance | 900 | buyer | function plus VP seniority | gate |
+| Director of FP&A | 2,000 | buyer | `FP&A` is one token. Splitting on a bare `&` shreds it into "FP" and "A" and the function match dies — so splitting happens only on whitespace-delimited separators | gate |
+| Finance Manager | 50 | buyer | **promoted on headcount** — at 50 people a finance manager signs. Flagged as size-promoted so you can disagree | gate |
+| Finance Manager | 5,000 | influencer | the same title at 5,000 people is not the signer | gate |
+| Finance Manager | unknown | influencer | **never promoted on missing data.** Flagged size-unknown — absent headcount is not permission to assume a small company | gate |
+| AP Specialist | 800 | influencer | accounts-payable function without authority. Matched on a boundary-matched `ap`, which is safe only under word-boundary matching | gate |
+| Procurement Lead | 1,100 | gatekeeper | classifies cleanly, and is a process gatekeeper rather than a buyer. Flagged separately — whether gatekeepers get outreach is your call, not this skill's | gate |
+| Project Manager | 600 | non-buyer | the over-promotion trap: "Manager" is seniority with none of the function | gate |
+| Account Executive | 300 | non-buyer | the exclusion trap, and exclusions run before inclusions | gate |
+| Chief of Staff to the CFO | 1,200 | influencer | the contained-keyword trap: "CFO" is in the string and the person is not the CFO | gate |
+| Founder & CFO | 80 | buyer | compound title, best part wins | gate |
+| Head of Revenue Operations | 700 | influencer | adjacent function — owns the systems the spend runs through, not the spend | judgment |
+| *(empty)* | 450 | unclear | no title on the row. Recorded with its reason rather than guessed into a bucket | gate |
+| `—·—` | 450 | unclear | symbol-only title | gate |
+
+### The funnel
+
+```
+16 contacts in
+
+  buyers        6
+  influencers   5
+  gatekeepers   1
+  non-buyers    2
+  unclear       2
+               --
+               16 of 16 accounted for
+
+Decided by deterministic gate: 15.  Decided by judgment: 1.
+Spend: 0 credits. Re-running the same list against the same definition
+produces identical verdicts.
+```
+
+### The definition used
+
+Shipped so the next run is reproducible, and so you can point at a line and say it is
+wrong for your product — correcting it and re-running costs nothing.
+
+```
+Product: spend-management software
+
+Buyer requires BOTH:
+  function   finance / accounting / spend ownership
+             keywords: cfo, finance, controller, fp&a, accounting, ap, ar,
+             treasury          (all boundary-matched)
+  authority  chief, vp, head or director — or manager-and-above at fewer
+             than ~200 employees
+
+Exclusions, applied BEFORE inclusion:
+  account executive, sales, business development, recruiting,
+  customer success
+
+Relation rule:  "<role> to the <buyer title>" is an influencer, never the buyer
+Compound split: whitespace-delimited separators only  (/  ,  " & "  " and ")
+                so FP&A, M&A and R&D remain single tokens
+Headcount:      promote manager-level below 200; never promote on unknown
+```
+
+The question these gates answer is **"can this person decide *this* purchase?"** — not
+"is this person senior?". Function and seniority must both hold, which is why a Project
+Manager at 600 people is a non-buyer and a Finance Manager at 50 is not.
+
 ## Worked example
 
 Ask: "Tag our 400-contact conference list — we sell spend-management software.
