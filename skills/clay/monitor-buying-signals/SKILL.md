@@ -61,6 +61,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Writes** — only its own output, to the destination you name (a table, a CSV, or the
   conversation). It never changes a record that already exists.
 - **Never** — writes to a CRM, or sends outreach on a signal it surfaced.
+- **Halts** — Step 2 spend-approval.
 
 ## Step 0 — Verify Clay is working
 

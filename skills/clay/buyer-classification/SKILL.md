@@ -63,6 +63,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — the contacts you supply and your definition of function, seniority and persona.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes a classification back to a CRM, or infers a persona from a title it was not given.
+- **Halts** — Step 1 other.
 
 ## Step 0 — Verify Clay is working
 

@@ -56,6 +56,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — the address list you supply, and the validators it runs against it.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes to a CRM, sends to any address, or deletes a row from your list.
+- **Halts** — Step 4 spend-approval.
 
 ## Step 0 — Verify Clay is working
 

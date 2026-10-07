@@ -7,7 +7,7 @@ description: |
   Use whenever someone asks: how fast is this company growing, get headcount
   growth for these accounts, which of these companies are hiring or shrinking,
   or filter my list to high-growth companies. Works per company from a
-  LinkedIn company URL (best) or domain;
+  company social URL (best) or domain;
   names resolve to a domain first. It verifies the answer is about the RIGHT
   company, never ships a percentage without its base counts, and reads two
   windows so a recent reversal isn't hidden by a 12-month average. Do NOT use
@@ -60,6 +60,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — an identifier per company and the windows you choose, via headcount sources.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes to a CRM, or reports growth outside a window you declared.
+- **Halts** — Step 1 spend-approval.
 
 ## Step 0 — Verify Clay is working
 

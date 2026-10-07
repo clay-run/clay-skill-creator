@@ -64,6 +64,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — your book of accounts and the ICP dimensions you define, plus the enrichment it runs per account.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes a tier back to a CRM, or tiers on enrichment presence alone when liveness is in doubt.
+- **Halts** — Step 1 other, Step 3 spend-approval.
 
 ## Step 0 — Verify Clay is working
 

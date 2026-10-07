@@ -56,6 +56,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — the domains you supply, and the technology sources it queries per domain.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes to a CRM, or claims a technology it did not observe.
+- **Halts** — Step 2 spend-approval.
 
 ## Step 0 — Verify Clay is working
 

@@ -185,7 +185,7 @@ goes to review.
 |---|---|---|---|---|---|---|---|
 | g1 | c_1041 | c_1198 | L1 | `Ana.Ruiz@northfield.example` and `ana.ruiz@northfield.example` are identical after lowercasing; both raw strings kept | high | 2 — survivor holds the open opportunity | title `Director` (survivor) vs `Manager` — the survivor's value ships |
 | g2 | c_1077 | c_1203 | L2 | `p.nair+crm@kirivale.com` folds to `p.nair@kirivale.com` | high | 4 — completeness | none |
-| g3 | c_1112 | c_1266 | L2-id | one normalized profile URL `/in/m-santos` across both; surname differs (`Santos`, `Lee`) | high | 3 — human owner beats a system import | last name recorded, not resolved |
+| g3 | c_1112 | c_1266 | L2-id | one normalized profile URL `socialsite.example/m-santos` across both; surname differs (`Santos`, `Lee`) | high | 3 — human owner beats a system import | last name recorded, not resolved |
 | g4 | c_1130 | c_1287 | L3 | `Bob` / `Robert` from the nickname table, `Initech` and `Initech LLC` in one label family, corroborated by a shared direct phone | medium | 4 — completeness | company spelling recorded |
 | g5 | c_1150 | c_1301 | alias, regional TLD | `kirivale.com` and `kirivale.co.uk` share a registrable label — an ordinary anchor, so a second signal was required and found (same direct phone) | medium | 1 — parent-domain match | none |
 | g6 | c_1162 | c_1318 | alias, acquisition map | `brandx.example` → `acme-corp.example`, from the acquisition map you supplied | high | 2 — opportunity count | survivor's empty phone gap-filled from c_1318, provenance recorded |

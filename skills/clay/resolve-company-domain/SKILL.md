@@ -58,6 +58,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — what each row already carries, and the resolution ladder it runs.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes to a CRM, or returns a domain it could not validate.
+- **Halts** — Step 1 spend-approval.
 
 ## Step 0 — Verify Clay is working
 

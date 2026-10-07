@@ -61,6 +61,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — the account list you supply and the fields you ask for, via Clay enrichment.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes back to the CRM, or enriches a name the resolver flagged ambiguous or acquired.
+- **Halts** — Step 1 spend-approval.
 
 ## Step 0 — Verify Clay is working
 

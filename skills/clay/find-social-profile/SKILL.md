@@ -1,10 +1,10 @@
 ---
-name: find-linkedin-profile
+name: find-social-profile
 description: |
-  Find a person's LinkedIn profile URL with Clay — from their name and company, or from an
+  Find a person's social profile URL with Clay — from their name and company, or from an
   email — and validate it before reporting. Use whenever someone asks: find this person's
-  LinkedIn, get the LinkedIn URL for a contact, what's X's LinkedIn profile at company Y,
-  check whether this LinkedIn URL is still the right person, or fix a stale LinkedIn link.
+  social profile, get the social URL for a contact, what's X's profile at company Y,
+  check whether this profile URL is still the right person, or fix a stale profile link.
   It searches Clay's people index by name + company, validates every candidate URL against
   known facts (name and current employer must match), flags name collisions instead of
   guessing, and recovers from stale slugs and wrong-person rejects to the canonical
@@ -19,7 +19,7 @@ touches: read-only
 keywords: []
 ---
 
-# Find a LinkedIn profile
+# Find a social profile
 
 The insight: **a returned URL is a candidate, not an answer — and a rejected candidate is
 not a dead end.** Finders hand back plausible URLs for the wrong person without erroring;
@@ -53,6 +53,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — what each row already carries and the expected employer you supply.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes to a CRM, or returns a profile it could not tie to the employer you named.
+- **Halts** — Step 3 spend-approval.
 
 ## Step 0 — Verify Clay is working
 
@@ -139,12 +140,12 @@ return no profile at all.
 
 ### Per person
 
-| name | company | profile | status | reasons |
+| name | company | social URL | status | reasons |
 |---|---|---|---|---|
-| D. Whitfield | brightloop.example | /in/danawhitfield | validated | one search hit · title and employer match the enriched record · name exact |
-| M. Torres | northfield.example | /in/m-torres-2 | low confidence | name and employer match, but the enriched record carries no title to corroborate them |
+| D. Whitfield | brightloop.example | socialsite.example/danawhitfield | validated | one search hit · title and employer match the enriched record · name exact |
+| M. Torres | northfield.example | socialsite.example/m-torres-2 | low confidence | name and employer match, but the enriched record carries no title to corroborate them |
 | A. Rivera | meridianbank.example | — | ambiguous — 6 candidates | a common name at a large employer · the six carry different titles · one more constraint would settle it |
-| D. Okonkwo | kirivale.co.uk | /in/d-okonkwo | moved — now at fabrikam.example | the enriched record's current role names a different employer than the one asked about |
+| D. Okonkwo | kirivale.co.uk | socialsite.example/d-okonkwo | moved — now at fabrikam.example | the enriched record's current role names a different employer than the one asked about |
 | J. Lindgren | halloway-industrial.example | — | not found | the search returned an empty result set cleanly, and an enrichment attempt came back as a completed run with an empty payload |
 
 **The URL that ships is always the enriched one, never the raw search hit.** On a live run

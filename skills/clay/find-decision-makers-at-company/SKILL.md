@@ -2,7 +2,7 @@
 name: find-decision-makers-at-company
 description: |
   Find the actual decision-makers at a specific company with Clay — the named people,
-  with title, LinkedIn, seniority, and current-employment evidence — for the thing
+  with title, social URL, seniority, and current-employment evidence — for the thing
   YOU sell, not just whoever ranks highest. Use whenever someone asks: who are the
   decision makers at this company, find the VP of engineering at X, who owns
   marketing budget there, who would buy our product at this account, find the CFO or
@@ -10,7 +10,7 @@ description: |
   reach out to at company Y. Works from a company domain plus what you sell or the
   function you target. Do NOT use it to source people across MANY companies by
   persona (build-prospect-list), to find a KNOWN person's profile
-  (find-linkedin-profile) or email (find-work-email), or to research the company
+  (find-social-profile) or email (find-work-email), or to research the company
   itself (company-research-brief). Built on role-scoped Clay people search plus
   deterministic seniority/department mapping and employment verification — it never
   trusts a seniority ranking to answer a role question.
@@ -155,10 +155,10 @@ buying committee at one company.
 
 | name | title | seniority | department | committee role | profile | employment | evidence |
 |---|---|---|---|---|---|---|---|
-| A. Rivera | SVP Finance | Executives | Finance | economic buyer candidate | /in/a-rivera | current, since 2023-04 | the record's own `latest_experience_company` matches the target and `latest_experience_title` reads SVP Finance |
-| B. Osei | SVP Finance | Executives | Finance | economic buyer candidate | /in/b-osei | current, since 2021-09 | same fields, same employer |
-| C. Lindqvist | Corporate Controller | Executives | Finance | influencer | /in/c-lindqvist | current, since 2022-01 | matched the Controller rule — without it this title falls to "Other" and the person is dropped |
-| D. Haruki | Chief of Staff to the CFO | Non-exec management | Finance | influencer | /in/d-haruki | current, since 2024-06 | the Chief-of-Staff exception fires *before* the Chief token, so a staff role is not promoted to C-level |
+| A. Rivera | SVP Finance | Executives | Finance | economic buyer candidate | socialsite.example/a-rivera | current, since 2023-04 | the record's own `latest_experience_company` matches the target and `latest_experience_title` reads SVP Finance |
+| B. Osei | SVP Finance | Executives | Finance | economic buyer candidate | socialsite.example/b-osei | current, since 2021-09 | same fields, same employer |
+| C. Lindqvist | Corporate Controller | Executives | Finance | influencer | socialsite.example/c-lindqvist | current, since 2022-01 | matched the Controller rule — without it this title falls to "Other" and the person is dropped |
+| D. Haruki | Chief of Staff to the CFO | Non-exec management | Finance | influencer | socialsite.example/d-haruki | current, since 2024-06 | the Chief-of-Staff exception fires *before* the Chief token, so a staff role is not promoted to C-level |
 
 Employment is read from each person's own record fields, never from the search anchor —
 the `domain` field just echoes what you searched for, so using it would make every row

@@ -2,7 +2,7 @@
 name: find-work-phone
 description: |
   Find a person's work phone number — ideally a validated mobile — using Clay, from their
-  LinkedIn URL or name and company. Use whenever someone asks: find someone's phone number,
+  a social URL or name and company. Use whenever someone asks: find someone's phone number,
   get a mobile number for this contact, find a cell or direct-dial number for a person at a
   company, or turn a short list of prospects into callable numbers. It runs Clay's
   phone-finding waterfall (multiple providers, each candidate checked for line type and
@@ -56,6 +56,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — the profile URL or known email on each contact, and the phone providers it queries.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes to a CRM, or dials anything.
+- **Halts** — Step 2 spend-approval.
 
 ## Step 0 — Verify Clay is working
 
@@ -70,7 +71,7 @@ Phone waterfalls are keyed on the professional profile, not the name: the manage
 functions **require a LinkedIn URL** (email waterfalls don't).
 
 1. **LinkedIn URL** (plus name/company) — run directly.
-2. **Name + company only** — resolve the URL first (find-linkedin-profile, or managed
+2. **Name + company only** — resolve the URL first (find-social-profile, or managed
    Enrich Person) and confirm it's the right person; a wrong profile poisons the lookup.
 
 A known email raises the hit rate — pass it through if accepted. On a batch, gate first:
@@ -169,20 +170,15 @@ waterfall starts, and a real-but-unlisted person takes minutes as all arms
 exhaust.
 ```
 
-### What this output does not establish
+### Before you dial any of it
 
-**These rows show the shape of a real result. They do not demonstrate that the numbers are
-right.** The evaluation behind this skill verified the output shape against a profile for
-which no known-correct number was available, and recorded that plainly: the returned value's
-correctness was never checked against ground truth. So the field names, the line-type grades,
-the billing behaviour and the timing are evidenced. *"This number reaches this person"* is
-not.
+The returned value is a **bare string with no type or provenance attached**, so every
+line-type and status label beside it came from a separate validator and is attributed to that
+validator rather than assumed from the number itself.
 
-Two consequences worth acting on. The returned value is a **bare string with no type or
-provenance attached**, so any line-type or source label beside it came from a separate
-validator and must be attributed to it rather than assumed. And before anything
-high-stakes — a call block, a dialler import — run the second independent validation at
-about 0.2 credits and route disagreements between the two validators to a person.
+Before anything high-stakes — a call block, a dialler import — run the second independent
+validation at about 0.2 credits and route any disagreement between the two validators to a
+person.
 
 A validated mobile is not permission to dial it. Calling rules vary by jurisdiction and by
 line type, and that remains the caller's responsibility.

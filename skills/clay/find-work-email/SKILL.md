@@ -2,7 +2,7 @@
 name: find-work-email
 description: |
   Find and verify a person's work email address using Clay — from their name and company,
-  or their LinkedIn URL. Use whenever someone asks: find someone's email, what is this
+  or their social URL. Use whenever someone asks: find someone's email, what is this
   person's work email, get a verified email for this contact, find the email address of a
   person at a company, or turn a short list of names into verified work emails. It screens
   the domain free first (MX check, disposable/trap-domain screen — dead domains cost
@@ -59,6 +59,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — what each row already carries, and the provider waterfall plus deliverability checks it runs.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes to a CRM, sends to an address, or guesses an email pattern.
+- **Halts** — Step 3 spend-approval.
 
 ## Step 0 — Verify Clay is working
 

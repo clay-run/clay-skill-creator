@@ -61,6 +61,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — the competitor set you name and the public sources it watches.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes to a CRM, or reports a movement it cannot cite.
+- **Halts** — Step 2 spend-approval.
 
 ## Step 0 — Verify Clay is working
 

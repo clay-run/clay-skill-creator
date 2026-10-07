@@ -54,6 +54,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — the addresses you supply, and the verification providers it runs them through.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes to a CRM, or sends to an address to test it.
+- **Halts** — Step 4 spend-approval.
 
 ## Step 0 — Verify Clay is working
 

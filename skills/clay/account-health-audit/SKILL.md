@@ -76,6 +76,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — the fields under audit on the records you point it at, and the live sources it re-derives them from.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes back to the CRM or the source list — the delta is the deliverable.
+- **Halts** — Step 3 spend-approval.
 
 ## Step 0 — Verify Clay and resolve the arms
 

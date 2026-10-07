@@ -12,7 +12,7 @@ description: |
   they make the list. Do NOT use it to find emails or phones for the list
   (find-work-email / find-work-phone take each row from here), to write outreach
   (that is a personalize-outbound play), to enrich signups you already have
-  (enrich-signup-users), or to find one known person (find-linkedin-profile).
+  (enrich-signup-users), or to find one known person (find-social-profile).
   It never pads a short list with off-ICP rows, states cost before any paid
   enrichment, and sends nothing anywhere.
 category: build-lists
@@ -146,7 +146,7 @@ A returned person is a candidate, not a row. Gates, all mandatory:
 Failed rows are dropped with reasons, never patched. Spot-check 2–3 survivors' URLs
 against their claimed employer before delivering; when an enrichment ran, ship its
 canonical `url` — search-hit slugs drift (same person, different slug across sources).
-For deeper per-person validation, hand rows to find-linkedin-profile.
+For deeper per-person validation, hand rows to find-social-profile.
 
 ## Step 6 — Count honesty + optional fill-ins
 
@@ -187,19 +187,19 @@ Three things come back. Placeholder rows: `Northwind` and `Contoso` are invented
 
 ### Companies
 
-| Company | Domain | LinkedIn | Size band | Location | Industry | Status |
+| Company | Domain | Social URL | Size band | Location | Industry | Status |
 |---|---|---|---|---|---|---|
-| Northwind Systems | northwind.example | /company/northwind | 50–200 | Denver, CO | B2B software | listed |
-| Contoso Logistics | contoso.example | /company/contoso | 500–1,000 | Denver, CO | freight | dropped: off-band |
-| Fabrikam Cloud | fabrikam.example | /company/fabrikam | 80–250 | Boulder, CO | B2B software | suppressed: customers, matched on domain |
+| Northwind Systems | northwind.example | socialsite.example/northwind | 50–200 | Denver, CO | B2B software | listed |
+| Contoso Logistics | contoso.example | socialsite.example/contoso | 500–1,000 | Denver, CO | freight | dropped: off-band |
+| Fabrikam Cloud | fabrikam.example | socialsite.example/fabrikam | 80–250 | Boulder, CO | B2B software | suppressed: customers, matched on domain |
 
 ### People
 
-| Name | Title | Company | LinkedIn | Role start | Persona | Validation |
+| Name | Title | Company | Social URL | Role start | Persona | Validation |
 |---|---|---|---|---|---|---|
-| A. Rivera | VP Sales | Northwind Systems · northwind.example | /in/a-rivera | 2024-03 | vp-sales | passed |
-| B. Osei | VP Revenue Operations | Northwind Systems · northwind.example | /in/b-osei | 2023-11 | vp-sales | passed, flagged multi-role |
-| C. Lindqvist | VP Sales Enablement | Fabrikam Cloud · fabrikam.example | /in/c-lindqvist | 2022-06 | — | dropped: off-persona |
+| A. Rivera | VP Sales | Northwind Systems · northwind.example | socialsite.example/a-rivera | 2024-03 | vp-sales | passed |
+| B. Osei | VP Revenue Operations | Northwind Systems · northwind.example | socialsite.example/b-osei | 2023-11 | vp-sales | passed, flagged multi-role |
+| C. Lindqvist | VP Sales Enablement | Fabrikam Cloud · fabrikam.example | socialsite.example/c-lindqvist | 2022-06 | — | dropped: off-persona |
 
 ### Run summary
 

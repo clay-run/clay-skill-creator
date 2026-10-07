@@ -67,6 +67,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — the enriched leads you supply, your ICP, disqualifiers and weights.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — routes, writes to a CRM, enrolls in sequences, or sends anything — the score is the deliverable.
+- **Halts** — Step 2 other.
 
 ## Step 0 — Verify Clay is working
 

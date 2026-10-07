@@ -11,7 +11,7 @@ Live-verified mechanics 2026-08-11 (this workspace); re-verify per workspace.
   before seniority: "CFO" misses "Head of Finance", "Finance Director", localized
   titles.
 - Optionally `names` (also a list) when narrowing to a known person — but that's
-  find-linkedin-profile territory.
+  find-social-profile territory.
 
 Then `clay search filters-mode run <searchId>` pages results. Facts that bite:
 - Filters are RECALL, not guarantees — post-validate every returned record against

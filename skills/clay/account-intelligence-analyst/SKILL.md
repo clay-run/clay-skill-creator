@@ -76,6 +76,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — your account list and the question you set, plus the public sources it researches against.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes to a CRM, or answers beyond what it actually read.
+- **Halts** — Step 3 spend-approval.
 
 ## Step 0 — Verify Clay is working
 

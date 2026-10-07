@@ -61,6 +61,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — the list you supply and the fields you name, plus the enrichment that re-derives them.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes back to the CRM from this skill — you get the table and the change log.
+- **Halts** — Step 1 spend-approval.
 
 ## Step 0 — Verify Clay is working
 

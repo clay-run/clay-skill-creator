@@ -81,6 +81,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — the account and persona axes you define, and the qualifiers you supply.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes to a CRM — the matrix is a definition you take elsewhere.
+- **Halts** — Step 2 other.
 
 ## Step 0 — Verify Clay and pull the field metadata
 

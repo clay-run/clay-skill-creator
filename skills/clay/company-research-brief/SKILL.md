@@ -58,6 +58,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — the company you anchor on and the public sources it reads for the angle you set.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes to a CRM, or states a fact it did not read somewhere.
+- **Halts** — Step 1 other.
 
 ## Step 0 — Verify Clay is working
 

@@ -5,7 +5,7 @@ description: |
   dated, deduplicated inbound trigger — pull your team's recent posts, pull who reacted,
   commented and reshared, drop your own employees and company pages, resolve each engager
   to a person and account, and rank by how hard they leaned in. Use whenever someone asks:
-  who engaged with our posts, who commented on our founder's content, turn LinkedIn
+  who engaged with our posts, who commented on our founder's content, turn social
   engagement into pipeline, find warm leads from people reacting to us, or which accounts
   are showing up in our comments. Do NOT use it to watch accounts for third-party news
   events (monitor-buying-signals), to source net-new accounts from events (signal-sourcer),
@@ -71,6 +71,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — the posts you point it at and the interaction types you choose.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes to a CRM, pushes anywhere, or contacts anyone who interacted.
+- **Halts** — Step 2 spend-approval.
 
 ## Step 0 — Verify Clay is working
 
@@ -314,10 +315,10 @@ distinct (post, interaction) pairs at comment 3 · share 2 · reaction 1; tiers 
 
 | person | profile | title · account | intensity | tier | distinct interactions | their words |
 |---|---|---|---|---|---|---|
-| M. Torres | /in/m-torres | Head of Growth · Brightloop | 8 | hot | commented on "Why pipeline reviews fail" (09-29) · reacted on three posts (09-22, 09-25, 10-01) · shared "Our Q3 benchmark report" (09-30) | "We ran exactly this and the hand-off step is where it broke for us." |
-| D. Okonkwo | /in/d-okonkwo | VP Engineering · Brightloop | 3 | warm | commented on "Why pipeline reviews fail" (09-28) | "Curious how this handles multi-region." |
-| R. Calloway | /in/r-calloway | unresolved | 2 | watch | shared "Our Q3 benchmark report" (09-30) | — |
-| J. Lindgren | /in/j-lindgren | Operations Manager · Meridian Ops | 1 | watch | reacted on "Why pipeline reviews fail" (09-27) | — |
+| M. Torres | socialsite.example/m-torres | Head of Growth · Brightloop | 8 | hot | commented on "Why pipeline reviews fail" (09-29) · reacted on three posts (09-22, 09-25, 10-01) · shared "Our Q3 benchmark report" (09-30) | "We ran exactly this and the hand-off step is where it broke for us." |
+| D. Okonkwo | socialsite.example/d-okonkwo | VP Engineering · Brightloop | 3 | warm | commented on "Why pipeline reviews fail" (09-28) | "Curious how this handles multi-region." |
+| R. Calloway | socialsite.example/r-calloway | unresolved | 2 | watch | shared "Our Q3 benchmark report" (09-30) | — |
+| J. Lindgren | socialsite.example/j-lindgren | Operations Manager · Meridian Ops | 1 | watch | reacted on "Why pipeline reviews fail" (09-27) | — |
 
 ### Per account
 

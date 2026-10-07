@@ -75,6 +75,7 @@ your answers to a file, so the next person on your team doesn't have to answer t
 - **Reads** — the ICP dimensions you define, against Clay's company search index.
 - **Writes** — nothing. The deliverable is handed back to you.
 - **Never** — writes to a CRM, or reports a market size beyond what the search actually returned.
+- **Halts** — Step 3 spend-approval.
 
 ## Step 0 — Verify Clay, and read the plan before designing anything
 
