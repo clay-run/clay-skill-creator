@@ -132,12 +132,7 @@ user the graph. Where more than one Clay action can do a step (several person-en
 people-finding functions usually exist), list the options by human-readable name with costs
 and let the user choose.
 
-Build gotchas, each one measured live — **but measured 2026-08, before workflows went GA.**
-Treat them as the known traps rather than as current facts: a workaround below may be for a
-bug that has since been fixed, and a rule below may have changed. Confirm each against the
-installed version as you wire it (`clay workflows nodes --help`, then a draft run) rather
-than assuming either way. The balanced-diamond rule is the one to check first, because its
-failure mode is silent.
+Build gotchas, each one measured live (2026-08):
 - Code nodes are `def handler(context):` returning a dict; read inputs with
   `context.get_input("name")`. Top-level `return` is a syntax error.
 - Pin inputs via the flat `inputSchema` shorthand (`{"x": {"type":"string","sourceNodeId":
