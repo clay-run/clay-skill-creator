@@ -127,13 +127,68 @@ Then grade each real finding:
 - NEVER present an uncorroborated (possibly historical) detection as current usage.
 - NEVER pad a sparse result with plausible-sounding technologies.
 
-## Output
+## Representative output
 
-Per domain: technologies grouped by GTM-relevant category (commerce, marketing/ads,
-analytics, support, infrastructure), each as `technology · evidence (corroborated /
-uncorroborated)`, a truncation note when applicable, then a **not-assessable line**
-naming the invisible layers relevant to the user's question, then a one-line readout
-tied to their stated scenario.
+Three parts per domain. **Every domain and technology pairing below is invented**
+(`.example` reserved TLD). Evidence is `corroborated` or `uncorroborated` — there are no
+other grades, because this surface returns no dates and a recency grade cannot honestly
+be computed from it.
+
+### Detected technologies, grouped
+
+**northfield-outfitters.example** — a detectable stack
+
+| category | technology | evidence |
+|---|---|---|
+| commerce | Shopify, Shopify Hosted, Shop Pay, Shopify Custom Theme | corroborated — a four-member family, consistent with the live storefront |
+| commerce | Magento | uncorroborated — a lone entry contradicted by the corroborated Shopify family. Archive noise; **not** reported as in use |
+| marketing / ads | Google Ads, Meta Pixel | corroborated |
+| analytics | Google Analytics 4 | corroborated |
+| support | Gorgias | uncorroborated — single entry, nothing corroborating it |
+| infrastructure | Cloudflare, nginx | corroborated |
+
+> **Truncated.** The provider returned exactly 8,192 characters, ending mid-name. This
+> list is incomplete and the provider gives no truncation flag — so a large stack looks
+> like a complete small one unless the length is checked.
+
+**holbrook-industrial.example** — little detectable
+
+| category | technology | evidence |
+|---|---|---|
+| infrastructure | IIS, Apache, nginx | uncorroborated — three web servers listed at once is the archive signature, not a concurrent stack |
+| analytics | basic page analytics | corroborated |
+
+85 entries came back against 525 for the storefront, and most were metadata
+pseudo-entries — copyright-year tags, crawl-rank markers, a stock-exchange listing, even
+a `403 Error` — all filtered out before reporting. **The thin result is reported as thin.**
+Padding it with the archive would turn a minimal static site into a technology portfolio.
+
+### What this surface cannot see
+
+Website-visible technology only. HR, finance, ERP, CRM, data warehouse and anything else
+that leaves no trace in page source is **structurally invisible here**, so absence is not
+evidence of absence. And because the list is a lifetime archive with no dates, a current
+technology and one retired three years ago are indistinguishable: detected ≠ used now,
+not-detected ≠ not used.
+
+### Readout
+
+> **"Does northfield-outfitters.example run Shopify? We sell a Shopify competitor."**
+> Yes — a corroborated four-member Shopify family, consistent with the live storefront.
+> Displacement-qualified. The Magento entry in the same list is archive noise and is not
+> a second platform.
+>
+> **"Do they use Workday?"**
+> Not assessable on this surface, and no amount of spend here will change that. HR systems
+> do not appear in website source. Job postings or provider research answer it instead.
+
+```
+Spend: 2 credits per domain at the declared rate. The routines surface exposes no
+per-run billing fields, so that is a declared estimate and not a measurement —
+read the actual charge where your surface reports one.
+Not-found shape: the run completes and the output field is PRESENT but empty.
+The field existing is not data; gate on non-empty content.
+```
 
 ## Worked example
 

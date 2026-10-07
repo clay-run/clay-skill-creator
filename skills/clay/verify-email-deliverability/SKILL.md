@@ -127,11 +127,59 @@ Map the observed fields to the verdict:
 - NEVER "correct" a typo'd address and verify the corrected version silently.
 - NEVER report catch-all, role, or disposable results as plain valid.
 
-## Output
+## Representative output
 
-Per address: `email · verdict (valid / catch-all risky / catch-all validated / flagged:
-reason / invalid / could not verify) · raw fields · provider`. Multi-address runs add %
-per tier plus a one-line recommendation for the stated use.
+Two artifacts. **Every address and domain below is invented** (`.example` reserved TLD);
+the verdict vocabulary and field pairs are the ones these validators actually return. The
+six verdict tiers are **valid / catch-all validated / catch-all risky / flagged: reason /
+invalid / could not verify**, and every address lands in exactly one.
+
+### Per-address verdicts
+
+| email | verdict | raw fields | provider |
+|---|---|---|---|
+| dana.whitfield@northfield.example | valid | `status: valid` + `sub_status: ""` (empty string, not null) | ZeroBounce, tier 2 |
+| m.okonkwo@initech-consulting.example | catch-all validated | `valid: true` + `result: catch_all_validated` — escalation probe reached the mailbox | Enrichley, tier 2 |
+| r.calloway@initech-consulting.example | catch-all risky | `status: valid` + `sub_status: catch_all` — the domain accepts everything; escalation left it unconfirmed | ZeroBounce, tier 2 |
+| support@northfield.example | flagged: role address | `status: do_not_mail` + `sub_status: role_based_catch_all` | ZeroBounce, tier 2 |
+| burner@disposable.example | flagged: disposable | `status: do_not_mail` + `sub_status: global_suppression`, `free_email: true` | ZeroBounce, tier 2 |
+| zzq-tfvb@northfield.example | invalid | `status: invalid` + `sub_status: mailbox_not_found` | ZeroBounce, tier 2 |
+| p.lindgren@nullmx.example | invalid, no paid check spent | DNS: single MX record `0 .` — the domain declares it takes no mail (RFC 7505) | free MX pre-check |
+| s.novak@nowhere.example | invalid, no paid check spent | DNS: NXDOMAIN | free MX pre-check |
+
+Three things in that table are the whole reason this skill exists. The catch-all is
+sitting under `status: valid`, so a status-only reader blesses it. The monitored `support@`
+box comes back `do_not_mail` — validators grade for cold-list hygiene, not for whether a
+human reads it, so that is a flag and not a bounce prediction. And the same domain graded
+`catch_all` by one validator can be graded `invalid / mailbox_not_found` by another:
+**catch-all is a per-validator verdict, not a fact about the domain**, so one validator's
+vocabulary is used end to end.
+
+### Summary
+
+```
+8 addresses in
+
+  valid                1   12.5%
+  catch-all validated  1   12.5%
+  catch-all risky      1   12.5%
+  flagged              2   25.0%   (1 role address, 1 disposable)
+  invalid              3   37.5%   (1 mailbox not found, 2 dead domain)
+  could not verify     0    0.0%
+                      --  ------
+                       8  100.0%
+
+Spend, read from run usage metadata: 0 credits + 6 action executions
+(≈0.6 credits equivalent at the catalog's nominal 0.1/check).
+The free MX pre-check settled 2 of 8 addresses before the first paid call.
+Every call returned run status SUCCESS regardless of verdict — the gate reads
+payload values, never run status.
+
+Recommendation: 2 of 8 are safely sendable. The catch-all risky address is a
+judgment call — one escalation probe already failed to confirm it. The role
+address is deliverable but is not a person, so it does not belong in a cold
+send; it may be fine for a support-channel touch.
+```
 
 ## Worked example
 

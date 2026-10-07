@@ -195,13 +195,54 @@ that returns `info@company.example` for "Jordan Lee" found the *company*, not th
 - NEVER report a catch-all address without its flag; unprobed catch-all is risky, not
   valid.
 
-## Output
+## Representative output
 
-Per person: `name · company domain · email · status (valid / valid, catch-all
-probe-confirmed / catch-all risky / rejected: role address / not found / blocked: dead or
-trap domain) · source (track + provider)`, plus what identified them (LinkedIn URL or
-name+domain). For multi-person runs, add a summary line: found-valid %, probe-confirmed %,
-risky %, rejected %, not found %.
+Two artifacts. **Every name, domain and address below is invented** (`.example` reserved
+TLD). The six statuses are **valid / valid, catch-all probe-confirmed / catch-all risky /
+rejected: role address / not found / blocked: dead or trap domain**, and every person asked
+for lands in exactly one — including the ones that produce no address.
+
+### Per-person results
+
+| name | company domain | email | status | identified by | source |
+|---|---|---|---|---|---|
+| A. Rivera | northfield.example | a.rivera@northfield.example | valid | name + domain | managed waterfall, stopped at its second source |
+| C. Park | initech-consulting.example | c.park@initech-consulting.example | valid, catch-all probe-confirmed | profile URL | catch-all track → mailbox probe returned `valid: true` + `result: catch_all_validated` |
+| B. Osei | initech-consulting.example | b.osei@initech-consulting.example | catch-all risky | name + domain | catch-all track; the probe stayed `status: valid` + `sub_status: catch_all` — shipped flagged, not blessed |
+| D. Haruki | fabrikam.example | — | rejected: role address | name + domain | the waterfall returned only `info@fabrikam.example`; a role local-part is not this person's email, and nothing person-matched remained |
+| E. Lindqvist | nowhere.example | — | blocked: dead or trap domain | name + domain | free MX pre-gate, DNS: NXDOMAIN — zero credits, no waterfall run |
+| F. Okonkwo | northfield.example | — | not found | name + domain | managed waterfall exhausted: `status: complete` with an empty `result: {}` — no pattern-guessed address |
+
+Two rows carry the discipline. `D. Haruki` shows what the skill refuses to do: the only
+address the waterfall produced was a role mailbox, and offering it as a person's email —
+or offering a plausible `d.haruki@fabrikam.example` instead — is the one unrecoverable
+failure. `F. Okonkwo` is an honest miss: the function returns a completed run with an
+empty result, and that is the not-found signal rather than a reason to guess.
+
+### Summary
+
+```
+6 people asked
+
+  valid                            1   17%
+  valid, catch-all probe-confirmed 1   17%
+  catch-all risky                  1   17%
+  rejected: role address           1   17%
+  blocked: dead or trap domain     1   17%
+  not found                        1   17%
+                                  --
+                                   6 of 6 accounted for
+
+Deliverable addresses: 2 of 6. Shipped flagged for the user to decide: 1.
+Spend: ~1.1 credits for the managed waterfall run, plus 0 credits +
+2 action executions for the catch-all probes. Read the actual charge from run
+usage metadata — the routines surface exposes no per-run actuals.
+The free MX pre-gate removed 1 person before any paid call.
+
+Timing, because it decides how you batch: a hit comes back in ~12 seconds and a
+not-found takes ~4.5 minutes as the waterfall exhausts. A batch finishes at the
+speed of its misses, not its hits.
+```
 
 ## Worked example
 

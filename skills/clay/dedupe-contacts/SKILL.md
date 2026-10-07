@@ -172,13 +172,58 @@ Merge semantics — the distinction that keeps records coherent:
   formula-cell ceiling — when this graduates to a Clay table, route arrays through
   an action cell (filter-list-of-objects container), never formula columns.
 
-## Output
+## Representative output
 
-A merge plan: `group · survivor (id) · merged records (ids) · layer (L1/L2/L2-id/L3)
-· evidence (incl. alias derivation) · confidence · ladder rule · field conflicts`, a
-**review** list (candidates + AI-alias pairs), a **do-not-merge** list (collisions,
-with conflicting evidence), and a summary line: `N in → S survivors, M merged,
-R review pairs, C do-not-merge pairs`.
+Four artifacts, and **none of them is a merge** — the plan goes to your CRM's own merge
+screen. **Every id, name and domain below is invented** (`.example` reserved TLD).
+Confidence is `high` or `medium`; a pair with no second signal is never given either, it
+goes to review.
+
+### Merge plan
+
+| group | survivor | merged | layer | evidence | confidence | ladder rule | field conflicts |
+|---|---|---|---|---|---|---|---|
+| g1 | c_1041 | c_1198 | L1 | `Ana.Ruiz@northfield.example` and `ana.ruiz@northfield.example` are identical after lowercasing; both raw strings kept | high | 2 — survivor holds the open opportunity | title `Director` (survivor) vs `Manager` — the survivor's value ships |
+| g2 | c_1077 | c_1203 | L2 | `p.nair+crm@kirivale.com` folds to `p.nair@kirivale.com` | high | 4 — completeness | none |
+| g3 | c_1112 | c_1266 | L2-id | one normalized profile URL `/in/m-santos` across both; surname differs (`Santos`, `Lee`) | high | 3 — human owner beats a system import | last name recorded, not resolved |
+| g4 | c_1130 | c_1287 | L3 | `Bob` / `Robert` from the nickname table, `Initech` and `Initech LLC` in one label family, corroborated by a shared direct phone | medium | 4 — completeness | company spelling recorded |
+| g5 | c_1150 | c_1301 | alias, regional TLD | `kirivale.com` and `kirivale.co.uk` share a registrable label — an ordinary anchor, so a second signal was required and found (same direct phone) | medium | 1 — parent-domain match | none |
+| g6 | c_1162 | c_1318 | alias, acquisition map | `brandx.example` → `acme-corp.example`, from the acquisition map you supplied | high | 2 — opportunity count | survivor's empty phone gap-filled from c_1318, provenance recorded |
+
+**The survivor's value set ships whole.** Losing values are recorded and never written, and
+only the survivor's *empty* fields are gap-filled. Resolving conflicts field by field on
+most-recent-wins was tested against this same group and produces a `(title, phone)` pair
+that **no single record ever held** — a contact that never existed, assembled from two that
+did.
+
+### Review — a human decides
+
+| pair | why it stopped here |
+|---|---|
+| c_1205 / c_1211 | name and company key match, personal emails differ, and there is no phone or profile URL on either — one signal is not a match |
+| c_1240 / c_1259 | matched only through an AI-suggested alias (`northfield.example` ↔ `northfield-group.example`). A shared phone is present, and it still stays here: an AI alias generates candidates and never decides one. Confirm the alias into your map and it merges on the next run |
+
+### Do not merge
+
+| pair | conflicting evidence |
+|---|---|
+| c_1270 / c_1274 | same name, same company — and two different profile URLs *and* two different direct phones. Both records survive, and the conflict is quoted rather than scored away |
+
+### Summary
+
+```
+36 in → 22 survivors, 14 merged, 2 review pairs, 1 do-not-merge pair
+         22 + 14 = 36  ✓   nothing dropped, nothing invented
+
+Spend: 0 credits. The matching layer is local deterministic code; Clay supplies
+the normalizers and the CRM lookups.
+Two identical runs produced byte-identical plans.
+
+Nothing was written. Clay's catalogue has no CRM merge or delete executor at all
+(Salesforce coverage is lookup / update / create / convert-lead), so a merge plan
+is not this skill being cautious — it is the only honest deliverable. Take it to
+your CRM's merge screen.
+```
 
 ## Worked example
 
