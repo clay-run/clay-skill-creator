@@ -246,6 +246,94 @@ acquisition is the OLD company's tier.
 - NEVER tier on enrichment presence alone when liveness is in doubt, and NEVER write
   tiers into a CRM or trigger outreach — the tiered book is the deliverable.
 
+## Representative output
+
+Three artifacts, and the third is the one that matters most: everything needed to re-cut
+the tiers without coming back. **Every domain below is invented** (`.example` reserved TLD).
+
+### Per account
+
+| domain | tier | composite | observability | fields missing | flags |
+|---|---|---|---|---|---|
+| northwind.example | T1 | 87.0 | 100/100 | — | — |
+| fabrikam.example | T1 | 83.3 | 60/100 | funding stage, tech signal, persona presence | **thin row** |
+| kirivale.co.uk | T2 | 58.3 | 85/100 | funding stage | — |
+| meridianops.example | T3 | 31.0 | 100/100 | — | — |
+| quartzlane.example | T4 | 12.0 | 100/100 | — | — |
+| halloway-industrial.example | — | — | 15/100 | industry fit, size band, geo, tech signal, funding stage | **cannot-tier** · liveness-doubt |
+
+**Why observability sits next to every tier.** Renormalizing over observed dimensions has no
+upper penalty, so `fabrikam.example` — judged on 60% of the weight table and passing what it
+showed — scores 83.3 and outranks plenty of fully-observed accounts. An 83.3 computed off
+60% of the table is not the same claim as an 87.0 computed off all of it, and a tier column
+on its own cannot tell you which you are looking at.
+
+`halloway-industrial.example` gets no score at all. Below the observability gate the honest
+output is a refusal, not a low number — a low number reads as a judgement about the account
+rather than about how little was seen.
+
+### One account's components
+
+`northwind.example`
+
+| dimension | weight | sub-score | contribution | evidence |
+|---|---|---|---|---|
+| industry fit | 25 | 1.00 | 25.00 | describes itself as "inventory software for mid-market distributors" — inside the declared vertical |
+| size band in range | 20 | 1.00 | 20.00 | band `201-500`, compared as a band against the declared 50–1,000 |
+| geo match | 15 | 1.00 | 15.00 | US |
+| tech signal | 15 | 0.67 | 10.05 | two of three declared signals corroborated; each signal counts once |
+| funding stage | 10 | 1.00 | 10.00 | Series B |
+| persona presence | 15 | 0.46 | 6.90 | one target-function person found against a target of two |
+| | **100** | | **86.95 → 87.0** | |
+
+Judgment terms carry a quoted phrase, never a bare score. "Industry fit 1.0" is an
+assertion; "industry fit 1.0, because the company calls itself inventory software for
+mid-market distributors" is a claim someone can disagree with.
+
+### The artifact — re-cut it yourself
+
+```
+Weight table. These are a PROPOSAL and they are yours to change; they need not
+sum to 100 once you have re-tuned them.
+
+  industry fit         25
+  size band in range   20
+  geo match            15
+  tech signal          15
+  funding stage        10
+  persona presence     15
+                      ---
+                      100
+
+Observability gate:  0.50 of the table's total weight. Below it, no score is
+                     computed. Raise it if you want a harder bar.
+Tier cuts:           >= 80 T1 · >= 50 T2 · >= 25 T3 · else T4
+
+Distribution
+
+  400 accounts in
+  - 29 dropped        21 duplicate domains, 6 suppressed, 2 hierarchy-collapsed
+  ----
+   371 scored or gated
+
+       T1            38
+       T2            74
+       T3           151
+       T4            89
+       cannot-tier   19
+                   ----
+                    371        38 + 74 + 151 + 89 + 19 = 371
+
+A distribution with 60% of the book in T1 means the weights need re-tuning, not
+that the book is excellent. At 38 of 371 these cuts are discriminating.
+```
+
+Two standing caveats shipped with every run. **Scores go stale**: a tier computed before a
+funding round or an acquisition is the previous company's tier, so this is worth re-running
+on a cadence rather than treating as a fact about the account. And **the cuts above are
+conventions**, not findings — nothing re-checks a threshold after you move it, so if you
+re-cut, re-read the distribution.
+
 ## Worked example
 
 Ask: "Tier our 400 target accounts; we sell compliance software to US fintech and

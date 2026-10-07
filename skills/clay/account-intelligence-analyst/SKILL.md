@@ -300,6 +300,100 @@ trustworthy rather than impressive:
 - NEVER let background knowledge fill a proxy verdict, and NEVER answer a question that could
   not be tightened into observable terms.
 
+## Representative output
+
+Four artifacts, and the last two are the ones that make this trustworthy rather than
+impressive. **Every account and domain below is invented** (`.example` reserved TLD).
+
+The question: *"Is this account expanding into Europe?"* Five proxies, total weight 12, of
+which one is unobservable and stays in the denominator.
+
+### Per account
+
+| domain | answer | confidence | coverage | direction |
+|---|---|---|---|---|
+| fabrikam.example | yes | high | 0.83 | +10 |
+| northwind.example | yes | medium | 0.50 | +6 |
+| quartzlane.example | no | medium | 0.58 | −7 |
+| kirivale.co.uk | insufficient evidence | — | 0.50 | 0 |
+| meridianops.example | insufficient evidence | — | 0.17 | +2 |
+
+`kirivale.co.uk` is the case worth staring at. Coverage is fine — two proxies fired — and
+they fired in **opposite directions**, so direction is zero. A tie routes to insufficient
+evidence and is never broken toward `no`, because calling it `no` converts not knowing into
+a negative claim about a real company. And no confidence is reported on a non-answer: a
+confidence attached to "we don't know" is theatre.
+
+### The proxies, for one account
+
+`northwind.example`
+
+| proxy | weight | verdict | evidence |
+|---|---|---|---|
+| job postings in EU locations, last 30 days | 3 | supports | 3 postings in Dublin and Berlin, most recent 2026-09-28, source link on each |
+| new EU operating locations | 3 | supports | one new Dublin address, first observed 2026-08 |
+| EU-language pages on the site | 2 | unobserved | the arm returned nothing. Recorded as unobserved, **not** as absence |
+| news mentioning EU expansion | 2 | unobserved | no dated story inside the window |
+| internal headcount by region | 2 | **unobservable** | no arm exposes this at all. It stays in the denominator rather than being quietly dropped |
+
+`coverage = 6/12 = 0.50` · `direction = +6` → **yes**, medium confidence.
+
+Keeping the unobservable proxy in the denominator is what stops a one-proxy answer from
+looking fully evidenced. It also means a question whose unobservable weight exceeds half the
+total cannot be answered for *any* account — which is a fact about the question, said once
+at the top, rather than 243 low-coverage rows.
+
+### Roll-up
+
+```
+243 accounts
+
+  yes                      93
+  no                       93
+  insufficient evidence    57
+                          ---
+                          243
+
+  plus 7 accounts that failed the free anchor gate, listed separately —
+  a dead domain is a different problem, with a different fix, from
+  "not enough evidence was gathered"
+
+Mean coverage across answered accounts: 0.64
+
+How often each proxy fired:
+  job postings in EU locations     198 of 243
+  new EU operating locations       141
+  EU-language pages                 88
+  news mentioning EU expansion      31
+  internal headcount by region       0   unobservable by design
+
+Spend: 3 credits per account on the cheap arms = 729 against a quote of 750.
+The same five observables bought from the expensive providers in the same
+catalogue cost roughly 30 per account — about 7,300 credits for this run.
+Same observable, up to 10× the price, which is why proxies get decomposed and
+priced before anything is bought.
+
+One per-unit trap in that arithmetic: the operating-location arm is priced PER
+LOCATION FOUND, not per account. A multi-site company can cost many times the
+headline rate, so that parameter is passed explicitly rather than defaulted.
+```
+
+### The unsettled list
+
+57 accounts returned insufficient evidence. This is a deliverable, not a remainder — each
+row names the one thing that would settle it, and settling them is usually cheaper than the
+run that produced them.
+
+| account | why it is unsettled | what would settle it |
+|---|---|---|
+| kirivale.co.uk | two proxies fired in opposite directions, so direction is 0 | the news proxy, 1 credit |
+| meridianops.example | coverage 0.17 — only one proxy returned anything | the job-postings proxy, 1 credit; it failed to resolve against this account's anchor |
+
+A last note that is about the arms rather than the accounts: the news proxy fired on 31 of
+243. Had any proxy fired **zero** times across 243 accounts, that would be a finding about
+how it was observed — almost certainly wrong — and the honest response is to say so, not to
+publish 243 answers dragged down by it.
+
 ## Worked example
 
 Question: *"Which of these 40 accounts are building an AI team?"* Tightened bar, agreed with
