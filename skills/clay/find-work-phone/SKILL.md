@@ -121,11 +121,71 @@ regional tuning), not a CLI loop.
 - NEVER report a number without its type, or an unvalidated number as "valid."
 - NEVER dial, text, or export numbers anywhere without explicit user approval.
 
-## Output
+## Representative output
 
-Per person: `name · company · phone (E.164) · type (mobile / direct-dial / HQ; flag VoIP)
-· status (valid / not found)` plus what identified them. Batch runs add a summary: found %
-by type, not found %, credits spent. Close with the compliance one-liner.
+Three parts, and the third one is not optional. **Every name, company and number below is
+invented** — the numbers use the `555-01xx` range reserved for fiction, and a real run
+returns real numbers that should be handled accordingly.
+
+### Per person
+
+| name | company | phone | type | status | identified by |
+|---|---|---|---|---|---|
+| P. Raman | brightloop.example | +1-555-010-4821 | mobile | valid | profile URL |
+| D. Okonkwo | northfield.example | +1-555-010-2277 | direct-dial | valid | profile URL |
+| R. Calloway | meridianops.example | +1-555-010-7734 | mobile | valid, **flagged VoIP** | profile URL — an active VoIP line is not necessarily a person's handset |
+| M. Torres | kirivale.co.uk | +44-20-7946-0315 | landline | valid | profile URL. The country code travels with the number: a non-US number arriving without one is graded invalid |
+| J. Lindgren | fabrikam.example | — | — | not found | the profile URL would not resolve. Fast-failed in about 60 seconds, **before** the waterfall ran — and note the run itself still reports as complete, with the failure one level down |
+| A. Rivera | halloway-industrial.example | — | — | not found | a real person the waterfall could not reach. All arms exhausted, which takes minutes — **and this row still cost credits** |
+
+The main switchboard is never substituted for a person's number. If you ask for it, it
+arrives labelled `HQ` and not as a direct line.
+
+### Summary
+
+```
+6 contacts attempted, every one pre-gated — phone is the most expensive column
+here, so only people someone would actually call were submitted at all.
+
+  valid, mobile          2     one flagged VoIP
+  valid, direct-dial     1
+  valid, landline        1
+  not found              2     one fast-fail at resolution,
+                               one full waterfall exhaustion
+                        --
+                         6 of 6
+
+Validated-mobile fill: 2 of 6. On senior US B2B, roughly 45–65% is a GOOD run;
+lower down-market and in Europe, considerably lower in Asia-Pacific. A miss
+rate in this region is the normal shape of the work, not a malfunction.
+
+Spend: ~9.9 credits per run — about nine times the work-email finder. The
+not-found rows are NOT free: at least one arm bills even when it finds nothing,
+so budget on attempts rather than on hits.
+
+Three timing shapes, which decide how you batch: a hit returns in about 8
+seconds, an unresolvable profile fast-fails in about 60 seconds before the
+waterfall starts, and a real-but-unlisted person takes minutes as all arms
+exhaust.
+```
+
+### What this output does not establish
+
+**These rows show the shape of a real result. They do not demonstrate that the numbers are
+right.** The evaluation behind this skill verified the output shape against a profile for
+which no known-correct number was available, and recorded that plainly: the returned value's
+correctness was never checked against ground truth. So the field names, the line-type grades,
+the billing behaviour and the timing are evidenced. *"This number reaches this person"* is
+not.
+
+Two consequences worth acting on. The returned value is a **bare string with no type or
+provenance attached**, so any line-type or source label beside it came from a separate
+validator and must be attributed to it rather than assumed. And before anything
+high-stakes — a call block, a dialler import — run the second independent validation at
+about 0.2 credits and route disagreements between the two validators to a person.
+
+A validated mobile is not permission to dial it. Calling rules vary by jurisdiction and by
+line type, and that remains the caller's responsibility.
 
 ## Worked example
 

@@ -131,11 +131,62 @@ trusting one confident-looking hit — a single match can still be a same-named 
 - NEVER construct a slug as a fallback; NEVER ship a URL that passed on one signal.
 - MUST state cost and get approval before multi-person runs.
 
-## Output
+## Representative output
 
-Per person: `name · company · LinkedIn URL · status (validated / low confidence /
-ambiguous — n candidates / moved — now at X / not found) · reasons (1–3 short strings)`.
-Batches get a summary line: validated %, low-confidence %, ambiguous %, not found %.
+Three parts. **Every name, company and profile path below is invented** (`.example`
+reserved TLD). Each person lands in exactly one of five statuses, and two of those five
+return no profile at all.
+
+### Per person
+
+| name | company | profile | status | reasons |
+|---|---|---|---|---|
+| D. Whitfield | brightloop.example | /in/danawhitfield | validated | one search hit · title and employer match the enriched record · name exact |
+| M. Torres | northfield.example | /in/m-torres-2 | low confidence | name and employer match, but the enriched record carries no title to corroborate them |
+| A. Rivera | meridianbank.example | — | ambiguous — 6 candidates | a common name at a large employer · the six carry different titles · one more constraint would settle it |
+| D. Okonkwo | kirivale.co.uk | /in/d-okonkwo | moved — now at fabrikam.example | the enriched record's current role names a different employer than the one asked about |
+| J. Lindgren | halloway-industrial.example | — | not found | the search returned an empty result set cleanly, and an enrichment attempt came back as a completed run with an empty payload |
+
+**The URL that ships is always the enriched one, never the raw search hit.** On a live run
+the search returned a numeric-suffixed slug and the enrichment resolved the same person to a
+different canonical slug. Both open in a browser; only one is stable, so a row built from
+the search hit quietly diverges from the row the next run produces for the same person.
+
+**Ambiguity has a size, and usually a cheap fix.** A common name at a large employer returned
+20 distinct profiles with more available; adding a single job-title filter collapsed that to
+exactly one. So `ambiguous — 6 candidates` is a request for one more constraint rather than a
+dead end — and it is never resolved by taking the first result. A search that returns 20
+people has produced a question, not an answer.
+
+Neither empty shape is an error. An empty result set and a completed-but-empty enrichment
+are both ordinary outcomes, and neither is a licence to offer a near-match.
+
+### Summary
+
+```
+5 people asked for
+
+  validated         1
+  low confidence    1
+  ambiguous         1
+  moved             1
+  not found         1
+                   --
+                    5 of 5
+
+Spend: 0 credits. The search arm consumes search quota rather than credits, and
+the enrichment arm billed no base credits on this surface — read the actual
+charge from run usage metadata rather than trusting that figure.
+```
+
+### What has not been exercised
+
+The statuses above are the full contract, and the evidence behind them is uneven. The
+ground-truth, collision and not-found shapes are all live-verified. **The newer validation
+logic is not**: the three-signal rubric, the name-match scoring, the non-Latin-script
+handling — which needs one search per script, native and romanised, because providers index
+them inconsistently — and the recover-on-reject stage were added as a desk revision and have
+never been run. Treat those four as unverified prose until someone exercises them.
 
 ## Worked example
 
