@@ -156,6 +156,91 @@ set quarterly (competitors get acquired; domains change hands).
 - NEVER auto-send, auto-post, or write conclusions into a CRM — the digest is the
   deliverable; acting on it is the user's move.
 
+## Representative output
+
+Four parts, and the separation between the first two is the whole design. **Every
+competitor, quote and URL below is invented** (`.example` reserved TLD). Read the last part
+before you trust any mechanical claim here.
+
+### The facts — dated, sourced, no adjectives
+
+| # | competitor | class | what happened | date, and how it was derived | quote | source |
+|---|---|---|---|---|---|---|
+| 1 | Kirivale | pricing | Starter tier moved from $29 to $49 per seat; the three-seat minimum was removed | 2026-09-26 — dated changelog entry | "Starter is now $49/seat, with no minimum" | kirivale.co.uk/changelog |
+| 2 | Fabrikam | exec-change | the Chief Security Officer departed after four years | 2026-09-18 — date in the article text | "…is stepping down at the end of the month" | tradepress.example/fabrikam-cso |
+| 3 | Quartzlane | hiring-pattern | nine machine-learning engineering roles posted in 30 days, against a trailing average of two | 2026-09-01 → 2026-09-30 — the sweep window itself | — | quartzlane.example/careers |
+| 4 | Kirivale | launch | shipped a supplier-portal module | 2026-09-11 — dated release note | "Supplier Portal is now generally available" | kirivale.co.uk/releases |
+
+A rep should be able to read any one of those aloud in a deal and survive the prospect
+clicking the link. That is the bar, and it is why there are no adjectives in that table.
+
+### The reads — interpretation, labelled, and never cited as fact
+
+> **READ on 1** — a displacement window opens at their renewals over the next two quarters,
+> concentrated in accounts under ten seats, where the rise is proportionally largest.
+>
+> **READ on 2** — security objections have a shelf life. Whatever you say about their posture
+> lands hardest in the next quarter and weakly once a successor is visibly in seat.
+>
+> **READ on 3** — a roadmap tell, two to three quarters out. Nine machine-learning hires is a
+> build rather than a pilot.
+>
+> **READ on 4** — direct overlap with your own supplier module. Expect it in competitive deals
+> now, not next quarter.
+
+Every one of those is an opinion with a number attached, and none of them appears in the
+facts table. The failure this structure prevents is a well-written competitor essay with
+three unsourced claims woven into it, where nobody downstream can tell which sentence was
+dated and sourced.
+
+### Logged items, quiet competitors, and set problems
+
+| competitor | items | note |
+|---|---|---|
+| Meridian Ops | 2 logged | a conference booth and a reshared customer story. Real, dated, and not worth a rep's attention this week |
+| Northwind Systems | 0 | **quiet this week** — and this one line is the entire entry. A quiet competitor is a result; padding it is how a radar loses its reader by week three |
+| Halloway Industrial | — | **set-definition problem**: the domain now resolves to an acquirer. Re-verify the competitor set, because competitors get acquired and domains change hands |
+
+### Summary
+
+```
+5 competitors swept · window 2026-09-01 → 2026-09-30
+
+  by class
+    pricing          1
+    exec-change      1
+    hiring-pattern   1
+    launch           1
+    other (tail)     2
+                    --
+                     6 events
+
+  act-on-now         4
+  logged             2
+  quiet              1
+  set problems       1
+
+No repeats from the previous sweep. The window boundary IS the dedupe, which is
+what stops the same funding round arriving as fresh intel every week — the
+single commonest way a standing radar becomes archive re-heated as news.
+
+Spend: measured where the surface reports it, a declared estimate where it does
+not, and labelled either way.
+```
+
+### What is actually behind this output
+
+**Nothing has been run.** This section shows the shape of the digest and makes no claim
+beyond that. No evaluation of this skill exists — not a live sweep, not a fixture set, not a
+triggering check — and its arm mechanics are carried across from a sibling build rather than
+probed here, with the query anchor inverted, which is a different query shape than the one
+that was verified.
+
+So: the structure above is the contract its author specified, and the counts, costs and
+payload behaviour in this package are **unverified prose** until someone runs a sweep against
+it. Every other skill in this library has at least a fixture or a free metadata read behind
+it. This one does not.
+
 ## Worked example
 
 Ask: "Watch our 4 main competitors — we sell workflow automation; pricing moves and

@@ -182,7 +182,7 @@ Failures, reported rather than smoothed over:
       It genuinely 404s. The vendor exposes no HTTP status anywhere in the
       response, so the only thing that caught it was a free status probe on
       the same URL, which errored honestly with the 404.
-      THIS IS WHY SUCCESS IS NOT THE GATE — served content is.
+      THIS IS WHY A SUCCESSFUL CALL PROVES NOTHING — served content does.
 
   One earlier attempt on the API rung returned 403 for a missing request
   header. An honest, diagnosable failure: fixed by sending the header, not by
