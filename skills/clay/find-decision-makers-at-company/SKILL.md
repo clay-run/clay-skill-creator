@@ -146,6 +146,54 @@ off, don't inline.
 - Cost posture: the search arm costs quota, not credits; any credit-bearing
   enrichment (canonical URL, employment resolution) is stated per person first.
 
+## Representative output
+
+Two artifacts. **Every name and profile path below is invented.** The ask was the finance
+buying committee at one company.
+
+### The committee
+
+| name | title | seniority | department | committee role | profile | employment | evidence |
+|---|---|---|---|---|---|---|---|
+| A. Rivera | SVP Finance | Executives | Finance | economic buyer candidate | /in/a-rivera | current, since 2023-04 | the record's own `latest_experience_company` matches the target and `latest_experience_title` reads SVP Finance |
+| B. Osei | SVP Finance | Executives | Finance | economic buyer candidate | /in/b-osei | current, since 2021-09 | same fields, same employer |
+| C. Lindqvist | Corporate Controller | Executives | Finance | influencer | /in/c-lindqvist | current, since 2022-01 | matched the Controller rule — without it this title falls to "Other" and the person is dropped |
+| D. Haruki | Chief of Staff to the CFO | Non-exec management | Finance | influencer | /in/d-haruki | current, since 2024-06 | the Chief-of-Staff exception fires *before* the Chief token, so a staff role is not promoted to C-level |
+
+Employment is read from each person's own record fields, never from the search anchor —
+the `domain` field just echoes what you searched for, so using it would make every row
+self-confirming.
+
+### Run summary
+
+```
+Vocabulary searched: "VP Finance", "SVP Finance", "Head of Finance",
+                     "Controller", "Chief Financial"
+
+  candidates examined    4
+  kept                   4
+  rejected               0
+  index exhausted        yes — the search reported no further results
+
+Two plausible economic buyers, so both are presented and neither is chosen for
+you. A flat list of VPs is not a committee, and picking one silently is the
+decision this skill refuses to make on your behalf.
+
+Shortfall, stated rather than papered over: NO SITTING CFO IS IDENTIFIABLE.
+The narrow first attempt on "Chief Financial Officer" / "CFO" returned exactly
+one record, and it was the Chief of Staff to the CFO — keyword containment is
+not role identity. The widened vocabulary returned four real people and still no
+CFO: the title is absent from the index. Senior-most identifiable: SVP Finance.
+Promoting the nearest hit to fill the gap would be a fabrication.
+
+Zero matches is also a result. An implausible function at the same company
+returned no records and consumed nothing — "no identifiable leadership for that
+function" beats returning whoever ranked first.
+
+Spend: 0 credits. The finding arm costs search quota only. Getting these people's
+email addresses is find-work-email's job.
+```
+
 ## Worked example
 
 Ask: "Who would buy our spend-management platform at brightloop.example?"

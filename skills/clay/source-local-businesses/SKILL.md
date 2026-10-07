@@ -163,6 +163,69 @@ locations/pages were exhausted — never padded with off-category rows.
 - NEVER grind ad-hoc pages past the cap or for recurring refreshes — graduate to
   the table/workflow shape and say so.
 
+## Representative output
+
+Two artifacts, and the first one looks different depending on the grain you chose in
+Step 1. **Every business, address, phone and domain below is invented** (`.example`
+reserved TLD).
+
+### The list — location grain
+
+Each row is a place you could visit. Survivors only; the rejected rows are accounted for
+in the funnel.
+
+| name | address | category as evidenced | rating | reviews | website | phone | source |
+|---|---|---|---|---|---|---|---|
+| Fernwood Coffee Roasters | 418 Alder St, Westbrook | coffee shop — "Coffee Roasters" in the name | 4.7 | 312 | fernwoodcoffee.example | (555) 010-0118 | local results, page 1 |
+| Marlowe & Sons Café | 22 Kestrel Ave, Westbrook | coffee shop — listed category "Café" | 4.5 | 188 | marlowesons.example | (555) 010-0147 | local results, page 1 |
+| Brightline Coffee — Harrow Rd | 9 Harrow Rd, Westbrook | coffee shop — franchise location | 4.4 | 241 | brightlinecoffee.example | (555) 010-0163 | brand locations arm |
+
+### The same haul at brand grain
+
+One row per parent, with the location count carried as a column. A franchisee-seller wants
+the table above; a brand-seller wants this one. **One list cannot serve both**, which is
+why Step 1 asks before spending anything.
+
+| name | category as evidenced | rating | reviews | website | location_count | source |
+|---|---|---|---|---|---|---|
+| Brightline Coffee Co. | coffee shop chain | 4.4 avg | 1,204 total | brightlinecoffee.example | 5 | brand locations arm |
+
+The grain keys arrive in-band rather than being inferred: each location carried
+`ownership_type: FRANCHISE`, a `brand_id`, and a `parent_company_locations_count`, plus
+parsed address, both place ids and a per-location phone.
+
+### Funnel
+
+```
+Pages pulled: 1 (cap: 3)
+
+  raw rows                        17
+  localized UI tokens stripped     3   names arrived with search-page chrome
+                                       concatenated onto them
+  collapsed as duplicates          4   including five URL variants — www, an
+                                       /en-us path, a restaurants. subdomain and
+                                       two tracking-tagged deep links — that
+                                       normalize to ONE registrable domain
+  rejected on category             2   a physio clinic and a supplement shop;
+                                       both matched the keyword, neither is a
+                                       coffee shop
+  survivors                       11
+                                  --
+                        4 + 2 + 11 = 17  ✓
+
+Paid depth ran on the 11 survivors only. Dedupe and category validation are free;
+enrichment is not, so the spend order is the whole economics of this play.
+
+Spend: 1 credit measured for the discovery page, 1 for the brand-locations call.
+A third call on a brand that does not exist returned a no-data result and was
+refunded by the provider — net zero for that call, and netted out of the total
+rather than reported as spend.
+
+Shortfall: none. 11 survivors against a target of 10. Had it come up short, the
+report would name which pages and locations were exhausted — never padded with
+the off-category rows above.
+```
+
 ## Worked example
 
 Ask: "Get me 50 independent coffee shops in Providence for our POS pitch."
