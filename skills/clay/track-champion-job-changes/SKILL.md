@@ -199,13 +199,78 @@ Build gotchas verified against the live Alpha (2026-08):
 - NEVER drop a champion silently: every input row lands in the digest as verified-current,
   moved (with plays), out-of-ICP, or could-not-verify.
 
-## Output
+## Representative output
 
-Per scheduled run, one digest with a row per champion:
-`champion · old account · verdict (current / moved / could-not-verify) · evidence · new company ·
-new title · ICP fit · FOLLOW note draft · suggested committee titles · BACKFILL successor ·
-seat-vacated flag`
-plus a summary line: champions checked, moves found, plays generated, rows needing human review.
+Three artifacts per scheduled run. **Every person, company and domain below is invented**
+(`.example` reserved TLD). This is the small test run that precedes a full one — five
+champions, not the whole segment.
+
+### The digest
+
+| champion | old account | verdict | evidence | new company | new title | ICP fit |
+|---|---|---|---|---|---|---|
+| J. Lee | acme.example | **moved** | the profile's prior role at Acme now carries an end date, and a new role starts 2026-08 | northfield.example | VP Revenue Operations | fit — 2,300 staff, B2B software |
+| J. Lindgren | quartzlane.example | **moved** | prior role closed, new role dated 2026-09 | fabrikam.example | Director of Finance Operations | **no-fit** — 40 staff, below the declared 100 floor |
+| D. Okonkwo | meridianops.example | **moved** | two **concurrent current** roles: a newer one elsewhere, with Meridian still listed as current | kirivale.co.uk | Advisor | needs review |
+| M. Torres | brightloop.example | verified current | the current role still names Brightloop, started 2023-04 | — | — | — |
+| R. Calloway | halloway-industrial.example | could not verify | the enrichment returned a **successful run with an empty payload** | — | — | — |
+
+The last two rows are the ones that keep this honest.
+
+`D. Okonkwo` has not necessarily left. A profile carrying two current roles is the
+portfolio-executive pattern, and a new employer appearing alongside the old one means
+*unconfirmed*, not *departed*. Only the experience history distinguishes the two, so the row
+ships flagged for review rather than triggering a backfill play against a champion who is
+still in seat.
+
+`R. Calloway` is the failure that looks like a success. The call completed and reported
+success; the payload was empty. Reading that as "no change" would silently convert a lookup
+failure into a reassuring verdict on a champion who may well have moved.
+
+### The plays, for one move
+
+```
+J. Lee — acme.example → northfield.example
+
+FOLLOW, on the new account
+  Draft note, grounded in the relationship rather than in the move itself:
+  "Jordan ran our product at Acme for three years, through two renewals ..."
+  Suggested committee at the new account: CFO · Director of Sales Operations
+
+BACKFILL, on the old account
+  Likely successor: P. Shah, currently Director of Revenue Operations at Acme
+  Seat-vacated flag raised on acme.example — the relationship that carried
+  the last two renewals has left, and nobody on the account team is
+  necessarily aware of it yet
+
+Both plays are DRAFTS.
+```
+
+### Summary
+
+```
+5 champions checked — a deliberate test run before the full segment of 120
+
+  moved                3
+  verified current     1
+  could not verify     1
+                      --
+                       5 of 5
+
+  plays drafted         3 FOLLOW + 3 BACKFILL
+  rows needing review   2    1 multi-role, 1 move to an out-of-ICP account
+
+Spend on this run: ~10 credits. At 120 champions on a weekly cadence, roughly
+150–350 credits per run — quoted and approved BEFORE the first full run, which
+is why the test run exists.
+```
+
+**Nothing above was sent and nothing was written to a CRM.** The digest ends at play-ready:
+the follow note is a draft, the backfill is a recommendation, and the seat-vacated flag is a
+line in a report. Acting on any of it is a separate decision that you make.
+
+One dependency worth stating plainly: this is built as a scheduled Clay workflow, and Clay
+workflows are an **Alpha** product.
 
 ## Worked example
 

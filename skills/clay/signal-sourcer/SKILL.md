@@ -218,6 +218,66 @@ with the arithmetic, never rebuild it as a re-scraping loop.
 - NEVER auto-send outreach, write to a CRM, or stand up a permanent re-scraping
   loop — deliver the sweep; graduate standing watches to the native signal engine.
 
+## Representative output
+
+Two artifacts, and an expert reads the second one first. **Every organisation and domain
+below is invented** (`.example` reserved TLD). The ask was a security-incident signal across
+US healthcare, 200+ employees, against a two-account book.
+
+### Qualified rows
+
+| company | domain | signal | evidence line | event date, and how it was derived | sources | ICP | net-new |
+|---|---|---|---|---|---|---|---|
+| Alderwood Health Systems | alderwoodhealth.example | security incident | "Alderwood notified 42,000 patients of unauthorized access at a billing vendor" | 2026-09-24 — the disclosure date stated in the notice | 2 independent outlets | fit · 1,400 staff · US | net-new |
+| Kestrel Regional Care | kestrelcare.example | security incident | "Kestrel confirmed a ransomware incident affecting scheduling systems" | 2026-09-29 — stated in the article text | 3 independent outlets | fit · 650 staff · US | net-new |
+| Harrow Medical Group | harrowmedical.example | security incident | "Harrow disclosed a breach affecting its imaging archive" | 2026-10-01 — stated in the article text | 2 independent outlets | fit · 310 staff · US | net-new |
+
+Every event date has a **stated basis** and not one of them is a crawl timestamp. That
+distinction is load-bearing: a years-old roundup surfaced inside a one-week sweep carrying a
+fresh relative stamp, and anything trusting the crawl date would have shipped it as this
+week's news.
+
+`Harrow Medical Group` was harvested under a subsidiary's former brand name and resolved to
+the parent organisation. Without the multi-name carry-forward it would have appeared as an
+unresolvable entity and been dropped.
+
+### Drop ledger — read this first
+
+| gate | dropped | why |
+|---|---|---|
+| window and vocabulary noise | 22 | aggregator reprints of events already counted; a years-old roundup surfacing in a one-week window behind a fresh relative stamp; and a preferred-stock conversion notice that matched the signal vocabulary exactly while not being the signal |
+| book gate — existing customer | 2 | both surfaced through litigation coverage. Excluded **and recorded**, with a pointer to the fixed-list watching play — these are accounts to watch, not to source |
+| off-ICP | 1 | 90 staff against a declared floor of 200, compared as a band rather than a number |
+| uncorroborated | 1 | a single derivative source — a law firm's own release — with the primary unreachable |
+| unresolved entity | 1 | the article named an organisation that could not be resolved to a canonical domain |
+
+```
+30 articles seen
+ 8 candidates after event-cluster dedupe (one event across 3–4 outlets
+   collapses to one candidate, sources merged)
+ 3 qualified, net-new
+
+   8 = 3 qualified + 2 suppressed + 1 off-ICP + 1 uncorroborated + 1 unresolved
+
+Up to 5 were asked for and 3 delivered, because the window supplied 3. Padding
+to five would mean shipping the rows the gates had just killed.
+
+Spend: 6 credits — 2 measured on the sweep queries, 4 a declared estimate on
+enrichment, where the surface exposes no per-run actuals.
+
+Corroboration mode: DEGRADED, and stated because it changes what the evidence
+is worth. This run had no general web egress, and no structured lookup exists
+for incident signals, so corroboration was cross-outlet agreement: two or more
+independent outlets carrying the same event fingerprint.
+```
+
+**A window that qualifies nobody is a result** and gets reported as a zero. Zero *drops*, on
+the other hand, means this was news clipping rather than sourcing — the ledger above is what
+proves the gates ran at all.
+
+This is a point-in-time sweep. A standing version of the same ask belongs on the in-app
+signal engine rather than being rebuilt here as a re-scraping loop.
+
 ## Worked example
 
 Ask: "Find healthcare companies hit by a data breach this week — we sell incident
