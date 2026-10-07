@@ -171,6 +171,79 @@ measured vs declared. Every input row lands somewhere.
 - NEVER write back to the CRM from this skill — deliver the table + change-log; the
   user (or their ops flow) applies it.
 
+## Representative output
+
+Four artifacts. **Every person, account and domain below is invented** (`.example` reserved
+TLD; the phone uses the `555-01xx` fiction range). The six verdicts are **current-confirmed /
+changed / departed→replaced / departed→unfilled / retired / unverifiable**, and every input
+row lands in exactly one.
+
+### The refreshed table
+
+| contact | account | verdict | refreshed fields | email | flags | evidence |
+|---|---|---|---|---|---|---|
+| M. Torres | brightloop.example | current-confirmed | — | valid | — | the current role still names Brightloop, start date 2023-04 |
+| E. Lindqvist | quartzlane.example | current-confirmed | — | valid | **multi-role** | two concurrent current roles, the newer one elsewhere with Quartzlane still listed. A mismatch against the anchor means *unconfirmed*, never *departed* |
+| D. Okonkwo | northfield.example | changed | title: `Director of RevOps` → `VP Revenue Operations` | valid | — | new title dated 2026-07 at the same employer — a material change, so it overwrites |
+| A. Rivera | meridianops.example | departed→replaced | — | — | — | the current role names a different employer. Replaced by J. Lindgren, VP Finance at Meridian Ops, employment confirmed with a start date |
+| R. Calloway | kirivale.co.uk | departed→unfilled | — | — | — | departed, and a capped role-scoped search found no same-account candidate matching the declared vocabulary. **The seat ships empty** rather than filled with the nearest available person |
+| P. Shah | fabrikam.example | retired | — | — | — | departed, and the policy set for this segment is retire rather than replace |
+| J. Haruki | halloway-industrial.example | unverifiable | — | unknown | thin coverage | the enrichment returned a completed run with an empty payload. Not current, not departed, and not guessed at |
+
+### The change log
+
+| contact | field | before | after | why the overwrite was allowed |
+|---|---|---|---|---|
+| D. Okonkwo | title | Director of RevOps | VP Revenue Operations | a material change, on an employer confirmed current |
+| M. Torres | phone | *(empty)* | +1-555-010-3318 | the stored value was empty, so nothing was displaced |
+
+**Zero empty-over-value overwrites**, and that number is the one to read first. An enrichment
+that returns nothing never replaces something you already hold — the commonest way a refresh
+run leaves a CRM worse than it found it.
+
+### Movers
+
+| person | left | now at | why they are here |
+|---|---|---|---|
+| A. Rivera | meridianops.example | northfield.example · VP Revenue Operations | a departed contact is also a warm relationship at a new account. Departed is not deleted |
+
+### Funnel
+
+```
+7 contacts in
+
+  current-confirmed      2    one flagged multi-role
+  changed                1
+  departed → replaced    1
+  departed → unfilled    1
+  retired                1
+  unverifiable           1
+                        --
+                         7 of 7 — every input row lands somewhere
+
+  overwrites applied     2    both logged above
+  empty-over-value       0
+  movers                 1
+
+Spend: 0 credits on this run. Verification consumes search quota rather than
+credits, and nothing was re-enriched that did not need it — a row whose state
+matches its claims costs one verification, not a refresh sweep. Nothing here is
+driven by a timer.
+```
+
+**The employment verdict comes first, and the ordering is the whole design.** A perfect new
+email address for somebody who left the company is polished garbage. Refreshing fields before
+checking employment is precisely how a stale CRM becomes more confident rather than more
+correct.
+
+Nothing above was written back. You get the table and the change log, and applying either is
+your decision.
+
+One thing this output does not establish: the enrichment miss shapes it gates on are carried
+from earlier live evidence on the same arms rather than re-purchased for this run, and no
+graded old-state/new-state reference set exists for the composite job. The gate logic is
+exercised deterministically; its accuracy across a real book is unmeasured.
+
 ## Worked example
 
 Ask: "Refresh our 80-contact target list before the Q4 push — emails and titles."

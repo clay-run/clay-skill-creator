@@ -157,6 +157,91 @@ developments (dated, linked) · open questions (what could NOT be established).
 - This is one company deep — a LIST of companies is a batch motion (table/workflow);
   say so instead of looping this skill.
 
+## Representative output
+
+The deliverable is a brief, so here is one filled in rather than a frame to fill.
+**Northwind Systems is invented**, as is every fact about it (`.example` reserved TLD).
+
+### The brief
+
+#### Identity
+
+- **Name** — Northwind Systems, Inc. (cleaned from "Northwind Systems Inc" as the footer
+  writes it)
+- **Domain** — northwind.example
+- **Entity type** — private operating company. Checked rather than assumed: a brand of a
+  larger parent, or a holding company, changes who you are actually selling to
+
+#### What they do — from their own site
+
+> "Inventory and replenishment software for mid-market distributors."
+> — their homepage, retrieved 2026-10-02
+
+Products named on their site: Replenishment Planner · Demand Forecast · Supplier Portal.
+Their own framing of the value: *"cut stockouts without carrying more inventory."*
+
+#### Who they sell to — **inference, and labelled as one**
+
+Supply-chain and operations leaders at distributors running roughly 50–500 locations.
+
+The basis, so you can disagree with it: their customer-story page names three distributors,
+their navigation segments by Wholesale, Industrial and Food Service, and a Supplier Portal
+implies a buyer managing many suppliers. **They publish no ICP statement**, so this is
+assembled from evidence rather than quoted.
+
+#### Firmographics — from the enrichment payload
+
+| field | value | note |
+|---|---|---|
+| industry | Software Development | quoted from the payload |
+| headcount | 201-500 | a **band**. There is no exact figure in this payload |
+| revenue | $50M to <$100M | a band |
+| HQ | Denver, CO, US | |
+| founded | 2014 | |
+| funding stage | Series B | |
+
+#### Recent developments — dated and linked
+
+- **2026-09-24** — opened a Dublin office *(their press page)*
+- **2026-08-11** — named a Chief Revenue Officer *(trade press)*
+- Nothing else inside the twelve-month window.
+
+#### Open questions — what could not be established
+
+- **No published pricing.** Their site routes to a contact form.
+- **Headcount is a band only.** If an exact figure matters for your own gate, this brief
+  cannot supply it.
+- **No competitor set.** Their site compares itself to nobody, and inferring one from the
+  category would be invention dressed as research.
+- **The Dublin office** — the announcement does not say whether it is sales, engineering or
+  both.
+
+### Run summary
+
+```
+Spend: ~4 credits — 1 measured on the homepage fetch, the remainder on the
+enrichment and a news pass.
+
+The anchor was confirmed BEFORE any paid call: the homepage's own title and
+footer name the company that was asked about, so nothing was bought against the
+wrong entity. A domain in an enrichment payload is a join hint and never an
+identity — link shorteners and redirects both appear there.
+
+Provenance on every line above: their own site, the enrichment payload, or a
+dated link. Nothing came from background knowledge about the company, and that
+distinction is the one that matters most in a research brief — a model knows
+plausible things about most companies, and a plausible unsourced sentence is
+indistinguishable from a researched one on the page.
+
+Where nothing supported a field, the field is EMPTY and the open-questions
+section says so in prose. Empty means empty, never "N/A" and never filled with
+something reasonable.
+
+One trap worth carrying: a page fetch can report success and return a full body
+for a URL that genuinely 404s, so the gate is served content rather than call
+status.
+```
+
 ## Worked example
 
 Ask: "Prep me a brief on brightloop.example before my call tomorrow."
