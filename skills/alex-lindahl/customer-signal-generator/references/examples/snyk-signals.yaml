@@ -1,0 +1,662 @@
+meta:
+  seller_company: Snyk
+  seller_domain: snyk.io
+  seller_perspective: Snyk sellers prospecting new buyers
+  focus_segment: null
+  run_mode: full
+  run_date: '2026-10-07'
+  backtest_date: null
+  clay_mode: public
+  icp:
+    industries:
+    - Software Development
+    - Financial Services
+    - Technology, Information and Internet
+    - Banking
+    - Insurance
+    employee_range:
+    - 200
+    - 10000
+    regions:
+    - North America
+    - Europe
+    must_have:
+    - Ships its own software
+    - Engineering team of 50+ contributing developers
+signals:
+- id: eng_headcount_growth
+  name: Headcount growth of 15%+ over 12 months
+  category: demographic_firmographic
+  trigger_ref: T7
+  buying_stage: awareness
+  decay_window_days: 120
+  weight: 10
+  source: clay
+  clay_source:
+    type: search_filter
+    name: employee_growth_12mo
+    custom_prompt: null
+  threshold: employee_growth_12mo >= 1.15 and 200-10,000 employees
+  external_source: null
+  backtest:
+    verdict: not_backtested
+  personas:
+  - VP Engineering
+  - Head of Platform Engineering
+  play_ref: null
+- id: growth_funding
+  name: Series B or later round of $30M+ in the last 90 days
+  category: demographic_firmographic
+  trigger_ref: T7
+  buying_stage: awareness
+  decay_window_days: 90
+  weight: 15
+  source: inferred
+  clay_source:
+    type: company_data_point
+    name: Latest Funding
+    custom_prompt: null
+  threshold: Latest round >= $30M, Series B or later, closed within 90 days
+  external_source: null
+  backtest:
+    verdict: not_backtested
+  personas:
+  - VP Engineering
+  - CTO
+  play_ref: play_growth
+- id: eu_market_entry
+  name: Opening an EU entity, office or product line
+  category: demographic_firmographic
+  trigger_ref: T4
+  buying_stage: awareness
+  decay_window_days: 120
+  weight: 10
+  source: inferred
+  clay_source:
+    type: custom_company
+    name: EU expansion
+    custom_prompt: Has this company opened an EU office, entity or EU-specific product in the last 6 months? Return yes/no,
+      country, date and source URL.
+  threshold: yes, dated within 6 months
+  external_source: null
+  backtest:
+    verdict: not_backtested
+  personas:
+  - Director of Product Security
+  - General Counsel
+  play_ref: play_cra
+- id: appsec_hiring
+  name: Open AppSec, DevSecOps or Product Security role posted in the last 45 days
+  category: hiring_org_design
+  trigger_ref: T1
+  buying_stage: consideration
+  decay_window_days: 45
+  weight: 25
+  source: clay
+  clay_source:
+    type: search_filter
+    name: jobs.exists
+    custom_prompt: null
+  threshold: '>= 1 open role similar to Application Security / DevSecOps / Product Security Engineer, posted in trailing 45
+    days'
+  external_source: null
+  backtest:
+    verdict: not_backtested
+  personas:
+  - Head of Application Security
+  - Director of Product Security
+  play_ref: play_appsec_hire
+- id: first_security_hire
+  name: First-ever security engineer at a 150-500 person software company
+  category: hiring_org_design
+  trigger_ref: T1
+  buying_stage: consideration
+  decay_window_days: 60
+  weight: 20
+  source: inferred
+  clay_source:
+    type: search_filter
+    name: jobs.exists + people.count
+    custom_prompt: null
+  threshold: Open security engineering role AND no current employee with a security title
+  external_source: null
+  backtest:
+    verdict: not_backtested
+  personas:
+  - CTO
+  - VP Engineering
+  play_ref: play_appsec_hire
+- id: platform_team_formation
+  name: Platform engineering or developer experience team being formed
+  category: hiring_org_design
+  trigger_ref: T7
+  buying_stage: awareness
+  decay_window_days: 90
+  weight: 10
+  source: inferred
+  clay_source:
+    type: search_filter
+    name: jobs.exists
+    custom_prompt: null
+  threshold: '>= 2 open roles titled Platform Engineer or Developer Experience Engineer'
+  external_source: null
+  backtest:
+    verdict: not_backtested
+  personas:
+  - Head of Platform Engineering
+  play_ref: null
+- id: ai_coding_rollout
+  name: Org-wide rollout of AI coding assistants (Copilot, Cursor, Claude Code)
+  category: technographic
+  trigger_ref: T2
+  buying_stage: consideration
+  decay_window_days: 120
+  weight: 30
+  source: inferred
+  clay_source:
+    type: custom_company
+    name: AI coding assistant rollout
+    custom_prompt: Has this company publicly announced or described an org-wide rollout of AI coding assistants (GitHub Copilot,
+      Cursor, Claude Code or similar) in the last 12 months? Return yes/no, the tool, the date, and a source URL.
+  threshold: yes, dated within 12 months
+  external_source: null
+  backtest:
+    verdict: not_backtested
+  personas:
+  - VP Engineering
+  - Head of Application Security
+  play_ref: play_ai_code_surge
+- id: cloud_native_shift
+  name: Kubernetes, container or Terraform build-out
+  category: technographic
+  trigger_ref: T7
+  buying_stage: awareness
+  decay_window_days: 150
+  weight: 10
+  source: inferred
+  clay_source:
+    type: search_filter
+    name: jobs.exists(job_description contains)
+    custom_prompt: null
+  threshold: '>= 3 open platform or DevOps roles mentioning Kubernetes or Terraform'
+  external_source: null
+  backtest:
+    verdict: not_backtested
+  personas:
+  - Head of Platform Engineering
+  play_ref: null
+- id: legacy_sast_in_stack
+  name: Legacy SAST (Checkmarx, Veracode) named in job postings
+  category: technographic
+  trigger_ref: T3
+  buying_stage: decision
+  decay_window_days: 180
+  weight: 20
+  source: inferred
+  clay_source:
+    type: search_filter
+    name: jobs.exists(job_description contains)
+    custom_prompt: null
+  threshold: '>= 1 open role mentioning Checkmarx or Veracode'
+  external_source: null
+  backtest:
+    verdict: not_backtested
+  personas:
+  - Head of Application Security
+  play_ref: play_displacement
+- id: bundle_adoption
+  name: Adopting GitHub Advanced Security or Wiz Code
+  category: technographic
+  trigger_ref: T8
+  buying_stage: decision
+  decay_window_days: 180
+  weight: 15
+  source: inferred
+  clay_source:
+    type: search_filter
+    name: technographics / jobs.exists
+    custom_prompt: null
+  threshold: Job descriptions or tech stack mention GitHub Advanced Security, CodeQL or Wiz Code
+  external_source: null
+  backtest:
+    verdict: not_backtested
+  personas:
+  - CISO
+  - Head of Application Security
+  play_ref: play_bundle_defense
+- id: new_security_leader
+  name: New CISO, Head of AppSec or Head of Product Security in the last 120 days
+  category: people_movement
+  trigger_ref: T1
+  buying_stage: awareness
+  decay_window_days: 90
+  weight: 20
+  source: clay
+  clay_source:
+    type: search_filter
+    name: people.exists(start_date)
+    custom_prompt: null
+  threshold: Current role started within 120 days
+  external_source: null
+  backtest:
+    verdict: not_backtested
+  personas:
+  - CISO
+  - Head of Application Security
+  play_ref: play_new_leader
+- id: snyk_champion_moved
+  name: Former Snyk user joins a non-customer in a security or platform role
+  category: people_movement
+  trigger_ref: T1
+  buying_stage: consideration
+  decay_window_days: 120
+  weight: 30
+  source: inferred
+  clay_source:
+    type: search_filter
+    name: people.exists(description contains Snyk)
+    custom_prompt: null
+  threshold: Profile or past role mentions Snyk; started current role within 120 days; employer not a known customer
+  external_source: Snyk CRM (to confirm the person was a real user)
+  backtest:
+    verdict: not_backtested
+  personas:
+  - Head of Application Security
+  - Staff Security Engineer
+  play_ref: play_champion
+- id: eu_cra_exposure
+  name: EU Cyber Resilience Act work (SBOM, PSIRT, vulnerability reporting)
+  category: initiatives_programs
+  trigger_ref: T4
+  buying_stage: consideration
+  decay_window_days: 180
+  weight: 25
+  source: web_research
+  clay_source:
+    type: search_filter
+    name: jobs.exists(job_description contains)
+    custom_prompt: null
+  threshold: Sells into the EU AND >= 1 open role mentioning Cyber Resilience Act, PSIRT or SBOM
+  external_source: null
+  backtest:
+    verdict: not_backtested
+  personas:
+  - Director of Product Security
+  - VP Engineering
+  play_ref: play_cra
+- id: compliance_push
+  name: Compliance programme in flight (PCI DSS, FedRAMP, SOC 2)
+  category: initiatives_programs
+  trigger_ref: T5
+  buying_stage: consideration
+  decay_window_days: 90
+  weight: 15
+  source: inferred
+  clay_source:
+    type: search_filter
+    name: jobs.exists(job_description contains)
+    custom_prompt: null
+  threshold: '>= 1 open security or engineering role mentioning PCI DSS, FedRAMP or SOC 2'
+  external_source: null
+  backtest:
+    verdict: not_backtested
+  personas:
+  - CISO
+  - GRC Lead
+  play_ref: null
+- id: ai_agent_build
+  name: Building AI agents, LLM apps or MCP servers
+  category: initiatives_programs
+  trigger_ref: T3
+  buying_stage: consideration
+  decay_window_days: 90
+  weight: 25
+  source: inferred
+  clay_source:
+    type: search_filter
+    name: jobs.exists(job_description contains)
+    custom_prompt: null
+  threshold: '>= 2 open roles whose description mentions MCP, agentic, LLM application or AI agents'
+  external_source: null
+  backtest:
+    verdict: not_backtested
+  personas:
+  - Head of AI Platform
+  - Head of Application Security
+  play_ref: play_ai_code_surge
+- id: security_incident
+  name: Disclosed security incident or supply-chain compromise
+  category: public_announcements
+  trigger_ref: T6
+  buying_stage: decision
+  decay_window_days: 60
+  weight: 25
+  source: inferred
+  clay_source:
+    type: custom_company
+    name: Recent security incident
+    custom_prompt: Has this company publicly disclosed a security incident, breach or compromised dependency in the last 90
+      days? Return yes/no, date, summary and source URL.
+  threshold: yes, within 90 days
+  external_source: News monitoring
+  backtest:
+    verdict: not_backtested
+  personas:
+  - CISO
+  play_ref: null
+- id: ai_product_launch
+  name: Public launch of AI features or agents in the product
+  category: public_announcements
+  trigger_ref: T3
+  buying_stage: awareness
+  decay_window_days: 60
+  weight: 15
+  source: inferred
+  clay_source:
+    type: company_data_point
+    name: Recent News
+    custom_prompt: null
+  threshold: Recent News mentions an AI or agent product launch within 60 days
+  external_source: null
+  backtest:
+    verdict: not_backtested
+  personas:
+  - CTO
+  - Head of AI Platform
+  play_ref: play_ai_code_surge
+- id: ipo_prep
+  name: IPO preparation (S-1 filing, new public-company CFO or audit committee)
+  category: public_announcements
+  trigger_ref: T5
+  buying_stage: awareness
+  decay_window_days: 180
+  weight: 10
+  source: inferred
+  clay_source:
+    type: company_data_point
+    name: Recent News
+    custom_prompt: null
+  threshold: S-1 filed or IPO preparation reported within 6 months
+  external_source: SEC EDGAR
+  backtest:
+    verdict: not_backtested
+  personas:
+  - CISO
+  - CFO
+  play_ref: null
+- id: snyk_content_engagement
+  name: Multiple people from one account engaging with Snyk content
+  category: web_content
+  trigger_ref: T1
+  buying_stage: consideration
+  decay_window_days: 30
+  weight: 20
+  source: inferred
+  clay_source: null
+  threshold: 3+ people from the same domain on Snyk webinars, reports or docs in 30 days
+  external_source: Snyk marketing automation and web analytics
+  backtest:
+    verdict: not_testable
+  personas:
+  - Head of Application Security
+  play_ref: null
+- id: oss_vuln_exposure
+  name: Public repos with known critical vulnerabilities in dependencies
+  category: web_content
+  trigger_ref: T6
+  buying_stage: awareness
+  decay_window_days: 30
+  weight: 15
+  source: inferred
+  clay_source: null
+  threshold: Company-owned public GitHub repo with a critical dependency vulnerability
+  external_source: Public GitHub plus a vulnerability database (OSV or Snyk's own)
+  backtest:
+    verdict: not_testable
+  personas:
+  - Head of Application Security
+  - Staff Engineer
+  play_ref: null
+- id: team_plan_ceiling
+  name: Free or Team workspace growing past 10 contributing developers
+  category: intent_behavioral
+  trigger_ref: T7
+  buying_stage: decision
+  decay_window_days: 60
+  weight: 35
+  source: web_research
+  clay_source: null
+  threshold: Workspace contributor count > 10 on the Team plan
+  external_source: Snyk first-party product usage data
+  backtest:
+    verdict: not_testable
+  personas:
+  - Engineering Manager
+  - Head of Application Security
+  play_ref: play_team_ceiling
+- id: free_tier_cluster
+  name: Several developers from one company signing up for Snyk Free
+  category: intent_behavioral
+  trigger_ref: T2
+  buying_stage: consideration
+  decay_window_days: 30
+  weight: 25
+  source: inferred
+  clay_source: null
+  threshold: 3+ sign-ups from the same work domain in 30 days
+  external_source: Snyk first-party sign-up data
+  backtest:
+    verdict: not_testable
+  personas:
+  - Engineering Manager
+  play_ref: null
+- id: g2_category_research
+  name: Researching SAST or SCA categories on review sites
+  category: intent_behavioral
+  trigger_ref: T8
+  buying_stage: consideration
+  decay_window_days: 14
+  weight: 15
+  source: inferred
+  clay_source: null
+  threshold: G2 buyer intent on SAST, SCA or Snyk comparison pages
+  external_source: G2 buyer intent
+  backtest:
+    verdict: not_testable
+  personas:
+  - Head of Application Security
+  play_ref: null
+clusters:
+- id: ai_code_surge
+  name: The AI Code Surge
+  signal_ids:
+  - ai_coding_rollout
+  - ai_agent_build
+  - appsec_hiring
+- id: compliance_clock
+  name: The Compliance Clock
+  signal_ids:
+  - eu_cra_exposure
+  - eu_market_entry
+  - compliance_push
+- id: new_sheriff
+  name: The New Sheriff
+  signal_ids:
+  - new_security_leader
+  - appsec_hiring
+  - legacy_sast_in_stack
+- id: champion_returns
+  name: The Champion Returns
+  signal_ids:
+  - snyk_champion_moved
+  - free_tier_cluster
+  - appsec_hiring
+board_snapshot:
+  run_date: '2026-10-08'
+  hiring_signal: appsec_hiring
+  accounts:
+  - domain: siemens.com
+    name: Siemens Digital Industries Software
+    fit: strong
+    days_left: 7
+    net_new: null
+    firing:
+    - id: appsec_hiring
+      evidence_date: '2026-08-31'
+      evidence_precision: exact
+    job_post:
+      title: Cyber Security Expert
+      posted: '2026-08-31'
+  - domain: databricks.com
+    name: Databricks
+    fit: moderate
+    days_left: 41
+    net_new: null
+    firing:
+    - id: appsec_hiring
+      evidence_date: '2026-10-04'
+      evidence_precision: exact
+    job_post:
+      title: Security Infrastructure roles
+      posted: '2026-10-04'
+  - domain: akamai.com
+    name: Akamai Technologies
+    fit: none
+    days_left: null
+    net_new: null
+    firing:
+    - id: appsec_hiring
+      evidence_date: 2026-09-23..2026-10-08
+      evidence_precision: bucket
+    job_post: null
+  - domain: canonical.com
+    name: Canonical
+    fit: none
+    days_left: null
+    net_new: null
+    firing:
+    - id: appsec_hiring
+      evidence_date: 2026-09-23..2026-10-08
+      evidence_precision: bucket
+    job_post: null
+  - domain: gomotive.com
+    name: Motive
+    fit: none
+    days_left: null
+    net_new: null
+    firing:
+    - id: appsec_hiring
+      evidence_date: 2026-09-23..2026-10-08
+      evidence_precision: bucket
+    job_post: null
+  - domain: yahoo.com
+    name: Yahoo
+    fit: none
+    days_left: null
+    net_new: null
+    firing:
+    - id: appsec_hiring
+      evidence_date: 2026-09-23..2026-10-08
+      evidence_precision: bucket
+    job_post: null
+  - domain: stripe.com
+    name: Stripe
+    fit: none
+    days_left: null
+    net_new: null
+    firing:
+    - id: appsec_hiring
+      evidence_date: 2026-09-23..2026-10-08
+      evidence_precision: bucket
+    job_post: null
+  - domain: notion.com
+    name: Notion
+    fit: none
+    days_left: null
+    net_new: null
+    firing:
+    - id: appsec_hiring
+      evidence_date: 2026-09-23..2026-10-08
+      evidence_precision: bucket
+    job_post: null
+  - domain: nasdaq.com
+    name: Nasdaq
+    fit: none
+    days_left: null
+    net_new: null
+    firing:
+    - id: appsec_hiring
+      evidence_date: 2026-09-23..2026-10-08
+      evidence_precision: bucket
+    job_post: null
+  - domain: kkr.com
+    name: KKR
+    fit: none
+    days_left: null
+    net_new: null
+    firing:
+    - id: appsec_hiring
+      evidence_date: 2026-09-23..2026-10-08
+      evidence_precision: bucket
+    job_post: null
+  - domain: asana.com
+    name: Asana
+    fit: none
+    days_left: null
+    net_new: null
+    firing:
+    - id: appsec_hiring
+      evidence_date: 2026-08-24..2026-09-22
+      evidence_precision: bucket
+    job_post: null
+  - domain: unity.com
+    name: Unity
+    fit: none
+    days_left: null
+    net_new: null
+    firing:
+    - id: appsec_hiring
+      evidence_date: 2026-08-24..2026-09-22
+      evidence_precision: bucket
+    job_post: null
+  - domain: coinbase.com
+    name: Coinbase
+    fit: none
+    days_left: null
+    net_new: null
+    firing:
+    - id: appsec_hiring
+      evidence_date: 2026-08-24..2026-09-22
+      evidence_precision: bucket
+    job_post: null
+  - domain: perplexity.ai
+    name: Perplexity
+    fit: none
+    days_left: null
+    net_new: null
+    firing:
+    - id: appsec_hiring
+      evidence_date: 2026-08-24..2026-09-22
+      evidence_precision: bucket
+    job_post: null
+  - domain: sprinklr.com
+    name: Sprinklr
+    fit: none
+    days_left: null
+    net_new: null
+    firing:
+    - id: appsec_hiring
+      evidence_date: 2026-08-24..2026-09-22
+      evidence_precision: bucket
+    job_post: null
+  - domain: brookfield.com
+    name: Brookfield
+    fit: none
+    days_left: null
+    net_new: null
+    firing:
+    - id: appsec_hiring
+      evidence_date: 2026-08-24..2026-09-22
+      evidence_precision: bucket
+    job_post: null
+previous_snapshot: null

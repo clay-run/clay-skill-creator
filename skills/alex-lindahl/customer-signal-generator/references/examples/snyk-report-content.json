@@ -1,0 +1,1324 @@
+{
+ "meta": {
+  "company": "Snyk",
+  "date": "8 Oct 2026",
+  "seller_perspective": "Snyk sellers prospecting new buyers",
+  "theme": "clay"
+ },
+ "hero": {
+  "title": "Call these two first",
+  "lead": "Sixteen companies are hiring AppSec engineers right now. Two have job posts that show **why now**; Siemens' window closes in about a week.",
+  "calls": [
+   {
+    "rank_label": "#1 \u00b7 Strong fit",
+    "company": "Siemens DI Software",
+    "why": "Security expert role naming SAST, DAST, dependency analysis and container scanning. About 7 days left in the window.",
+    "cluster": "Compliance Clock",
+    "cluster_style": "secondary"
+   },
+   {
+    "rank_label": "#2 \u00b7 Moderate fit",
+    "company": "Databricks",
+    "why": "Three senior Security Infrastructure roles posted 4 October on its AI and agent platform. Confirm the AppSec role first.",
+    "cluster": "AI Code Surge",
+    "cluster_style": "primary"
+   }
+  ],
+  "note": "Ranked by fit from the job post, then days left. The other 14 are on the board, but their job posts weren't retrievable from Clay yet."
+ },
+ "deadlines": [
+  {
+   "label": "CRA reporting live",
+   "date": "11 Sep 2026",
+   "text": "Manufacturers selling into the EU owe a 24-hour early warning and a 72-hour full notification. [Web]"
+  },
+  {
+   "label": "CRA fully applies",
+   "date": "11 Dec 2027",
+   "text": "SBOM generation and vulnerability handling become mandatory. [Web]"
+  }
+ ],
+ "banner": "Not back-tested: signal weights are reasoned rather than measured. Job posts were pulled for 2 of 16 board accounts; see the note under the board.",
+ "executive_summary": [
+  "Snyk sells a developer-first security platform covering code, open-source dependencies, containers, infrastructure as code and APIs, priced per contributing developer. [Web]",
+  "The strongest signal themes are AI coding volume outrunning security review, security teams being formed or rebuilt, and regulatory clocks led by the EU Cyber Resilience Act. [Web]",
+  "Start with Siemens Digital Industries Software, whose AppSec-related role closes in about a week."
+ ],
+ "company": {
+  "products": [
+   {
+    "name": "Snyk Code",
+    "text": "SAST built on the DeepCode AI engine. [Web]"
+   },
+   {
+    "name": "Snyk Open Source",
+    "text": "SCA and licence compliance."
+   },
+   {
+    "name": "AI-era products",
+    "text": "Snyk Studio, AI-BOM and the Evo agentic security system. [Web]"
+   }
+  ],
+  "standing": "About $326M ARR in February 2026, growing 7% year on year. [Web]",
+  "pains": [
+   "Security teams outnumbered by developers.",
+   "AI-generated code shipping faster than review."
+  ],
+  "personas": [
+   {
+    "role": "Champion",
+    "titles": "Head of Application Security"
+   },
+   {
+    "role": "Economic buyer",
+    "titles": "CISO"
+   }
+  ],
+  "icp": [
+   {
+    "label": "Size",
+    "text": "About 200 to 10,000 employees."
+   }
+  ],
+  "motion": "Hybrid: free tier and self-serve Team plan, then sales-led Ignite and Enterprise. [Web]"
+ },
+ "board": {
+  "signal_name": "AppSec hiring",
+  "window_days": 45,
+  "how": "Search companies with an open Application Security, DevSecOps or Product Security Engineer role posted in the last 45 days.",
+  "intro": "One hiring signal sources this board. The Why now column paraphrases each company's job post. [Clay]",
+  "rows": [
+   {
+    "account": "Siemens Digital Industries Software",
+    "segment": "Industrial software",
+    "role": "Cyber Security Expert",
+    "days_left": 7,
+    "days_label": "7d left \u00b7 posted 31 Aug",
+    "why": "Works with product and development teams on application security and secure-SDLC practices; names SAST, DAST, dependency analysis and container scanning.",
+    "job_url": "https://jobs.siemens.com/en_US/externaljobs/JobDetail/520210",
+    "fit": "strong"
+   },
+   {
+    "account": "Databricks",
+    "segment": "Data and AI software",
+    "role": "Security Infrastructure roles",
+    "days_left": 41,
+    "days_label": "41d left \u00b7 posted 4 Oct",
+    "why": "Senior Security Infrastructure roles on an AI and agent platform; confirm the AppSec role before outreach.",
+    "job_url": "https://www.linkedin.com/jobs/view/staff-software-engineer-security-infrastructure-at-databricks-4297741878",
+    "fit": "moderate"
+   },
+   {
+    "account": "Stripe",
+    "segment": "Fintech",
+    "role": "AppSec role",
+    "days_left": null,
+    "days_label": "30\u201345d left \u00b7 posted 23 Sep\u20138 Oct",
+    "why": "Job post not pulled. Clay's search matched an open AppSec role posted in the last 15 days.",
+    "fit": "none"
+   }
+  ],
+  "notes": [
+   "Some accounts may already be Snyk customers."
+  ]
+ },
+ "clusters": [
+  {
+   "name": "The AI Code Surge",
+   "signals": [
+    "Org-wide rollout of AI coding assistants (Copilot, Cursor, Claude Code)",
+    "Building AI agents, LLM apps or MCP servers",
+    "Open AppSec, DevSecOps or Product Security role posted in the last 45 days"
+   ],
+   "why": "The company is producing more code, of a newer kind, than its security team can see, and it has just admitted the gap by hiring for it.",
+   "play": [
+    "Target the Head of AppSec or the hiring manager on the open role, plus the Head of AI Platform.",
+    "Lead with Snyk Studio: guardrails inside the AI assistant developers already use.",
+    "Follow with an AI-BOM scan of a public repo, then an Evo conversation for the agent work.",
+    "Reach out within 2 weeks of the posting, before the new hire picks their own stack."
+   ]
+  },
+  {
+   "name": "The Compliance Clock",
+   "signals": [
+    "EU Cyber Resilience Act work (SBOM, PSIRT, vulnerability reporting)",
+    "Opening an EU entity, office or product line",
+    "Compliance programme in flight (PCI DSS, FedRAMP, SOC 2)"
+   ],
+   "why": "A dated obligation (CRA reporting today, SBOMs by December 2027, or an audit) has landed on a company that ships into regulated markets.",
+   "play": [
+    "Target the Director of Product Security, with the CISO copied on the second touch.",
+    "Lead with the CRA-to-Snyk control map and the 24-hour reporting problem.",
+    "Offer an SBOM generation workshop, then a scoped evaluation.",
+    "Expect 4 to 8 weeks from signal to first meeting; the deadline sets the pace."
+   ]
+  },
+  {
+   "name": "The New Sheriff",
+   "signals": [
+    "New CISO, Head of AppSec or Head of Product Security in the last 120 days",
+    "Open AppSec, DevSecOps or Product Security role posted in the last 45 days",
+    "Legacy SAST (Checkmarx, Veracode) named in job postings"
+   ],
+   "why": "A new security leader is building a team on top of an incumbent tool developers don't use. The stack is up for review.",
+   "play": [
+    "Target the new leader directly in their first 60 days.",
+    "Lead with a peer benchmark, not a demo.",
+    "Offer a side-by-side scan against the incumbent on one repo.",
+    "Bring in the VP Engineering once the leader agrees there's a developer-adoption problem."
+   ]
+  },
+  {
+   "name": "The Champion Returns",
+   "signals": [
+    "Former Snyk user joins a non-customer in a security or platform role",
+    "Several developers from one company signing up for Snyk Free",
+    "Open AppSec, DevSecOps or Product Security role posted in the last 45 days"
+   ],
+   "why": "A former Snyk user has joined, developers are already trying Snyk Free, and a security role is open. Adoption is pulling from the inside.",
+   "play": [
+    "Target the former user first, then the engineering manager behind the sign-ups.",
+    "Lead with a fast-start offer that connects existing free accounts into one org.",
+    "Route straight to an AE; skip nurture.",
+    "Move within 2 weeks; this cluster cools quickly."
+   ]
+  }
+ ],
+ "templates": [
+  {
+   "name": "Awareness: new security leader",
+   "trigger": "new_security_leader",
+   "persona": "New CISO or Head of AppSec",
+   "channel": "LinkedIn",
+   "hook": "Congrats on the new role at {Company}",
+   "body": "Congrats on joining {Company}. Most AppSec leaders I talk to spend their first 90 days figuring out what developers actually use versus what's licensed. We put together a short benchmark of how teams your size structure that first quarter. Happy to send it over.",
+   "cta": "Want the benchmark?"
+  },
+  {
+   "name": "High intent: the AI Code Surge",
+   "trigger": "ai_code_surge",
+   "persona": "Head of Application Security",
+   "channel": "Email",
+   "hook": "{Company}'s AI coding rollout and the AppSec role you're hiring for",
+   "body": "Hi {FirstName},\n\nSaw that {Company} rolled out {AI tool} across engineering and is hiring a {open role}. That combination usually means more code is shipping than the security team can see.\n\nSnyk Studio runs inside the assistant your developers already use, so issues get caught before the code is committed rather than in a backlog later. {Reference customer} used it to {outcome}.\n\nWould a 20-minute look at what that would mean for your repos be useful?",
+   "cta": "20-minute session on their repos"
+  },
+  {
+   "name": "Compliance: the CRA clock",
+   "trigger": "compliance_clock",
+   "persona": "Director of Product Security",
+   "channel": "Email",
+   "hook": "The CRA's 24-hour clock at {Company}",
+   "body": "Hi {FirstName},\n\nSince 11 September, manufacturers selling into the EU have 24 hours to flag an actively exploited vulnerability. The hard part isn't the form, it's knowing which of your releases contain the affected component.\n\nWe built a one-page map of which CRA obligations Snyk covers and which it doesn't. Want me to send it?",
+   "cta": "Send the CRA map"
+  },
+  {
+   "name": "Displacement: legacy SAST",
+   "trigger": "new_sheriff",
+   "persona": "Head of Application Security",
+   "channel": "Email",
+   "hook": "Is {Incumbent} getting fixed or getting ignored?",
+   "body": "Hi {FirstName},\n\nNoticed {Company}'s postings still list {Incumbent}. The teams we talk to rarely complain about detection. They complain that developers don't act on the findings.\n\nWe can run Snyk side by side with {Incumbent} on one repo and compare what developers would actually fix. No migration, one afternoon.",
+   "cta": "Side-by-side on one repo"
+  },
+  {
+   "name": "Cross-sell: Team plan ceiling",
+   "trigger": "team_plan_ceiling",
+   "persona": "Engineering Manager",
+   "channel": "Email",
+   "hook": "Your Snyk workspace just hit 10 developers",
+   "body": "Hi {FirstName},\n\nYour team at {Company} is at the Team plan's 10-developer limit, so the next person to commit won't be covered. I can walk you through what Ignite adds and price it against your actual contributor count.",
+   "cta": "15-minute plan review"
+  },
+  {
+   "name": "Champion: former Snyk user",
+   "trigger": "champion_returns",
+   "persona": "Former Snyk user, now at a new company",
+   "channel": "LinkedIn",
+   "hook": "Bringing Snyk to {Company}?",
+   "body": "Congrats on the move to {Company}. You ran Snyk at {Previous company}, and a few developers at {Company} have already signed up for the free tier. Want help connecting them into one org so you start with a full picture?",
+   "cta": "Quick setup call"
+  }
+ ],
+ "triggers": [
+  {
+   "id": "T1",
+   "if": "a company is standing up or rebuilding its application security function",
+   "then": "a developer-facing security platform",
+   "because": "a small security team cannot review every pull request across hundreds of engineers"
+  },
+  {
+   "id": "T2",
+   "if": "developers adopt AI coding assistants across the organisation",
+   "then": "guardrails in the IDE and pipeline (Snyk Studio, Snyk Code)",
+   "because": "generated code grows faster than human review capacity"
+  },
+  {
+   "id": "T3",
+   "if": "a company is shipping AI agents, LLM features or MCP servers",
+   "then": "AI-BOM and agent-aware testing (Snyk Evo)",
+   "because": "prompt injection, tool calls and model supply chains sit outside what classic SAST covers"
+  },
+  {
+   "id": "T4",
+   "if": "a company sells software or connected products into the EU",
+   "then": "SCA, SBOM generation and continuous monitoring",
+   "because": "CRA reporting gives 24 hours to flag an exploited vulnerability, which requires knowing what is in every release"
+  },
+  {
+   "id": "T5",
+   "if": "a company faces a PCI DSS, FedRAMP, SOC 2 or IPO readiness deadline",
+   "then": "scanning evidence that auditors accept",
+   "because": "auditors expect proof that code and dependencies are tested continuously"
+  },
+  {
+   "id": "T6",
+   "if": "a company has a public incident or visible dependency exposure",
+   "then": "fast dependency inventory and fixes",
+   "because": "leadership has urgency and budget to prevent a repeat"
+  },
+  {
+   "id": "T7",
+   "if": "engineering headcount, services or cloud-native infrastructure are growing quickly",
+   "then": "container, IaC and per-developer coverage",
+   "because": "each new contributor, image and Terraform module widens the attack surface"
+  },
+  {
+   "id": "T8",
+   "if": "a company is consolidating security tools or unhappy with an incumbent scanner",
+   "then": "a platform developers adopt and that covers code to cloud",
+   "because": "tools developers ignore leave findings unfixed, and bundled scanners can leave coverage gaps"
+  },
+  {
+   "id": "T9",
+   "if": "a Team-plan or free-tier footprint is growing inside an account",
+   "then": "an Ignite or Enterprise plan",
+   "because": "the Team plan stops at 10 contributing developers"
+  }
+ ],
+ "scorecards": {
+  "note": "Scores are reasoned, not back-tested. [Inferred]",
+  "a": [
+   {
+    "signal": "Free or Team workspace growing past 10 contributing developers",
+    "conv": 5,
+    "strategic": 4,
+    "detect": 5,
+    "rationale": "Already a user, hitting a hard plan limit"
+   },
+   {
+    "signal": "Former Snyk user joins a non-customer in a security or platform role",
+    "conv": 5,
+    "strategic": 4,
+    "detect": 3,
+    "rationale": "Trust carries over; needs CRM confirmation"
+   },
+   {
+    "signal": "Org-wide rollout of AI coding assistants (Copilot, Cursor, Claude Code)",
+    "conv": 4,
+    "strategic": 5,
+    "detect": 3,
+    "rationale": "Fits Snyk's AI-era positioning; needs a paid lookup"
+   },
+   {
+    "signal": "Open AppSec, DevSecOps or Product Security role posted in the last 45 days",
+    "conv": 4,
+    "strategic": 4,
+    "detect": 4,
+    "rationale": "Budget owner arriving; free to detect"
+   },
+   {
+    "signal": "Several developers from one company signing up for Snyk Free",
+    "conv": 4,
+    "strategic": 4,
+    "detect": 4,
+    "rationale": "Bottom-up adoption in progress"
+   },
+   {
+    "signal": "EU Cyber Resilience Act work (SBOM, PSIRT, vulnerability reporting)",
+    "conv": 4,
+    "strategic": 4,
+    "detect": 3,
+    "rationale": "Hard deadline already live"
+   },
+   {
+    "signal": "Building AI agents, LLM apps or MCP servers",
+    "conv": 3,
+    "strategic": 5,
+    "detect": 3,
+    "rationale": "Opens Evo and AI-BOM; earlier stage"
+   },
+   {
+    "signal": "Disclosed security incident or supply-chain compromise",
+    "conv": 4,
+    "strategic": 3,
+    "detect": 3,
+    "rationale": "Urgent but sensitive to approach"
+   },
+   {
+    "signal": "Legacy SAST (Checkmarx, Veracode) named in job postings",
+    "conv": 4,
+    "strategic": 3,
+    "detect": 3,
+    "rationale": "Displacement; renewal timing unknown"
+   },
+   {
+    "signal": "New CISO, Head of AppSec or Head of Product Security in the last 120 days",
+    "conv": 3,
+    "strategic": 4,
+    "detect": 3,
+    "rationale": "Tool reviews follow new leaders"
+   }
+  ],
+  "b": [
+   {
+    "signal": "Company publishes its own MCP servers on GitHub",
+    "conv": 3,
+    "strategic": 5,
+    "detect": 4,
+    "rationale": "Concrete, public evidence of agent work"
+   },
+   {
+    "signal": "Talks or CFPs on securing AI-generated code",
+    "conv": 3,
+    "strategic": 4,
+    "detect": 3,
+    "rationale": "Shows the problem is on the speaker's mind"
+   },
+   {
+    "signal": "Bug bounty programme launched (HackerOne, Bugcrowd)",
+    "conv": 3,
+    "strategic": 4,
+    "detect": 4,
+    "rationale": "Inbound reports create remediation load"
+   },
+   {
+    "signal": "Trust centre or security page launched",
+    "conv": 3,
+    "strategic": 3,
+    "detect": 4,
+    "rationale": "Selling to enterprises; needs scanning evidence"
+   },
+   {
+    "signal": "Company becomes a CVE Numbering Authority",
+    "conv": 3,
+    "strategic": 4,
+    "detect": 3,
+    "rationale": "Formal vulnerability disclosure process"
+   },
+   {
+    "signal": "Job posts mention 'reachability' or 'alert fatigue'",
+    "conv": 4,
+    "strategic": 3,
+    "detect": 3,
+    "rationale": "Pain with a noisy incumbent tool"
+   },
+   {
+    "signal": "Engineers complain about security tool noise publicly",
+    "conv": 3,
+    "strategic": 3,
+    "detect": 2,
+    "rationale": "Reddit, Hacker News or Glassdoor frustration"
+   },
+   {
+    "signal": "Company publishes npm or PyPI packages",
+    "conv": 2,
+    "strategic": 4,
+    "detect": 4,
+    "rationale": "Owns open-source supply-chain exposure"
+   },
+   {
+    "signal": "Regulator comment letters on software security",
+    "conv": 2,
+    "strategic": 3,
+    "detect": 2,
+    "rationale": "Policy engagement precedes compliance work"
+   },
+   {
+    "signal": "Security questionnaire or vendor assessment roles posted",
+    "conv": 3,
+    "strategic": 3,
+    "detect": 3,
+    "rationale": "Customer security reviews are piling up"
+   }
+  ]
+ },
+ "displacement": {
+  "competitor_note": "Inferred from research. [Web]",
+  "cross_sell": [
+   {
+    "signal": "Open Source only, while hiring AppSec",
+    "expansion": "Snyk Code",
+    "play": "Code trial on monitored repos"
+   }
+  ],
+  "competitors": [
+   {
+    "name": "GitHub Advanced Security",
+    "gap": "Coverage tied to GitHub.",
+    "signal": "Multi-SCM teams.",
+    "trigger": "A second source-control platform.",
+    "message": "One platform across every repo."
+   }
+  ]
+ },
+ "implementation": {
+  "data": [
+   "First-party product usage",
+   "Clay search filters and data points"
+  ],
+  "workflow": [
+   "Ingest",
+   "Score",
+   "Enrich",
+   "Route",
+   "Trigger"
+  ],
+  "stack": [
+   "Clay"
+  ],
+  "horizons": [
+   {
+    "horizon": "Quick wins",
+    "signals": "AppSec hiring"
+   }
+  ]
+ },
+ "deep_dives": {
+  "eng_headcount_growth": {
+   "indicates": "More contributing developers and services every quarter, which outgrows manual review and per-team tooling (T7).",
+   "why_now": "Security tooling decisions get made during the hiring wave, before new teams settle on their own scanners.",
+   "angle": "Every new engineer is a new committer. Snyk's per-developer model scales coverage with the team instead of with the security headcount.",
+   "campaigns": [
+    "Paid LinkedIn to VP Engineering at fast-growing companies with a 'security that scales with headcount' message",
+    "Quarterly growth-cohort sequence that pairs a growth stat with a short Snyk customer story from the same segment"
+   ],
+   "channels": "LinkedIn, email",
+   "ease": "High",
+   "detect": "Clay search-companies: employee_growth_12mo >= 1.15, company_size 201-500 to 5,001-10,000, industry in Software Development / Financial Services. Refresh monthly."
+  },
+  "growth_funding": {
+   "indicates": "New capital usually funds engineering hiring and the first formal security controls investors and enterprise buyers ask for (T7, T5).",
+   "why_now": "Post-round companies set up SOC 2 and secure-SDLC basics within two quarters to unblock enterprise deals.",
+   "angle": "Enterprise buyers will ask how you secure your code and dependencies. Snyk gives you the evidence without slowing the roadmap.",
+   "campaigns": [
+    "Congratulations-plus-checklist email: the five AppSec controls enterprise security reviews ask for",
+    "Founder or CTO dinner for recently funded companies in one city"
+   ],
+   "channels": "Email, events",
+   "ease": "High",
+   "detect": "Clay: Latest Funding data point (or a workspace funding subroutine) filtered to rounds >= $30M in 90 days; cross-check round type in Crunchbase."
+  },
+  "eu_market_entry": {
+   "indicates": "Products placed on the EU market fall under the Cyber Resilience Act regardless of where the manufacturer is based (T4).",
+   "why_now": "CRA reporting duties are already live, and the full SBOM obligations follow in December 2027.",
+   "angle": "Selling into the EU now means a 24-hour clock on exploited vulnerabilities. Know what's in every release before the clock starts.",
+   "campaigns": [
+    "CRA readiness webinar for US companies expanding into Europe",
+    "One-page CRA-to-Snyk control map sent to new EU entrants"
+   ],
+   "channels": "Email, webinars, partner (EU system integrators)",
+   "ease": "Medium",
+   "detect": "Clay custom data point on EU expansion, plus search filter locations.any(region = \"EMEA\") compared month over month."
+  },
+  "appsec_hiring": {
+   "indicates": "The company is building or expanding the team that owns AppSec tooling (T1).",
+   "why_now": "New AppSec hires usually pick or review the toolset in their first 90 days, so the window opens when the posting goes up.",
+   "angle": "Your new AppSec engineer will be outnumbered by developers. Give them a platform developers actually use, so they spend time on risk, not triage.",
+   "campaigns": [
+    "Sequence to the hiring manager referencing the open role and the developer-to-security ratio",
+    "Content offer: '30-60-90 day plan for a new AppSec engineer' guide",
+    "Retargeting ads to the company's engineering org during the hiring window"
+   ],
+   "channels": "Email, LinkedIn",
+   "ease": "High",
+   "detect": "Clay search-companies with jobs.exists(job_still_open = true and job_posted_date >= today() - interval 45 days and job_title is_similar_to (\"Application Security Engineer\", \"DevSecOps Engineer\", \"Product Security Engineer\")). Free; this is the signal behind the live board."
+  },
+  "first_security_hire": {
+   "indicates": "Security is moving from 'the CTO handles it' to a dedicated function, which is the Ignite tier's sweet spot (T1).",
+   "why_now": "The first hire often inherits a vendor decision the CTO wants made before they arrive.",
+   "angle": "Your first security hire shouldn't spend month one setting up scanners. Start them on a platform that already runs in your repos.",
+   "campaigns": [
+    "CTO-to-CTO email with a 'first security hire' playbook",
+    "Ignite-tier trial offer timed to the posting"
+   ],
+   "channels": "Email, LinkedIn",
+   "ease": "Medium",
+   "detect": "Clay search-companies: company_size in (\"51-200\",\"201-500\") and jobs.exists(security engineer titles) and people.count(is_current = true and job_title is_similar_to (\"Security Engineer\")) = 0."
+  },
+  "platform_team_formation": {
+   "indicates": "The company is standardising golden paths for building and shipping software, and security checks get baked into those paths (T7).",
+   "why_now": "Golden paths are designed once; tools that make it in early stay for years.",
+   "angle": "Put security in the golden path so every new service starts scanned, without a ticket to the security team.",
+   "campaigns": [
+    "Platform engineering meetup sponsorship",
+    "Technical guide: adding Snyk to an internal developer platform"
+   ],
+   "channels": "Community events, email, docs",
+   "ease": "High",
+   "detect": "Clay search filter jobs.exists(job_title is_similar_to (\"Platform Engineer\", \"Developer Experience Engineer\")) with jobs.count >= 2."
+  },
+  "ai_coding_rollout": {
+   "indicates": "Code volume is rising faster than human review, and much of it is generated (T2).",
+   "why_now": "Security leaders are being asked whether AI-generated code is safe after the rollout, not before.",
+   "angle": "Your developers ship more code with AI assistants than your reviewers can read. Snyk Studio puts guardrails inside the assistant they already use.",
+   "campaigns": [
+    "'Secure your AI coding rollout' assessment offer",
+    "Joint content with AI coding tool partners",
+    "Webinar on measuring the security of AI-generated code"
+   ],
+   "channels": "Email, LinkedIn, partner co-marketing",
+   "ease": "Medium",
+   "detect": "Clay custom data point (prompt in signals.yaml). Supplement with job descriptions mentioning Copilot, Cursor or Claude Code."
+  },
+  "cloud_native_shift": {
+   "indicates": "A growing container and IaC estate creates misconfiguration and base-image risk (T7).",
+   "why_now": "Container and IaC scanning is easiest to add while pipelines are being built.",
+   "angle": "Every Terraform module and base image is code. Scan it in the same workflow developers already use for their app code.",
+   "campaigns": [
+    "Container base-image risk report for their public images",
+    "Terraform misconfiguration workshop"
+   ],
+   "channels": "Email, community",
+   "ease": "High",
+   "detect": "Clay search filter jobs.exists(job_description contains (\"Kubernetes\", \"Terraform\")) with jobs.count >= 3; technographics.any(product contains \"Kubernetes\") where covered."
+  },
+  "legacy_sast_in_stack": {
+   "indicates": "An incumbent enterprise SAST tool is in place, often with low developer adoption (T8).",
+   "why_now": "Postings that list the tool show it is still in use; renewal timing is the open question.",
+   "angle": "If developers ignore your scanner, the findings don't get fixed. Snyk runs where they already work.",
+   "campaigns": [
+    "Side-by-side scan offer on one repo",
+    "Migration guide from Checkmarx or Veracode"
+   ],
+   "channels": "Email, LinkedIn",
+   "ease": "Medium",
+   "detect": "Clay search filter jobs.exists(job_still_open = true and job_description contains (\"Checkmarx\", \"Veracode\"))."
+  },
+  "bundle_adoption": {
+   "indicates": "The buyer is consolidating AppSec into a platform they already pay for, which puts best-of-breed tools at risk (T8).",
+   "why_now": "Consolidation decisions are often made at a platform renewal; arriving after it is too late.",
+   "angle": "Consolidating is fine, until coverage drops. Show where a bundled scanner misses dependencies, containers or fix guidance.",
+   "campaigns": [
+    "Coverage gap analysis against the bundled tool",
+    "Customer reference from a company that kept Snyk alongside a CNAPP"
+   ],
+   "channels": "Email, executive briefing",
+   "ease": "Medium",
+   "detect": "Clay search filter jobs.exists(job_description contains (\"GitHub Advanced Security\", \"CodeQL\", \"Wiz\")); technographics where available."
+  },
+  "new_security_leader": {
+   "indicates": "A new leader reviews the inherited stack and programme (T1).",
+   "why_now": "New leaders usually set a 90-day plan; tool changes land in it or wait a year.",
+   "angle": "Congratulations on the new role. Here's what developer-led security programmes look like in their first 90 days at companies your size.",
+   "campaigns": [
+    "New-leader welcome kit: benchmark, peer intros, 90-day plan",
+    "Invite to a CISO roundtable"
+   ],
+   "channels": "LinkedIn, email, events",
+   "ease": "Medium",
+   "detect": "Clay search-contacts at ICP accounts: experiences.any(is_current = true and job_title is_similar_to (\"CISO\", \"Head of Application Security\") and start_date >= today() - interval 4 months)."
+  },
+  "snyk_champion_moved": {
+   "indicates": "Someone who already trusts Snyk now sits inside a new account (T1).",
+   "why_now": "People bring tools they know in their first few months in a new job.",
+   "angle": "You ran Snyk at your last company. Want to set it up here before the backlog builds?",
+   "campaigns": [
+    "Alumni-champion sequence with a fast-start offer",
+    "Champion programme invite"
+   ],
+   "channels": "LinkedIn, email",
+   "ease": "Medium",
+   "detect": "Clay search-contacts: experiences.any(is_current = false and description contains \"Snyk\") and experiences.any(is_current = true and start_date >= today() - interval 4 months and job_title is_similar_to (security and platform titles)); cross-check Snyk CRM."
+  },
+  "eu_cra_exposure": {
+   "indicates": "The company is building the vulnerability handling and SBOM process the CRA requires (T4).",
+   "why_now": "Reporting duties have applied since 11 September 2026, and SBOMs become mandatory on 11 December 2027.",
+   "angle": "You can't report an exploited vulnerability in 24 hours if you don't know which releases contain it. Snyk keeps that inventory current.",
+   "campaigns": [
+    "CRA readiness assessment",
+    "SBOM generation workshop",
+    "Partner campaign with EU compliance consultancies"
+   ],
+   "channels": "Email, webinars, partners",
+   "ease": "Medium",
+   "detect": "Clay search filter jobs.exists(job_description contains (\"Cyber Resilience Act\", \"PSIRT\", \"SBOM\")) and locations.any(region = \"EMEA\")."
+  },
+  "compliance_push": {
+   "indicates": "An audit is coming that will ask for code and dependency scanning evidence (T5).",
+   "why_now": "Audit dates are fixed, so the purchase has a deadline.",
+   "angle": "Turn audit evidence into a by-product of the way developers already work.",
+   "campaigns": [
+    "PCI DSS or FedRAMP control mapping one-pager",
+    "Case study: Revolut on updated PCI standards"
+   ],
+   "channels": "Email, LinkedIn",
+   "ease": "High",
+   "detect": "Clay search filter jobs.exists(job_description contains (\"PCI DSS\", \"FedRAMP\", \"SOC 2\"))."
+  },
+  "ai_agent_build": {
+   "indicates": "New attack surface (prompt injection, tool calls, model supply chain) that classic SAST doesn't cover (T3).",
+   "why_now": "Teams are shipping agents to production now and security reviews are catching up.",
+   "angle": "Your agents call tools and pull models you didn't write. AI-BOM shows what's in the chain, and Evo tests it.",
+   "campaigns": [
+    "AI-BOM scan of a public repo",
+    "Agent security workshop for AI platform teams"
+   ],
+   "channels": "Email, community, events",
+   "ease": "Medium",
+   "detect": "Clay search filter jobs.exists(job_description contains (\"MCP\", \"agentic\", \"LLM\")) with jobs.count >= 2; public GitHub repos containing MCP server code."
+  },
+  "security_incident": {
+   "indicates": "Leadership now has budget and urgency to prevent a repeat (T6).",
+   "why_now": "Post-incident budgets are approved within weeks and spent within a quarter.",
+   "angle": "Lead with help, not a pitch: what to check in your dependencies right now.",
+   "campaigns": [
+    "Offer a free dependency exposure check",
+    "Executive briefing on supply-chain controls"
+   ],
+   "channels": "Email, executive outreach",
+   "ease": "Medium",
+   "detect": "Clay custom data point or Recent News filtered for breach terms; news alerts for 'breach' or 'compromised package' with company names."
+  },
+  "ai_product_launch": {
+   "indicates": "AI is now in production and in front of customers (T3).",
+   "why_now": "Customers and auditors start asking how the AI feature is secured soon after launch.",
+   "angle": "Your customers will ask how your new AI feature is secured. Have the answer ready.",
+   "campaigns": [
+    "Congratulations note plus AI security FAQ template",
+    "Webinar: securing AI features after launch"
+   ],
+   "channels": "Email, LinkedIn",
+   "ease": "High",
+   "detect": "Clay Recent News data point filtered for AI, agent or copilot launches."
+  },
+  "ipo_prep": {
+   "indicates": "Controls and risk disclosures, including software supply-chain risk, are being formalised (T5).",
+   "why_now": "Pre-IPO companies tighten controls in the year before listing.",
+   "angle": "Public-company cyber disclosures start with knowing your software risk. Snyk makes it measurable.",
+   "campaigns": [
+    "Pre-IPO security readiness checklist",
+    "CISO roundtable for pre-IPO companies"
+   ],
+   "channels": "Email, events",
+   "ease": "Medium",
+   "detect": "SEC EDGAR S-1 alerts; Clay Recent News for IPO preparation."
+  },
+  "snyk_content_engagement": {
+   "indicates": "A buying group is researching together (T1, T2).",
+   "why_now": "Multi-person engagement usually precedes a formal evaluation by weeks.",
+   "angle": "Several of your team have been reading about X. Want a session tailored to what they're looking at?",
+   "campaigns": [
+    "Account-level follow-up summarising what the team read",
+    "Invite to a technical deep-dive"
+   ],
+   "channels": "Email, SDR call",
+   "ease": "High",
+   "detect": "First-party: marketing automation account roll-up by domain. Not available in Clay."
+  },
+  "oss_vuln_exposure": {
+   "indicates": "Hygiene gaps that are visible from outside (T6).",
+   "why_now": "The exposure is public today.",
+   "angle": "We noticed a critical issue in one of your public repos. Here's the fix, no strings attached.",
+   "campaigns": [
+    "Responsible 'we found this' outreach with the fix",
+    "Open-source maintainer programme invite"
+   ],
+   "channels": "Email, GitHub",
+   "ease": "Medium",
+   "detect": "Scan the company's public GitHub org with Snyk or OSV; map org to domain. Not available in Clay."
+  },
+  "team_plan_ceiling": {
+   "indicates": "Snyk is already in use and has hit the Team plan's hard limit (T7).",
+   "why_now": "The team can't add the 11th developer without talking to sales.",
+   "angle": "You've outgrown the Team plan. Here's what Ignite adds, sized to your team.",
+   "campaigns": [
+    "In-product upgrade prompt plus AE outreach",
+    "Usage review call showing current coverage"
+   ],
+   "channels": "In-product, email",
+   "ease": "High",
+   "detect": "First-party product data: contributor count on the Usage page per organisation. Not available in Clay."
+  },
+  "free_tier_cluster": {
+   "indicates": "Bottom-up adoption ahead of a team decision (T2).",
+   "why_now": "Grassroots usage turns into a team purchase or fizzles out within weeks.",
+   "angle": "A few of your developers are already using Snyk. Want to connect it to your org so their results are shared?",
+   "campaigns": [
+    "Product-qualified lead routing to SDRs",
+    "Team onboarding webinar"
+   ],
+   "channels": "In-product, email",
+   "ease": "High",
+   "detect": "First-party sign-ups grouped by email domain; enrich the domain with Clay for firmographics."
+  },
+  "g2_category_research": {
+   "indicates": "Active vendor comparison (T8).",
+   "why_now": "Review-site research typically happens in the final weeks of a shortlist.",
+   "angle": "Comparing AppSec tools? Here's a fair comparison on your own code.",
+   "campaigns": [
+    "Comparison-page retargeting",
+    "Bake-off offer on a real repo"
+   ],
+   "channels": "Display, email",
+   "ease": "Medium",
+   "detect": "G2 buyer intent feed. Not available in Clay."
+  }
+ },
+ "signals": [
+  {
+   "id": "eng_headcount_growth",
+   "name": "Headcount growth of 15%+ over 12 months",
+   "category": "demographic_firmographic",
+   "trigger_ref": "T7",
+   "buying_stage": "awareness",
+   "decay_window_days": 120,
+   "weight": 10,
+   "source": "clay",
+   "clay_source": {
+    "type": "search_filter",
+    "name": "employee_growth_12mo",
+    "custom_prompt": null
+   },
+   "threshold": "employee_growth_12mo >= 1.15 and 200-10,000 employees",
+   "external_source": null,
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "VP Engineering",
+    "Head of Platform Engineering"
+   ],
+   "play_ref": null
+  },
+  {
+   "id": "growth_funding",
+   "name": "Series B or later round of $30M+ in the last 90 days",
+   "category": "demographic_firmographic",
+   "trigger_ref": "T7",
+   "buying_stage": "awareness",
+   "decay_window_days": 90,
+   "weight": 15,
+   "source": "inferred",
+   "clay_source": {
+    "type": "company_data_point",
+    "name": "Latest Funding",
+    "custom_prompt": null
+   },
+   "threshold": "Latest round >= $30M, Series B or later, closed within 90 days",
+   "external_source": null,
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "VP Engineering",
+    "CTO"
+   ],
+   "play_ref": "play_growth"
+  },
+  {
+   "id": "eu_market_entry",
+   "name": "Opening an EU entity, office or product line",
+   "category": "demographic_firmographic",
+   "trigger_ref": "T4",
+   "buying_stage": "awareness",
+   "decay_window_days": 120,
+   "weight": 10,
+   "source": "inferred",
+   "clay_source": {
+    "type": "custom_company",
+    "name": "EU expansion",
+    "custom_prompt": "Has this company opened an EU office, entity or EU-specific product in the last 6 months? Return yes/no, country, date and source URL."
+   },
+   "threshold": "yes, dated within 6 months",
+   "external_source": null,
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "Director of Product Security",
+    "General Counsel"
+   ],
+   "play_ref": "play_cra"
+  },
+  {
+   "id": "appsec_hiring",
+   "name": "Open AppSec, DevSecOps or Product Security role posted in the last 45 days",
+   "category": "hiring_org_design",
+   "trigger_ref": "T1",
+   "buying_stage": "consideration",
+   "decay_window_days": 45,
+   "weight": 25,
+   "source": "clay",
+   "clay_source": {
+    "type": "search_filter",
+    "name": "jobs.exists",
+    "custom_prompt": null
+   },
+   "threshold": ">= 1 open role similar to Application Security / DevSecOps / Product Security Engineer, posted in trailing 45 days",
+   "external_source": null,
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "Head of Application Security",
+    "Director of Product Security"
+   ],
+   "play_ref": "play_appsec_hire"
+  },
+  {
+   "id": "first_security_hire",
+   "name": "First-ever security engineer at a 150-500 person software company",
+   "category": "hiring_org_design",
+   "trigger_ref": "T1",
+   "buying_stage": "consideration",
+   "decay_window_days": 60,
+   "weight": 20,
+   "source": "inferred",
+   "clay_source": {
+    "type": "search_filter",
+    "name": "jobs.exists + people.count",
+    "custom_prompt": null
+   },
+   "threshold": "Open security engineering role AND no current employee with a security title",
+   "external_source": null,
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "CTO",
+    "VP Engineering"
+   ],
+   "play_ref": "play_appsec_hire"
+  },
+  {
+   "id": "platform_team_formation",
+   "name": "Platform engineering or developer experience team being formed",
+   "category": "hiring_org_design",
+   "trigger_ref": "T7",
+   "buying_stage": "awareness",
+   "decay_window_days": 90,
+   "weight": 10,
+   "source": "inferred",
+   "clay_source": {
+    "type": "search_filter",
+    "name": "jobs.exists",
+    "custom_prompt": null
+   },
+   "threshold": ">= 2 open roles titled Platform Engineer or Developer Experience Engineer",
+   "external_source": null,
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "Head of Platform Engineering"
+   ],
+   "play_ref": null
+  },
+  {
+   "id": "ai_coding_rollout",
+   "name": "Org-wide rollout of AI coding assistants (Copilot, Cursor, Claude Code)",
+   "category": "technographic",
+   "trigger_ref": "T2",
+   "buying_stage": "consideration",
+   "decay_window_days": 120,
+   "weight": 30,
+   "source": "inferred",
+   "clay_source": {
+    "type": "custom_company",
+    "name": "AI coding assistant rollout",
+    "custom_prompt": "Has this company publicly announced or described an org-wide rollout of AI coding assistants (GitHub Copilot, Cursor, Claude Code or similar) in the last 12 months? Return yes/no, the tool, the date, and a source URL."
+   },
+   "threshold": "yes, dated within 12 months",
+   "external_source": null,
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "VP Engineering",
+    "Head of Application Security"
+   ],
+   "play_ref": "play_ai_code_surge"
+  },
+  {
+   "id": "cloud_native_shift",
+   "name": "Kubernetes, container or Terraform build-out",
+   "category": "technographic",
+   "trigger_ref": "T7",
+   "buying_stage": "awareness",
+   "decay_window_days": 150,
+   "weight": 10,
+   "source": "inferred",
+   "clay_source": {
+    "type": "search_filter",
+    "name": "jobs.exists(job_description contains)",
+    "custom_prompt": null
+   },
+   "threshold": ">= 3 open platform or DevOps roles mentioning Kubernetes or Terraform",
+   "external_source": null,
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "Head of Platform Engineering"
+   ],
+   "play_ref": null
+  },
+  {
+   "id": "legacy_sast_in_stack",
+   "name": "Legacy SAST (Checkmarx, Veracode) named in job postings",
+   "category": "technographic",
+   "trigger_ref": "T3",
+   "buying_stage": "decision",
+   "decay_window_days": 180,
+   "weight": 20,
+   "source": "inferred",
+   "clay_source": {
+    "type": "search_filter",
+    "name": "jobs.exists(job_description contains)",
+    "custom_prompt": null
+   },
+   "threshold": ">= 1 open role mentioning Checkmarx or Veracode",
+   "external_source": null,
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "Head of Application Security"
+   ],
+   "play_ref": "play_displacement"
+  },
+  {
+   "id": "bundle_adoption",
+   "name": "Adopting GitHub Advanced Security or Wiz Code",
+   "category": "technographic",
+   "trigger_ref": "T8",
+   "buying_stage": "decision",
+   "decay_window_days": 180,
+   "weight": 15,
+   "source": "inferred",
+   "clay_source": {
+    "type": "search_filter",
+    "name": "technographics / jobs.exists",
+    "custom_prompt": null
+   },
+   "threshold": "Job descriptions or tech stack mention GitHub Advanced Security, CodeQL or Wiz Code",
+   "external_source": null,
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "CISO",
+    "Head of Application Security"
+   ],
+   "play_ref": "play_bundle_defense"
+  },
+  {
+   "id": "new_security_leader",
+   "name": "New CISO, Head of AppSec or Head of Product Security in the last 120 days",
+   "category": "people_movement",
+   "trigger_ref": "T1",
+   "buying_stage": "awareness",
+   "decay_window_days": 90,
+   "weight": 20,
+   "source": "clay",
+   "clay_source": {
+    "type": "search_filter",
+    "name": "people.exists(start_date)",
+    "custom_prompt": null
+   },
+   "threshold": "Current role started within 120 days",
+   "external_source": null,
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "CISO",
+    "Head of Application Security"
+   ],
+   "play_ref": "play_new_leader"
+  },
+  {
+   "id": "snyk_champion_moved",
+   "name": "Former Snyk user joins a non-customer in a security or platform role",
+   "category": "people_movement",
+   "trigger_ref": "T1",
+   "buying_stage": "consideration",
+   "decay_window_days": 120,
+   "weight": 30,
+   "source": "inferred",
+   "clay_source": {
+    "type": "search_filter",
+    "name": "people.exists(description contains Snyk)",
+    "custom_prompt": null
+   },
+   "threshold": "Profile or past role mentions Snyk; started current role within 120 days; employer not a known customer",
+   "external_source": "Snyk CRM (to confirm the person was a real user)",
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "Head of Application Security",
+    "Staff Security Engineer"
+   ],
+   "play_ref": "play_champion"
+  },
+  {
+   "id": "eu_cra_exposure",
+   "name": "EU Cyber Resilience Act work (SBOM, PSIRT, vulnerability reporting)",
+   "category": "initiatives_programs",
+   "trigger_ref": "T4",
+   "buying_stage": "consideration",
+   "decay_window_days": 180,
+   "weight": 25,
+   "source": "web_research",
+   "clay_source": {
+    "type": "search_filter",
+    "name": "jobs.exists(job_description contains)",
+    "custom_prompt": null
+   },
+   "threshold": "Sells into the EU AND >= 1 open role mentioning Cyber Resilience Act, PSIRT or SBOM",
+   "external_source": null,
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "Director of Product Security",
+    "VP Engineering"
+   ],
+   "play_ref": "play_cra"
+  },
+  {
+   "id": "compliance_push",
+   "name": "Compliance programme in flight (PCI DSS, FedRAMP, SOC 2)",
+   "category": "initiatives_programs",
+   "trigger_ref": "T5",
+   "buying_stage": "consideration",
+   "decay_window_days": 90,
+   "weight": 15,
+   "source": "inferred",
+   "clay_source": {
+    "type": "search_filter",
+    "name": "jobs.exists(job_description contains)",
+    "custom_prompt": null
+   },
+   "threshold": ">= 1 open security or engineering role mentioning PCI DSS, FedRAMP or SOC 2",
+   "external_source": null,
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "CISO",
+    "GRC Lead"
+   ],
+   "play_ref": null
+  },
+  {
+   "id": "ai_agent_build",
+   "name": "Building AI agents, LLM apps or MCP servers",
+   "category": "initiatives_programs",
+   "trigger_ref": "T3",
+   "buying_stage": "consideration",
+   "decay_window_days": 90,
+   "weight": 25,
+   "source": "inferred",
+   "clay_source": {
+    "type": "search_filter",
+    "name": "jobs.exists(job_description contains)",
+    "custom_prompt": null
+   },
+   "threshold": ">= 2 open roles whose description mentions MCP, agentic, LLM application or AI agents",
+   "external_source": null,
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "Head of AI Platform",
+    "Head of Application Security"
+   ],
+   "play_ref": "play_ai_code_surge"
+  },
+  {
+   "id": "security_incident",
+   "name": "Disclosed security incident or supply-chain compromise",
+   "category": "public_announcements",
+   "trigger_ref": "T6",
+   "buying_stage": "decision",
+   "decay_window_days": 60,
+   "weight": 25,
+   "source": "inferred",
+   "clay_source": {
+    "type": "custom_company",
+    "name": "Recent security incident",
+    "custom_prompt": "Has this company publicly disclosed a security incident, breach or compromised dependency in the last 90 days? Return yes/no, date, summary and source URL."
+   },
+   "threshold": "yes, within 90 days",
+   "external_source": "News monitoring",
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "CISO"
+   ],
+   "play_ref": null
+  },
+  {
+   "id": "ai_product_launch",
+   "name": "Public launch of AI features or agents in the product",
+   "category": "public_announcements",
+   "trigger_ref": "T3",
+   "buying_stage": "awareness",
+   "decay_window_days": 60,
+   "weight": 15,
+   "source": "inferred",
+   "clay_source": {
+    "type": "company_data_point",
+    "name": "Recent News",
+    "custom_prompt": null
+   },
+   "threshold": "Recent News mentions an AI or agent product launch within 60 days",
+   "external_source": null,
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "CTO",
+    "Head of AI Platform"
+   ],
+   "play_ref": "play_ai_code_surge"
+  },
+  {
+   "id": "ipo_prep",
+   "name": "IPO preparation (S-1 filing, new public-company CFO or audit committee)",
+   "category": "public_announcements",
+   "trigger_ref": "T5",
+   "buying_stage": "awareness",
+   "decay_window_days": 180,
+   "weight": 10,
+   "source": "inferred",
+   "clay_source": {
+    "type": "company_data_point",
+    "name": "Recent News",
+    "custom_prompt": null
+   },
+   "threshold": "S-1 filed or IPO preparation reported within 6 months",
+   "external_source": "SEC EDGAR",
+   "backtest": {
+    "verdict": "not_backtested"
+   },
+   "personas": [
+    "CISO",
+    "CFO"
+   ],
+   "play_ref": null
+  },
+  {
+   "id": "snyk_content_engagement",
+   "name": "Multiple people from one account engaging with Snyk content",
+   "category": "web_content",
+   "trigger_ref": "T1",
+   "buying_stage": "consideration",
+   "decay_window_days": 30,
+   "weight": 20,
+   "source": "inferred",
+   "clay_source": null,
+   "threshold": "3+ people from the same domain on Snyk webinars, reports or docs in 30 days",
+   "external_source": "Snyk marketing automation and web analytics",
+   "backtest": {
+    "verdict": "not_testable"
+   },
+   "personas": [
+    "Head of Application Security"
+   ],
+   "play_ref": null
+  },
+  {
+   "id": "oss_vuln_exposure",
+   "name": "Public repos with known critical vulnerabilities in dependencies",
+   "category": "web_content",
+   "trigger_ref": "T6",
+   "buying_stage": "awareness",
+   "decay_window_days": 30,
+   "weight": 15,
+   "source": "inferred",
+   "clay_source": null,
+   "threshold": "Company-owned public GitHub repo with a critical dependency vulnerability",
+   "external_source": "Public GitHub plus a vulnerability database (OSV or Snyk's own)",
+   "backtest": {
+    "verdict": "not_testable"
+   },
+   "personas": [
+    "Head of Application Security",
+    "Staff Engineer"
+   ],
+   "play_ref": null
+  },
+  {
+   "id": "team_plan_ceiling",
+   "name": "Free or Team workspace growing past 10 contributing developers",
+   "category": "intent_behavioral",
+   "trigger_ref": "T7",
+   "buying_stage": "decision",
+   "decay_window_days": 60,
+   "weight": 35,
+   "source": "web_research",
+   "clay_source": null,
+   "threshold": "Workspace contributor count > 10 on the Team plan",
+   "external_source": "Snyk first-party product usage data",
+   "backtest": {
+    "verdict": "not_testable"
+   },
+   "personas": [
+    "Engineering Manager",
+    "Head of Application Security"
+   ],
+   "play_ref": "play_team_ceiling"
+  },
+  {
+   "id": "free_tier_cluster",
+   "name": "Several developers from one company signing up for Snyk Free",
+   "category": "intent_behavioral",
+   "trigger_ref": "T2",
+   "buying_stage": "consideration",
+   "decay_window_days": 30,
+   "weight": 25,
+   "source": "inferred",
+   "clay_source": null,
+   "threshold": "3+ sign-ups from the same work domain in 30 days",
+   "external_source": "Snyk first-party sign-up data",
+   "backtest": {
+    "verdict": "not_testable"
+   },
+   "personas": [
+    "Engineering Manager"
+   ],
+   "play_ref": null
+  },
+  {
+   "id": "g2_category_research",
+   "name": "Researching SAST or SCA categories on review sites",
+   "category": "intent_behavioral",
+   "trigger_ref": "T8",
+   "buying_stage": "consideration",
+   "decay_window_days": 14,
+   "weight": 15,
+   "source": "inferred",
+   "clay_source": null,
+   "threshold": "G2 buyer intent on SAST, SCA or Snyk comparison pages",
+   "external_source": "G2 buyer intent",
+   "backtest": {
+    "verdict": "not_testable"
+   },
+   "personas": [
+    "Head of Application Security"
+   ],
+   "play_ref": null
+  }
+ ],
+ "sources": [
+  {
+   "title": "Sacra: Snyk at $326M ARR",
+   "url": "https://sacra.com/research/snyk-at-326m-arr-growing-7-yoy/"
+  }
+ ]
+}
