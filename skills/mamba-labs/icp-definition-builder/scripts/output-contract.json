@@ -1,0 +1,15 @@
+{
+  "skill": "icp-definition-builder",
+  "required_sections": [],
+  "table_sections": [],
+  "min_chars": 200,
+  "max_empty_cell_share": 0.2,
+  "placeholders": [
+    "TODO",
+    "TBD",
+    "lorem ipsum",
+    "[insert",
+    "XXX",
+    "<fill"
+  ]
+}
