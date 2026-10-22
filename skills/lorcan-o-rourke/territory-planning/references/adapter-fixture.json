@@ -1,0 +1,103 @@
+{
+  "synthetic": true,
+  "rubric": {
+    "version": "demo-seller-motion-1",
+    "missing_policy": "hold",
+    "min_weighted_coverage": 100,
+    "grades": [
+      {
+        "min": 80,
+        "label": "Best Fit"
+      },
+      {
+        "min": 65,
+        "label": "Good Fit"
+      },
+      {
+        "min": 50,
+        "label": "Moderate Fit"
+      },
+      {
+        "min": 0,
+        "label": "Low Fit"
+      }
+    ],
+    "factors": [
+      {
+        "id": "size",
+        "name": "Size",
+        "weight": 60,
+        "kind": "bands",
+        "bands": [
+          [
+            0,
+            0
+          ],
+          [
+            50,
+            60
+          ],
+          [
+            200,
+            100
+          ]
+        ],
+        "none_score": 0
+      },
+      {
+        "id": "motion",
+        "name": "Seller motion",
+        "weight": 40,
+        "kind": "map",
+        "map": {
+          "sales_led": 75,
+          "self_serve": 75,
+          "hybrid": 100,
+          "consumer": 0
+        },
+        "none_score": 0
+      }
+    ]
+  },
+  "context": {
+    "account_id": "synthetic-adapter",
+    "domain": "adapter.example",
+    "score_as_of": "2026-01-15T00:00:00Z",
+    "allowed_entity_types": [
+      "operating_company"
+    ],
+    "company_source": "cpj-enrich-company-v2",
+    "company_retrieved_at": "2026-01-15T09:00:00Z",
+    "evidence_policy": {
+      "headcount_max_age_days": 90,
+      "motion_max_age_days": 180,
+      "headcount_date_basis": "provider_refresh",
+      "headcount_band_conflict": "hold"
+    }
+  },
+  "company": {
+    "success": true,
+    "result": {
+      "name": "Synthetic Adapter Company",
+      "domain": "adapter.example",
+      "employee_count": 300,
+      "size": "201-500 employees",
+      "last_refresh": "2026-01-14T00:00:00Z",
+      "url": "https://www.linkedin.com/company/synthetic-adapter"
+    }
+  },
+  "research": {
+    "entity_type": "operating_company",
+    "customer_segment": "b2b",
+    "selling_motion": "hybrid",
+    "evidence_perspective": "seller",
+    "evidence": "Fictional fixture: self-serve team checkout and enterprise contact-sales are both observed. This does not imply B2C.",
+    "source_url": "https://adapter.example/pricing",
+    "observed_at": "2026-01-15",
+    "failure_reason": "",
+    "consumer_sales_evidence": "",
+    "business_sales_evidence": "Fictional team subscription and enterprise purchase routes.",
+    "unresolved_sales_routes": "",
+    "source_urls_json": "[\"https://adapter.example/pricing\"]"
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "fictional": true,
+  "scored_accounts": [],
+  "allocation": {
+    "snapshot_id": "fictional-pool-1",
+    "rules_version": "fictional-policy-1",
+    "grain": "entity",
+    "method": "snake",
+    "min_eligible_score": 80,
+    "fixture_only": true,
+    "account_attributes": [
+      {
+        "account_id": "good",
+        "protected": false,
+        "excluded": false,
+        "current_owner_id": "",
+        "bucket": "west",
+        "is_customer": false,
+        "has_open_opportunity": false,
+        "protection_source": "fictional reviewed ownership/protection fixture",
+        "exclusion_source": "fictional reviewed exclusions fixture"
+      },
+      {
+        "account_id": "held",
+        "protected": false,
+        "excluded": false,
+        "current_owner_id": "",
+        "bucket": "west",
+        "is_customer": false,
+        "has_open_opportunity": false,
+        "protection_source": "fictional reviewed ownership/protection fixture",
+        "exclusion_source": "fictional reviewed exclusions fixture"
+      },
+      {
+        "account_id": "excluded",
+        "protected": false,
+        "excluded": true,
+        "current_owner_id": "",
+        "bucket": "west",
+        "is_customer": false,
+        "has_open_opportunity": false,
+        "protection_source": "fictional reviewed ownership/protection fixture",
+        "exclusion_source": "fictional reviewed exclusions fixture",
+        "exclusion_reason": "fictional exclusion"
+      },
+      {
+        "account_id": "protected",
+        "protected": true,
+        "excluded": false,
+        "current_owner_id": "rep-a",
+        "bucket": "west",
+        "is_customer": true,
+        "has_open_opportunity": false,
+        "protection_source": "fictional reviewed ownership/protection fixture",
+        "exclusion_source": "fictional reviewed exclusions fixture",
+        "protection_reason": "fictional existing customer"
+      },
+      {
+        "account_id": "low",
+        "protected": false,
+        "excluded": false,
+        "current_owner_id": "",
+        "bucket": "west",
+        "is_customer": false,
+        "has_open_opportunity": false,
+        "protection_source": "fictional reviewed ownership/protection fixture",
+        "exclusion_source": "fictional reviewed exclusions fixture"
+      },
+      {
+        "account_id": "unmatched",
+        "protected": false,
+        "excluded": false,
+        "current_owner_id": "",
+        "bucket": "none",
+        "is_customer": false,
+        "has_open_opportunity": false,
+        "protection_source": "fictional reviewed ownership/protection fixture",
+        "exclusion_source": "fictional reviewed exclusions fixture"
+      }
+    ],
+    "fixture_accounts": [
+      {
+        "account_id": "good",
+        "scoring_status": "scored",
+        "account_fit_score": 95
+      },
+      {
+        "account_id": "held",
+        "scoring_status": "held",
+        "account_fit_score": null
+      },
+      {
+        "account_id": "excluded",
+        "scoring_status": "scored",
+        "account_fit_score": 90
+      },
+      {
+        "account_id": "protected",
+        "scoring_status": "scored",
+        "account_fit_score": 90
+      },
+      {
+        "account_id": "low",
+        "scoring_status": "scored",
+        "account_fit_score": 60
+      },
+      {
+        "account_id": "unmatched",
+        "scoring_status": "scored",
+        "account_fit_score": 90
+      }
+    ],
+    "reps": [
+      {
+        "rep_id": "rep-a",
+        "capacity": 2,
+        "existing_load_outside_snapshot": 0,
+        "buckets": [
+          "west"
+        ]
+      },
+      {
+        "rep_id": "rep-b",
+        "capacity": 0,
+        "existing_load_outside_snapshot": 1,
+        "buckets": [
+          "west"
+        ]
+      }
+    ]
+  }
+}

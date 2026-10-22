@@ -1,0 +1,178 @@
+{
+  "synthetic": true,
+  "rubric": {
+    "version": "synthetic-1",
+    "missing_policy": "hold",
+    "min_weighted_coverage": 100,
+    "grades": [
+      {
+        "min": 80,
+        "label": "Best Fit"
+      },
+      {
+        "min": 65,
+        "label": "Good Fit"
+      },
+      {
+        "min": 50,
+        "label": "Moderate Fit"
+      },
+      {
+        "min": 0,
+        "label": "Low Fit"
+      }
+    ],
+    "factors": [
+      {
+        "id": "size",
+        "name": "Size",
+        "weight": 60,
+        "kind": "bands",
+        "bands": [
+          [
+            0,
+            0
+          ],
+          [
+            50,
+            60
+          ],
+          [
+            200,
+            100
+          ]
+        ],
+        "none_score": 0
+      },
+      {
+        "id": "motion",
+        "name": "Motion",
+        "weight": 40,
+        "kind": "map",
+        "map": {
+          "enterprise": 100,
+          "mixed": 60,
+          "consumer": 0
+        },
+        "none_score": 0
+      }
+    ]
+  },
+  "accounts": [
+    {
+      "account_id": "northwind",
+      "domain": "northwind.example",
+      "matched_domain": "northwind.example",
+      "identity_status": "matched",
+      "score_as_of": "2026-01-15T00:00:00Z",
+      "factors": {
+        "size": {
+          "status": "found",
+          "value": 300,
+          "evidence": "300 employees in synthetic fixture",
+          "source": "synthetic fixture"
+        },
+        "motion": {
+          "status": "found",
+          "value": "enterprise",
+          "evidence": "enterprise motion in synthetic fixture",
+          "source": "synthetic fixture"
+        }
+      },
+      "expected_score": 100,
+      "expected_grade": "Best Fit"
+    },
+    {
+      "account_id": "contoso",
+      "domain": "contoso.example",
+      "matched_domain": "contoso.example",
+      "identity_status": "matched",
+      "score_as_of": "2026-01-15T00:00:00Z",
+      "factors": {
+        "size": {
+          "status": "found",
+          "value": 100,
+          "evidence": "100 employees in synthetic fixture",
+          "source": "synthetic fixture"
+        },
+        "motion": {
+          "status": "found",
+          "value": "enterprise",
+          "evidence": "enterprise motion in synthetic fixture",
+          "source": "synthetic fixture"
+        }
+      },
+      "expected_score": 76,
+      "expected_grade": "Good Fit"
+    },
+    {
+      "account_id": "fabrikam",
+      "domain": "fabrikam.example",
+      "matched_domain": "fabrikam.example",
+      "identity_status": "matched",
+      "score_as_of": "2026-01-15T00:00:00Z",
+      "factors": {
+        "size": {
+          "status": "found",
+          "value": 300,
+          "evidence": "300 employees in synthetic fixture",
+          "source": "synthetic fixture"
+        },
+        "motion": {
+          "status": "found",
+          "value": "consumer",
+          "evidence": "consumer motion in synthetic fixture",
+          "source": "synthetic fixture"
+        }
+      },
+      "expected_score": 60,
+      "expected_grade": "Moderate Fit"
+    },
+    {
+      "account_id": "wingtip",
+      "domain": "wingtip.example",
+      "matched_domain": "wingtip.example",
+      "identity_status": "matched",
+      "score_as_of": "2026-01-15T00:00:00Z",
+      "factors": {
+        "size": {
+          "status": "found",
+          "value": 10,
+          "evidence": "10 employees in synthetic fixture",
+          "source": "synthetic fixture"
+        },
+        "motion": {
+          "status": "found",
+          "value": "mixed",
+          "evidence": "mixed motion in synthetic fixture",
+          "source": "synthetic fixture"
+        }
+      },
+      "expected_score": 24,
+      "expected_grade": "Low Fit"
+    },
+    {
+      "account_id": "tailspin",
+      "domain": "tailspin.example",
+      "matched_domain": "tailspin.example",
+      "identity_status": "matched",
+      "score_as_of": "2026-01-15T00:00:00Z",
+      "factors": {
+        "size": {
+          "status": "failed",
+          "value": 300,
+          "evidence": "300 employees in synthetic fixture",
+          "source": "synthetic fixture"
+        },
+        "motion": {
+          "status": "found",
+          "value": "enterprise",
+          "evidence": "enterprise motion in synthetic fixture",
+          "source": "synthetic fixture"
+        }
+      },
+      "expected_score": null,
+      "expected_grade": null
+    }
+  ]
+}
