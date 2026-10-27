@@ -495,7 +495,11 @@ def validate(root: str, action_catalog: dict | None = None) -> dict:
             #
             # Three rejections, each because it makes the count unknowable rather than because it
             # looks untidy: no label at all, a label used twice, and a label with nothing under it.
-            sect = re.split(r"(?im)^#{2}\s+representative output\b[^\n]*\n", body, maxsplit=1)[1]
+            # The same heading levels the presence check above accepts, and no newline required
+            # after it: a split that matches less than that check finds nothing to split on, and
+            # `[1]` then raises IndexError on a package the check above already said was fine.
+            sect = re.split(r"(?im)^#{2,3}\s+representative output\b[^\n]*(?:\n|\Z)", body,
+                            maxsplit=1)[1]
             sect = re.split(r"(?m)^#{1,2}\s+\S", sect)[0]
             blocks = re.split(r"(?m)^#{3}\s+(.+)$", sect)
             labels = [b.strip() for b in blocks[1::2]]
