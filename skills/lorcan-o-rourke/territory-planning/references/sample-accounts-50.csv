@@ -1,0 +1,51 @@
+Name,Website,NumberOfEmployees,BillingCity,BillingState,BillingCountry,Industry,Type
+Vercel,https://vercel.com,700,San Francisco,CA,US,Technology,Prospect
+Notion,https://notion.com,800,San Francisco,CA,US,Technology,Prospect
+Cockroach Labs,https://cockroachlabs.com,600,New York,NY,US,Technology,Prospect
+Hex,https://hex.tech,150,San Francisco,CA,US,Technology,Prospect
+Dub,https://dub.co,12,San Francisco,CA,US,Technology,Prospect
+Supabase,https://supabase.com,250,San Francisco,CA,US,Technology,Prospect
+Loom,https://loom.com,150,San Francisco,CA,US,Technology,Prospect
+HashiCorp,https://hashicorp.com,2500,San Francisco,CA,US,Technology,Prospect
+Linear,https://linear.app,120,San Francisco,CA,US,Technology,Prospect
+Toast,https://toasttab.com,5500,Boston,MA,US,Technology,Prospect
+Attio,https://attio.com,80,London,,GB,Technology,Prospect
+folk,https://folk.app,60,Paris,,FR,Technology,Prospect
+Personio,https://personio.com,2000,Munich,,DE,Technology,Prospect
+Celonis,https://celonis.com,3200,Munich,,DE,Technology,Prospect
+Contentful,https://contentful.com,800,Berlin,,DE,Technology,Prospect
+Algolia,https://algolia.com,700,Paris,,FR,Technology,Prospect
+Pleo,https://pleo.io,900,Copenhagen,,DK,Financial Services,Prospect
+monday.com,https://monday.com,2500,Tel Aviv,,IL,Technology,Prospect
+1Password,https://1password.com,1200,Toronto,ON,CA,Technology,Prospect
+Canva,https://canva.com,5000,Sydney,,AU,Technology,Prospect
+Stanford University,https://stanford.edu,18000,Stanford,CA,US,Education,Prospect
+R/GA,https://rga.com,2000,New York,NY,US,Consulting,Prospect
+Betterment,https://betterment.com,600,New York,NY,US,Finance,Prospect
+Hims & Hers,https://hims.com,900,San Francisco,CA,US,Healthcare,Prospect
+Etsy,https://etsy.com,2400,Brooklyn,NY,US,Retail,Prospect
+Clerk,https://clerk.com,110,San Francisco,CA,US,Technology,Prospect
+PostHog,https://posthog.com,90,San Francisco,CA,US,Technology,Prospect
+Retool,https://retool.com,400,San Francisco,CA,US,Technology,Prospect
+Airbyte,https://airbyte.com,150,San Francisco,CA,US,Technology,Prospect
+dbt Labs,https://getdbt.com,600,Philadelphia,PA,US,Technology,Prospect
+Hightouch,https://hightouch.com,260,San Francisco,CA,US,Technology,Prospect
+Sigma,https://sigmacomputing.com,800,San Francisco,CA,US,Technology,Prospect
+PagerDuty,https://pagerduty.com,1200,San Francisco,CA,US,Technology,Prospect
+LaunchDarkly,https://launchdarkly.com,650,Oakland,CA,US,Technology,Prospect
+Netlify,https://netlify.com,180,San Francisco,CA,US,Technology,Prospect
+Temporal,https://temporal.io,550,Bellevue,WA,US,Technology,Prospect
+MongoDB,https://mongodb.com,5500,New York,NY,US,Technology,Prospect
+Datadog,https://datadoghq.com,4800,New York,NY,US,Technology,Prospect
+Wistia,https://wistia.com,150,Cambridge,MA,US,Technology,Prospect
+Chili Piper,https://chilipiper.com,150,New York,NY,US,Technology,Prospect
+Smartsheet,https://smartsheet.com,3500,Bellevue,WA,US,Technology,Prospect
+Expensify,https://expensify.com,140,Portland,OR,US,Technology,Prospect
+Rippling,https://rippling.com,4000,San Francisco,CA,US,Technology,Prospect
+Gorgias,https://gorgias.com,320,San Francisco,CA,US,Technology,Prospect
+Mixpanel,https://mixpanel.com,330,San Francisco,CA,US,Technology,Prospect
+Replit,https://replit.com,300,Foster City,CA,US,Technology,Prospect
+Runway,https://runwayml.com,150,New York,NY,US,Technology,Prospect
+Writer,https://writer.com,300,San Francisco,CA,US,Technology,Prospect
+Jasper,https://jasper.ai,250,San Francisco,CA,US,Technology,Prospect
+Hebbia,https://hebbia.com,120,New York,NY,US,Technology,Prospect

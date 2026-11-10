@@ -1,0 +1,7 @@
+name,crm_user_id,email,segment,sub_region,capacity,protected_domains
+Maya Chen,,maya@example.com,SA,US West,25,
+Priya Shah,,priya@example.com,SA,US East,25,
+Jordan Lee,,jordan@example.com,SL1/SL2,US West,40,
+Taylor Brooks,,taylor@example.com,SL1/SL2,US East,40,
+Morgan Patel,,morgan@example.com,SL3,US West,15,
+Casey Nguyen,,casey@example.com,SL3,US East,15,
